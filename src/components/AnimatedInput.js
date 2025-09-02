@@ -8,8 +8,16 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons"; // 👈 make sure to install
 import COLORS from "../theme/colors";
+import FONTSIZE from "../theme/fontsSize";
+import FONTS from "../theme/fonts";
 
-const AnimatedInput = ({ label, value, onChangeText, secureTextEntry }) => {
+const AnimatedInput = ({
+  label,
+  value,
+  onChangeText,
+  secureTextEntry,
+  style,
+}) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -28,17 +36,18 @@ const AnimatedInput = ({ label, value, onChangeText, secureTextEntry }) => {
     left: 20,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [35, 0],
+      outputRange: [32, 0],
     }),
-    fontSize: 12,
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistMedium,
     color: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [COLORS.secondary, COLORS.primary],
+      outputRange: [COLORS.secondary, COLORS.black],
     }),
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <Animated.Text style={labelStyle}>{label}</Animated.Text>
 
       <TextInput
@@ -78,7 +87,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
     borderRadius: 25,
     paddingHorizontal: 15,
-    fontSize: 14,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistMedium,
     paddingRight: 40, // 👈 space for eye icon
   },
   iconContainer: {

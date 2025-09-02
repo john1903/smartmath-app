@@ -3,6 +3,8 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import CustomBackground from "../../components/CustomBackground";
 import COLORS from "../../theme/colors";
 import CustomButton from "../../components/CustomButton";
+import FONTS from "../../theme/fonts";
+import FONTSIZE from "../../theme/fontsSize";
 
 const GetStartedScreen = ({ navigation }) => {
   return (
@@ -24,7 +26,11 @@ const GetStartedScreen = ({ navigation }) => {
           buttonStyle={{
             width: "50%",
           }}
-          textStyle={{ color: COLORS.white, fontSize: 18 }}
+          textStyle={{
+            color: COLORS.white,
+            fontSize: FONTSIZE.size20,
+            fontFamily: FONTS.UrbanistSemiBold,
+          }}
           onPress={() => navigation.navigate("SignIn")}
         />
       </View>
@@ -44,13 +50,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 30,
+    fontSize: FONTSIZE.size37,
+    fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.black,
     textAlign: "center",
   },
   highlight: {
     color: COLORS.primary,
-    fontWeight: "bold",
+    fontFamily: FONTS.UrbanistBold,
   },
 });
 

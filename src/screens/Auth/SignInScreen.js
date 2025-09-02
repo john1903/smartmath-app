@@ -15,6 +15,8 @@ import CustomButton from "../../components/CustomButton";
 import EmailIcon from "../../../assets/svgs/Email.svg";
 import GoogleIcon from "../../../assets/svgs/Google.svg";
 import AppleIcon from "../../../assets/svgs/Apple.svg";
+import FONTSIZE from "../../theme/fontsSize";
+import FONTS from "../../theme/fonts";
 
 export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -56,13 +58,17 @@ export default function SignInScreen({ navigation }) {
                 marginVertical: 10,
               }}
               textStyle={{ color: COLORS.white, fontSize: 14 }}
-              onPress={() => navigation.navigate("SignIn")}
+              onPress={() => navigation.navigate("Main")}
             />
 
-            <Text style={styles.createAccount}>
-              If you haven’t already an account?{" "}
-              <Text style={styles.createLink}>Create account</Text>
-            </Text>
+            <View style={styles.createAccountContainer}>
+              <Text style={styles.createAccount}>
+                If you haven’t already an account?{" "}
+              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+                <Text style={styles.createLink}> Create account </Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.divider}>
               <View style={styles.line} />
@@ -119,6 +125,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginTop: 20,
     marginHorizontal: 20,
+    paddingBottom: 40,
     // backgroundColor: "#00000010",
   },
 
@@ -136,12 +143,13 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 26,
-    fontWeight: 500,
+    fontSize: FONTSIZE.size40,
+    fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.primary,
   },
   subtitle: {
-    fontSize: 10,
+    fontSize: FONTSIZE.size16,
+    fontFamily: FONTS.UrbanistMedium,
     color: COLORS.secondary,
   },
   forgotBtn: {
@@ -149,8 +157,9 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     color: COLORS.black,
-    fontSize: 10,
-    fontWeight: 500,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistSemiBold,
+    marginBottom: 5,
   },
   signInBtn: {
     backgroundColor: "#007AFF",
@@ -161,17 +170,24 @@ const styles = StyleSheet.create({
   },
   signInText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: FONTSIZE.size16,
+    fontFamily: FONTS.UrbanistSemiBold,
+  },
+  createAccountContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   createAccount: {
-    fontSize: 10,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistRegular,
     textAlign: "center",
     color: COLORS.secondary,
   },
   createLink: {
     color: COLORS.black,
-    fontWeight: 500,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistSemiBold,
   },
   divider: {
     flexDirection: "row",
@@ -184,7 +200,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
   },
   orText: {
-    fontSize: 12,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistSemiBold,
     marginHorizontal: 10,
     color: COLORS.secondary,
   },
@@ -197,19 +214,22 @@ const styles = StyleSheet.create({
   },
   socialButtonTitle: {
     color: COLORS.black,
-    fontSize: 12,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistMedium,
     paddingVertical: 2,
   },
 
   footerText: {
-    marginHorizontal: 15,
+    // marginHorizontal: 5,
     marginTop: 20,
     textAlign: "center",
-    fontSize: 10,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistRegular,
     color: COLORS.secondary,
   },
   link: {
     color: COLORS.black,
-    fontWeight: 500,
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistSemiBold,
   },
 });
