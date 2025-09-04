@@ -11,9 +11,10 @@ const CustomBackground = ({
   imageSource = require("../../assets/images/student.png"),
   showGradient = false,
   gradientColors = ["#cce5fcff", "#ffffff"],
+  style,
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {/* Top Gradient */}
       {showGradient && (
         <LinearGradient

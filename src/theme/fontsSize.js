@@ -12,8 +12,10 @@ const FONTSIZE = {
   size26: RFValue(26),
   size28: RFValue(28),
   size30: RFValue(30),
+  size32: RFValue(32),
   size37: RFValue(37),
   size40: RFValue(40),
+  size48: RFValue(48),
 };
 
 export default FONTSIZE;
