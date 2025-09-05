@@ -6,6 +6,7 @@ const COLORS = {
   black: "#000000",
   danger: "#E53935",
   borderColor: "#DADADA",
+  borderColor2: "#C2C2C2",
 };
 
 export default COLORS;

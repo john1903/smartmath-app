@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeContent: { flex: 1 },
+  safeContent: { flex: 1, backgroundColor: COLORS.background },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     marginVertical: 20,
     gap: 5,
+    paddingRight: 30,
   },
   recommendedContainer: {
     flex: 1,

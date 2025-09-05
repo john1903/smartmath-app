@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import StatusBadge from "./StatusBadge";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import COLORS from "../theme/colors";
 
-export default function QuestionCard({ number, question, status }) {
+export default function QuestionCard({ number, question, status, onPress }) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={styles.container}>
       <View style={styles.leftContainer}>
         <View style={styles.circle}>
           <Text style={styles.number}>Q{number}</Text>
@@ -19,7 +19,7 @@ export default function QuestionCard({ number, question, status }) {
       <View style={styles.rightContainer}>
         <StatusBadge status={status} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

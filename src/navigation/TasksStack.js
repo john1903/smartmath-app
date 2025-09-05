@@ -1,6 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TasksScreen from "../screens/Tasks/TasksScreen";
+import TaskDetail from "../screens/Tasks/TaskDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -11,6 +12,11 @@ export default function TasksStack() {
         name="TasksMain"
         component={TasksScreen}
         options={{ title: "Tasks" }}
+      />
+      <Stack.Screen
+        name="TaskDetail"
+        component={TaskDetail}
+        options={{ title: "Task Detail" }}
       />
     </Stack.Navigator>
   );

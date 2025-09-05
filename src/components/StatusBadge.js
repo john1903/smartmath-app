@@ -8,7 +8,7 @@ const STATUS_STYLES = {
   Solve: { backgroundColor: COLORS.primary }, // Blue
   Completed: { backgroundColor: "#3CCB3C" }, // Green
   Failed: { backgroundColor: "#FD1207" }, // Red
-  "Limit Exceeded.": { backgroundColor: "#BCAAA4" }, // Brown
+  "Limit Exceeded": { backgroundColor: "#BCAAA4" }, // Brown
   Pending: { backgroundColor: "#FFD54F" }, // Yellow
 };
 

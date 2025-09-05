@@ -1,0 +1,92 @@
+import React, { useState } from "react";
+import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Voice from "@react-native-voice/voice";
+
+import { RFValue } from "react-native-responsive-fontsize";
+import COLORS from "../theme/colors";
+import FONTSIZE from "../theme/fontsSize";
+import FONTS from "../theme/fonts";
+import FilterIcon from "../../assets/svgs/FilterIcon.svg";
+
+export default function SearchBar({ onSearch, onFilter }) {
+  const [searchText, setSearchText] = useState("");
+
+  // Start voice recognition
+  const startVoiceRecognition = async () => {
+    try {
+      await Voice.start("en-US");
+      Voice.onSpeechResults = (event) => {
+        if (event.value && event.value.length > 0) {
+          const spokenText = event.value[0];
+          setSearchText(spokenText);
+          onSearch(spokenText);
+        }
+      };
+    } catch (error) {
+      console.log("Voice error:", error);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <Ionicons
+          name="search-outline"
+          size={22}
+          color="#555"
+          style={{ marginRight: 5 }}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          value={searchText}
+          onChangeText={(text) => {
+            setSearchText(text);
+            onSearch(text);
+          }}
+        />
+
+        <TouchableOpacity onPress={startVoiceRecognition}>
+          <Ionicons name="mic-outline" size={22} color="#555" />
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.filterButton} onPress={onFilter}>
+        <FilterIcon width={20} height={20} />
+        {/* <Ionicons name="options-outline" size={22} color="#555" /> */}
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 20,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    borderWidth: 1,
+    borderColor: COLORS.borderColor,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistRegular,
+    paddingVertical: 8,
+    color: COLORS.black,
+  },
+  filterButton: {
+    marginLeft: 10,
+    borderWidth: 1,
+    borderColor: COLORS.borderColor,
+    borderRadius: 50,
+    padding: 8,
+  },
+});
