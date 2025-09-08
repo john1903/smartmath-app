@@ -9,7 +9,13 @@ import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import FilterIcon from "../../assets/svgs/FilterIcon.svg";
 
-export default function SearchBar({ onSearch, onFilter }) {
+export default function SearchBar({
+  onSearch,
+  onFilter,
+  showFilter = true,
+  style = {},
+  placeholder = "Search",
+}) {
   const [searchText, setSearchText] = useState("");
 
   // Start voice recognition
@@ -29,7 +35,7 @@ export default function SearchBar({ onSearch, onFilter }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.searchContainer}>
         <Ionicons
           name="search-outline"
@@ -39,7 +45,7 @@ export default function SearchBar({ onSearch, onFilter }) {
         />
         <TextInput
           style={styles.input}
-          placeholder="Search"
+          placeholder={placeholder}
           value={searchText}
           onChangeText={(text) => {
             setSearchText(text);
@@ -52,10 +58,15 @@ export default function SearchBar({ onSearch, onFilter }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.filterButton} onPress={onFilter}>
-        <FilterIcon width={20} height={20} />
-        {/* <Ionicons name="options-outline" size={22} color="#555" /> */}
-      </TouchableOpacity>
+      {showFilter && (
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => onFilter?.()}
+        >
+          <FilterIcon width={20} height={20} />
+          {/* <Ionicons name="options-outline" size={22} color="#555" /> */}
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

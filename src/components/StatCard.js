@@ -7,8 +7,10 @@ import ArrowIcon from "../../assets/svgs/ArrowIcon.svg";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import COLORS from "../theme/colors";
+import { useTranslation } from "react-i18next";
 
 export default function StatCard({ value }) {
+  const { t } = useTranslation();
   return (
     <View style={styles.card}>
       <View
@@ -18,8 +20,8 @@ export default function StatCard({ value }) {
         }}
       >
         <View>
-          <Text style={styles.title}>Task</Text>
-          <Text style={styles.title}>Completed</Text>
+          <Text style={styles.title}>{t("task")}</Text>
+          <Text style={styles.title}>{t("completed")}</Text>
         </View>
         <CalanderIcon />
       </View>
@@ -30,7 +32,7 @@ export default function StatCard({ value }) {
         }}
       >
         <View>
-          <Text style={styles.subtitle}>Tasks Solve</Text>
+          <Text style={styles.subtitle}>{t("tasks_solve")}</Text>
           <Text style={styles.value}>{value}</Text>
         </View>
         <View

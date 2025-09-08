@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next"; // ✅ Import i18n hook
+
 import CustomBackground from "../../components/CustomBackground";
 import COLORS from "../../theme/colors";
 import FONTSIZE from "../../theme/fontsSize";
@@ -8,56 +11,95 @@ import FONTS from "../../theme/fonts";
 import StatCard from "../../components/StatCard";
 import ProgressCard from "../../components/ProgressCard";
 import CategoryButton from "../../components/CategoryButton";
-import { SafeAreaView } from "react-native-safe-area-context";
 import QuestionCard from "../../components/QuestionCard";
 import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
 
 export default function HomeScreen({ navigation }) {
-  const categories = ["All Exercises", "MCQs", "True / False", "Matching"];
+  const { t } = useTranslation(); // ✅ Initialize translations
+
+  const categories = [
+    t("all_exercises"),
+    t("mcqs"),
+    t("true_false"),
+    t("matching"),
+  ];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
-  // const questions = [
-  //   { id: 1, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 2, text: "What is the sum of 130+125+191?", status: "Completed" },
-  //   { id: 3, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 4, text: "What is the sum of 130+125+191?", status: "Failed" },
-  //   {
-  //     id: 5,
-  //     text: "What is the sum of 130+125+191?",
-  //     status: "Limit Exceeded.",
-  //   },
-  //   { id: 6, text: "What is the sum of 130+125+191?", status: "Completed" },
-  //   { id: 7, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 8, text: "What is the sum of 130+125+191?", status: "Pending" },
-  // ];
-
   const questions = [
-    { id: 1, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 2, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 3, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 4, text: "What is the sum of 130+125+191?", status: "Solve" },
+    {
+      id: 1,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "MCQs",
+    },
+    {
+      id: 2,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "Matching Pair",
+    },
+    {
+      id: 3,
+      text: t("question_sample"),
+      status: "Solve",
+
+      taskType: "True/False",
+    },
+    {
+      id: 4,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "MCQs",
+    },
     {
       id: 5,
-      text: "What is the sum of 130+125+191?",
+      text: t("question_sample"),
       status: "Solve",
+      taskType: "Matching Pair",
     },
-    { id: 6, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 7, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 8, text: "What is the sum of 130+125+191?", status: "Solve" },
+    {
+      id: 6,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "True/False",
+    },
+    {
+      id: 7,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "MCQs",
+    },
+    {
+      id: 8,
+      text: t("question_sample"),
+      status: "Solve",
+      taskType: "Matching Pair",
+    },
   ];
 
   const handleCategoryPress = (category) => {
     setActiveCategory(category);
-    console.log("Selected:", category); // ✅ parent handles press
   };
+
+  const filteredQuestions =
+    activeCategory === t("all_exercises")
+      ? questions
+      : questions.filter((q) => {
+          if (activeCategory === t("mcqs")) return q.taskType === "MCQs";
+          if (activeCategory === t("true_false"))
+            return q.taskType === "True/False";
+          if (activeCategory === t("matching"))
+            return q.taskType === "Matching Pair";
+          return true;
+        });
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hi! Jhon</Text>
-          <Text style={styles.subGreeting}>Welcome back</Text>
+          <Text style={styles.greeting}>{t("hi")}! Jhon</Text>
+          <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
         <View style={styles.rightHeader}>
           <View style={styles.notifyCircle}>
@@ -75,7 +117,7 @@ export default function HomeScreen({ navigation }) {
       {/* Cards */}
       <View style={styles.cardsRow}>
         <StatCard value="225" />
-        <ProgressCard title="Accuracy" percentage={50} total="50/100" />
+        <ProgressCard title={t("accuracy")} percentage={50} total="50/100" />
       </View>
 
       {/* Categories */}
@@ -97,14 +139,8 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       {/* Recommended Tasks */}
-
       <View style={styles.recommendedContainer}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            flex: 1,
-          }}
-        >
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           <View style={styles.recommendedInnerContainer}>
             <View style={styles.recommendedHeader}>
               <View>
@@ -115,7 +151,7 @@ export default function HomeScreen({ navigation }) {
                     color: COLORS.black,
                   }}
                 >
-                  Recommended Tasks
+                  {t("recommended_tasks")}
                 </Text>
                 <Text
                   style={{
@@ -124,14 +160,15 @@ export default function HomeScreen({ navigation }) {
                     color: COLORS.secondary,
                   }}
                 >
-                  20 Tasks Pending
+                  {t("pending_tasks", { count: 20 })}
                 </Text>
               </View>
               <View>
                 <FilterIcon />
               </View>
             </View>
-            {questions.map((q, index) => (
+
+            {filteredQuestions.map((q, index) => (
               <QuestionCard
                 key={q.id}
                 number={index + 1}

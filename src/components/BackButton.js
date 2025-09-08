@@ -7,7 +7,7 @@ import COLORS from "../theme/colors";
 const BackButton = ({
   onPress,
   size = 24,
-  style,
+  style = {},
   iconName = "chevron-left", // default back icon
 }) => {
   return (
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
-    width: "15%",
+    width: "13%",
     height: 50,
   },
 });

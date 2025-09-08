@@ -4,8 +4,11 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import COLORS from "../theme/colors";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
+import { useTranslation } from "react-i18next";
 
 export default function ProgressCard({ title, percentage, total }) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
@@ -32,7 +35,7 @@ export default function ProgressCard({ title, percentage, total }) {
           )}
         </AnimatedCircularProgress>
       </View>
-      <Text style={styles.total}>Correct Answers</Text>
+      <Text style={styles.total}>{t("correct_answers")}</Text>
     </View>
   );
 }
