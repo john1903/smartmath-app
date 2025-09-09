@@ -74,7 +74,11 @@ export default function SignUpScreen({ navigation }) {
               <CustomButton
                 title={t("sign_up")}
                 buttonStyle={{ width: "100%", marginVertical: 10 }}
-                textStyle={{ color: COLORS.white, fontSize: 14 }}
+                textStyle={{
+                  color: COLORS.white,
+                  fontSize: 14,
+                  includeFontPadding: false,
+                }}
                 onPress={() => navigation.navigate("Main")}
               />
 
@@ -196,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size12,
     fontFamily: FONTS.UrbanistMedium,
     paddingVertical: 2,
+    includeFontPadding: false,
   },
   footerText: {
     marginTop: 20,

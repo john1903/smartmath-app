@@ -361,6 +361,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
               color: COLORS.black,
               fontSize: FONTSIZE.size14,
               fontFamily: FONTS.UrbanistSemiBold,
+              includeFontPadding: false,
             }}
             onPress={() => handleCancel()}
           />
@@ -372,6 +373,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
               color: COLORS.white,
               fontSize: FONTSIZE.size14,
               fontFamily: FONTS.UrbanistSemiBold,
+              includeFontPadding: false,
             }}
             onPress={() => handleApply()}
           />

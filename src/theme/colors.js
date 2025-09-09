@@ -7,6 +7,8 @@ const COLORS = {
   danger: "#E53935",
   borderColor: "#DADADA",
   borderColor2: "#C2C2C2",
+  D9Gray: "#D9D9D9",
+  lightBlue: "#2473fc10",
 };
 
 export default COLORS;

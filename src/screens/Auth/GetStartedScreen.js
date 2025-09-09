@@ -43,6 +43,7 @@ const GetStartedScreen = ({ navigation }) => {
             color: COLORS.white,
             fontSize: FONTSIZE.size20,
             fontFamily: FONTS.UrbanistSemiBold,
+            includeFontPadding: false,
           }}
           onPress={() => navigation.navigate("SelectLanguage")}
         />

@@ -15,8 +15,8 @@ const AnimatedInput = ({
   label,
   value,
   onChangeText,
-  secureTextEntry,
-  style,
+  secureTextEntry = false,
+  style = {},
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
