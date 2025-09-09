@@ -17,56 +17,50 @@ import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
 export default function HomeScreen({ navigation }) {
   const { t } = useTranslation(); // ✅ Initialize translations
 
-  const categories = [
-    t("all_exercises"),
-    t("mcqs"),
-    t("true_false"),
-    t("matching"),
-  ];
+  const categories = ["all_exercises", "mcqs", "true_false", "matching"];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const questions = [
     {
       id: 1,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "MCQs",
     },
     {
       id: 2,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "Matching Pair",
     },
     {
       id: 3,
       text: t("question_sample"),
-      status: "Solve",
-
+      status: "solve",
       taskType: "True/False",
     },
     {
       id: 4,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "MCQs",
     },
     {
       id: 5,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "Matching Pair",
     },
     {
       id: 6,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "True/False",
     },
     {
       id: 7,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "MCQs",
     },
     {
@@ -82,13 +76,13 @@ export default function HomeScreen({ navigation }) {
   };
 
   const filteredQuestions =
-    activeCategory === t("all_exercises")
+    activeCategory === "all_exercises"
       ? questions
       : questions.filter((q) => {
-          if (activeCategory === t("mcqs")) return q.taskType === "MCQs";
-          if (activeCategory === t("true_false"))
+          if (activeCategory === "mcqs") return q.taskType === "MCQs";
+          if (activeCategory === "true_false")
             return q.taskType === "True/False";
-          if (activeCategory === t("matching"))
+          if (activeCategory === "matching")
             return q.taskType === "Matching Pair";
           return true;
         });
@@ -130,7 +124,7 @@ export default function HomeScreen({ navigation }) {
           {categories.map((cat) => (
             <CategoryButton
               key={cat}
-              label={cat}
+              label={t(`${cat}`)}
               active={cat === activeCategory}
               onPress={() => handleCategoryPress(cat)}
             />

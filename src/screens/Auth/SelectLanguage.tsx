@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 
 const languages = [
   { id: "1", key: "english", code: "en" },
-  { id: "2", key: "polski", code: "pl" },
+  { id: "2", key: "polish", code: "pl" },
 ];
 
 const LANGUAGE_KEY = "appLanguage";

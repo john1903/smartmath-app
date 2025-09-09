@@ -9,7 +9,7 @@
   "search": "Szukaj",
   "select_language": "Wybierz język",
   "english": "Angielski",
-  "polski": "Polski",
+  "polish": "Polski",
   "next": "Dalej",
   "login": "Zaloguj się",
   "login_subtitle": "Zaloguj się, aby kontynuować!",
@@ -44,15 +44,65 @@
   "pending_tasks": "{{count}} zadań oczekujących",
   "question_sample": "Jaka jest suma 130+125+191?",
   "solve": "Rozwiąż",
+
   "status": {
     "solve": "Rozwiąż",
-    "completed": "Ukończono",
+    "completed": "Ukończone",
     "failed": "Niepowodzenie",
-    "limitExceeded": "Przekroczono limit",
+    "limitexceeded": "Przekroczono limit",
     "pending": "Oczekujące"
   },
-  "task": "Zadanie",
-  "completed": "Ukończone",
-  "tasks_solve": "Rozwiązane zadania",
-  "correct_answers": "Poprawne odpowiedzi"
+
+  "tasks": {
+    "title": "Zadania",
+    "noData": "Nie znaleziono pytań"
+  },
+
+  "categories": {
+    "all": "Wszystkie zadania",
+    "completed": "Ukończone",
+    "notCompleted": "Nieukończone",
+    "pending": "Oczekujące",
+    "limitexceeded": "Przekroczony limit",
+    "solve": "Rozwiąż",
+    "failed": "Nieudane"
+  },
+
+  "questions": {
+    "q1": "Jaka jest suma 130+125+191?",
+    "q2": "Jaki jest wynik odejmowania 130-125-191?",
+    "q3": "Jaki jest wynik odejmowania 130-125+191?",
+    "q4": "Jaki jest wynik mnożenia 130*125*191?"
+  },
+
+  "filter": {
+    "title": "Filtruj według:",
+    "status": "Status ćwiczenia",
+    "difficulty": "Poziom trudności",
+    "taskType": "Rodzaj zadania"
+  },
+
+  "difficulty": {
+    "hard": "Trudny",
+    "normal": "Normalny",
+    "easy": "Łatwy"
+  },
+
+  "taskType": {
+    "mcq": "Test wielokrotnego wyboru",
+    "trueFalse": "Prawda/Fałsz",
+    "matching": "Dopasowywanie"
+  },
+
+  "actions": {
+    "cancel": "Anuluj",
+    "apply": "Zastosuj filtr"
+  },
+
+  "tabs": {
+    "home": "Strona główna",
+    "tasks": "Zadania",
+    "reports": "Raporty",
+    "settings": "Ustawienia"
+  }
 }

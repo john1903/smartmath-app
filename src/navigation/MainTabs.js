@@ -55,10 +55,12 @@ import ReportsIcon from "../../assets/svgs/ReportsIcon.svg";
 
 import SettingsActiveIcon from "../../assets/svgs/SettingsActiveIcon.svg";
 import SettingsIcon from "../../assets/svgs/SettingsIcon.svg";
+import { useTranslation } from "react-i18next";
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs() {
+  const { t } = useTranslation();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -98,22 +100,22 @@ export default function MainTabs() {
       <Tab.Screen
         name="HomeTab"
         component={HomeStack}
-        options={{ title: "Home" }}
+        options={{ title: t("tabs.home") }}
       />
       <Tab.Screen
         name="TasksTab"
         component={TasksStack}
-        options={{ title: "Tasks" }}
+        options={{ title: t("tabs.tasks") }}
       />
       <Tab.Screen
         name="ReportsTab"
         component={ReportsStack}
-        options={{ title: "Reports" }}
+        options={{ title: t("tabs.reports") }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStack}
-        options={{ title: "Settings" }}
+        options={{ title: t("tabs.settings") }}
       />
     </Tab.Navigator>
   );
