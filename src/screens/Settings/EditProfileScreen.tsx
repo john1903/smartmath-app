@@ -35,7 +35,7 @@ const EditProfileScreen = ({ navigation }: any) => {
       {/* Header */}
       <View style={styles.header}>
         <CustomHeader
-          title="Edit Profile"
+          title={t("editProfile")}
           onPress={() => navigation.goBack()}
         />
       </View>
@@ -80,16 +80,16 @@ const EditProfileScreen = ({ navigation }: any) => {
           {/* Header */}
           <View style={styles.tokenHeader}>
             <TokenIcon width={22} height={22} />
-            <Text style={styles.title}>Token</Text>
+            <Text style={styles.title}>{t("token")}</Text>
           </View>
 
           {/* Progress Info */}
           <View style={styles.infoRow}>
             <Text style={styles.infoText}>
-              {(used / 1000).toFixed(0)}k Used
+              {(used / 1000).toFixed(0)}k {t("used")}
             </Text>
             <Text style={styles.infoText}>
-              {(total / 1000).toFixed(0)}k Total
+              {(total / 1000).toFixed(0)}k {t("total")}
             </Text>
           </View>
 
@@ -107,12 +107,12 @@ const EditProfileScreen = ({ navigation }: any) => {
 
           {/* Buy Token Button */}
           <TouchableOpacity>
-            <Text style={styles.buyToken}>Buy Token</Text>
+            <Text style={styles.buyToken}>{t("buyToken")}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomButton}>
           <CustomButton
-            title="Save"
+            title={t("save")}
             buttonStyle={{
               width: "50%",
             }}

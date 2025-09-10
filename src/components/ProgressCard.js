@@ -24,7 +24,7 @@ export default function ProgressCard({ title, percentage, total }) {
           width={8}
           fill={percentage}
           tintColor={COLORS.primary}
-          backgroundColor="#EDEDED"
+          backgroundColor={COLORS.D9Gray}
           rotation={0}
         >
           {() => (

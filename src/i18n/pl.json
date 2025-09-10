@@ -104,6 +104,24 @@
     "home": "Strona główna",
     "tasks": "Zadania",
     "reports": "Raporty",
-    "settings": "Ustawienia"
-  }
+    "setting": "Ustawienia"
+  },
+  "account": "Konto",
+  "editProfile": "Edytuj profil",
+  "changePassword": "Zmień hasło",
+  "subscription": "Subskrypcja",
+  "tokens": "Tokeny",
+  "token": "Token",
+  "affiliateLink": "Link partnerski i statystyki",
+  "notification": "Powiadomienie",
+  "appNotification": "Powiadomienie w aplikacji",
+  "more": "Więcej",
+  "country": "Kraj",
+  "theme": "Motyw",
+  "dark/light": "Ciemny/Jasny",
+  "logout": "Wyloguj się",
+  "used": "Wykorzystano",
+  "total": "Razem",
+  "buyToken": "Kup token",
+  "save": "Zapisz"
 }

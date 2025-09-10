@@ -104,6 +104,25 @@
     "home": "Home",
     "tasks": "Tasks",
     "reports": "Reports",
-    "settings": "Settings"
-  }
+    "setting": "Setting"
+  },
+  "account": "Account",
+  "editProfile": "Edit Profile",
+  "changePassword": "Change Password",
+  "subscription": "Subscription",
+  "tokens": "Tokens",
+  "token": "Token",
+  "affiliateLink": "Affiliate Link & Stats",
+  "notification": "Notification",
+  "appNotification": "App Notification",
+  "more": "More",
+  "country": "Country",
+  "theme": "Theme",
+  "dark/light": "Dark/Light",
+  "logout": "Logout",
+  "used": "Used",
+  "total": "Total",
+  "buyToken": "Buy Token",
+  "save": "Save"
+
 }

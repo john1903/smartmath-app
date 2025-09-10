@@ -66,7 +66,7 @@ export default function HomeScreen({ navigation }) {
     {
       id: 8,
       text: t("question_sample"),
-      status: "Solve",
+      status: "solve",
       taskType: "Matching Pair",
     },
   ];

@@ -236,23 +236,15 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
 
   const OPTIONS = {
     status: [
-      t("categories.all"),
-      t("categories.completed"),
-      t("categories.pending"),
-      t("categories.failed"),
-      t("categories.limitexceeded"),
-      t("categories.notCompleted"),
+      "all",
+      "completed",
+      "pending",
+      "failed",
+      "limitexceeded",
+      "notCompleted",
     ],
-    difficulty: [
-      t("difficulty.hard"),
-      t("difficulty.normal"),
-      t("difficulty.easy"),
-    ],
-    taskType: [
-      t("taskType.mcq"),
-      t("taskType.trueFalse"),
-      t("taskType.matching"),
-    ],
+    difficulty: ["hard", "normal", "easy"],
+    taskType: ["mcq", "trueFalse", "matching"],
   };
 
   const [selectedStatus, setSelectedStatus] = useState(OPTIONS.status[0]);
@@ -308,7 +300,8 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
           {OPTIONS.status.map((item) => (
             <CategoryButton
               key={item}
-              label={item}
+              // label={item}
+              label={t(`categories.${item}`)}
               active={item === selectedStatus}
               onPress={() => setSelectedStatus(item)}
               textStyle={{ fontSize: FONTSIZE.size10 }}
@@ -324,7 +317,8 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
           {OPTIONS.difficulty.map((item) => (
             <CategoryButton
               key={item}
-              label={item}
+              // label={item}
+              label={t(`difficulty.${item}`)}
               active={item === selectedDifficulty}
               onPress={() => setSelectedDifficulty(item)}
               textStyle={{ fontSize: FONTSIZE.size10 }}
@@ -340,7 +334,8 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
           {OPTIONS.taskType.map((item) => (
             <CategoryButton
               key={item}
-              label={item}
+              // label={item}
+              label={t(`taskType.${item}`)}
               active={item === selectedTaskType}
               onPress={() => setSelectedTaskType(item)}
               textStyle={{ fontSize: FONTSIZE.size10 }}

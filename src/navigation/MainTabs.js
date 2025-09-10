@@ -115,7 +115,7 @@ export default function MainTabs() {
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStack}
-        options={{ title: t("tabs.settings") }}
+        options={{ title: t("tabs.setting") }}
       />
     </Tab.Navigator>
   );

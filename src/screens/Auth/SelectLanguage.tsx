@@ -123,7 +123,7 @@ const SelectLanguage = ({ navigation }: any) => {
         </View>
 
         {/* Next Button */}
-        {/* <View
+        <View
           style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
         >
           <CustomButton
@@ -137,7 +137,7 @@ const SelectLanguage = ({ navigation }: any) => {
             }}
             onPress={() => navigation.navigate("SignIn")}
           />
-        </View> */}
+        </View>
       </ScrollView>
     </CustomBackground>
   );

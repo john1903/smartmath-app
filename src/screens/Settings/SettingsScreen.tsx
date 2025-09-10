@@ -22,6 +22,7 @@ import ThemeIcon from "../../../assets/svgs/ThemeIcon.svg";
 import LogoutIcon from "../../../assets/svgs/LogoutIcon.svg";
 import SettingItem from "./SettingItem";
 import SwitchItem from "./SwitchItem";
+import { useTranslation } from "react-i18next";
 
 // ✅ Types
 type RootStackParamList = {
@@ -39,6 +40,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
 // ✅ Main Settings Screen
 export default function SettingsScreen({ navigation }: Props) {
+  const { t } = useTranslation();
+
   const [notification, setNotification] = useState<boolean>(false);
   const [appNotification, setAppNotification] = useState<boolean>(true);
   const [darkMode, setDarkMode] = useState<boolean>(true);
@@ -47,41 +50,44 @@ export default function SettingsScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
-        <CustomHeader title="Setting" onPress={() => navigation.goBack()} />
+        <CustomHeader
+          title={t("tabs.setting")}
+          onPress={() => navigation.goBack()}
+        />
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         {/* Account Section */}
         <View style={styles.sectionContainer}>
           <AccountIcon width={22} height={22} />
-          <Text style={styles.section}>Account</Text>
+          <Text style={styles.section}>{t("account")}</Text>
         </View>
         <SettingItem
-          label="Edit Profile"
+          label={t("editProfile")}
           onPress={() => {
             navigation.navigate("EditProfile");
           }}
         />
         <SettingItem
-          label="Change Password"
+          label={t("changePassword")}
           onPress={() => {
             navigation.navigate("Changepassword");
           }}
         />
         <SettingItem
-          label="Subscription"
+          label={t("subscription")}
           onPress={() => {
             navigation.navigate("Subscription");
           }}
         />
         <SettingItem
-          label="Tokens"
+          label={t("tokens")}
           onPress={() => {
             navigation.navigate("Tokens");
           }}
         />
         <SettingItem
-          label="Affiliate Link & Stats"
+          label={t("affiliateLink")}
           onPress={() => {
             navigation.navigate("AffiliateLink");
           }}
@@ -91,15 +97,15 @@ export default function SettingsScreen({ navigation }: Props) {
 
         <View style={styles.sectionContainer}>
           <NotificationIcon width={22} height={22} />
-          <Text style={styles.section}>Notification</Text>
+          <Text style={styles.section}>{t("notification")}</Text>
         </View>
         <SwitchItem
-          label="Notification"
+          label={t("notification")}
           value={notification}
           onValueChange={setNotification}
         />
         <SwitchItem
-          label="App Notification"
+          label={t("appNotification")}
           value={appNotification}
           onValueChange={setAppNotification}
         />
@@ -108,16 +114,16 @@ export default function SettingsScreen({ navigation }: Props) {
 
         <View style={styles.sectionContainer}>
           <MoreIcon width={22} height={22} />
-          <Text style={styles.section}>More</Text>
+          <Text style={styles.section}>{t("more")}</Text>
         </View>
         <SettingItem
-          label="Language"
+          label={t("language")}
           onPress={() => {
             navigation.navigate("SelectLanguage");
           }}
         />
         <SettingItem
-          label="Country"
+          label={t("country")}
           onPress={() => {
             navigation.navigate("Country");
           }}
@@ -126,10 +132,10 @@ export default function SettingsScreen({ navigation }: Props) {
         {/* Theme Section */}
         <View style={styles.sectionContainer}>
           <ThemeIcon width={22} height={22} />
-          <Text style={styles.section}>Theme</Text>
+          <Text style={styles.section}>{t("theme")}</Text>
         </View>
         <SwitchItem
-          label="Dark/Light"
+          label={t("dark/light")}
           value={darkMode}
           onValueChange={setDarkMode}
         />
@@ -137,7 +143,7 @@ export default function SettingsScreen({ navigation }: Props) {
         {/* Logout Button */}
         <TouchableOpacity style={styles.logout}>
           <LogoutIcon width={22} height={22} />
-          <Text style={styles.logoutText}>Logout</Text>
+          <Text style={styles.logoutText}>{t("logout")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
