@@ -18,11 +18,26 @@ import AppleIcon from "../../../assets/svgs/Apple.svg";
 import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
 import { useTranslation } from "react-i18next";
+import { useLoginUserMutation } from "../../services/authSlice";
 
 export default function SignInScreen({ navigation }) {
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const loginFunc = async () => {
+    let obj = {
+      data: {
+        username: email,
+        password: password,
+      },
+    };
+
+    console.log("obj :::: ", JSON.stringify(obj));
+    loginUser(obj);
+  };
 
   return (
     <CustomBackground showImage={false} showGradient={true}>
@@ -64,7 +79,7 @@ export default function SignInScreen({ navigation }) {
                 fontSize: 14,
                 includeFontPadding: false,
               }}
-              onPress={() => navigation.navigate("Main")}
+              onPress={() => loginFunc()}
             />
 
             <View style={styles.createAccountContainer}>

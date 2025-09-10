@@ -34,6 +34,7 @@ type RootStackParamList = {
   Tokens: undefined;
   AffiliateLink: undefined;
   Country: undefined;
+  SignIn: undefined;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
@@ -45,6 +46,10 @@ export default function SettingsScreen({ navigation }: Props) {
   const [notification, setNotification] = useState<boolean>(false);
   const [appNotification, setAppNotification] = useState<boolean>(true);
   const [darkMode, setDarkMode] = useState<boolean>(true);
+
+  const logoutFunc = () => {
+    navigation.replace("SignIn");
+  };
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -141,7 +146,7 @@ export default function SettingsScreen({ navigation }: Props) {
         />
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logout}>
+        <TouchableOpacity style={styles.logout} onPress={() => logoutFunc()}>
           <LogoutIcon width={22} height={22} />
           <Text style={styles.logoutText}>{t("logout")}</Text>
         </TouchableOpacity>
