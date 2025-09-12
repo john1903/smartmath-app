@@ -27,6 +27,8 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
       quality: 0.8,
     });
 
+    console.log("result :::::::::::::::::: ", result);
+
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       onImagePicked?.(result.assets[0].uri);
@@ -39,6 +41,8 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
       aspect: [1, 1],
       quality: 0.8,
     });
+
+    console.log("result :::::::::::::::::: ", result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);

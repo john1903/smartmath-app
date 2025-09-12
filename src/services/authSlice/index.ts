@@ -1,21 +1,24 @@
 import {
+  userDetailEndPoint,
   userLoginEndPoint,
   userRegisterEndPoint,
 } from "../../config/endPoints";
 import { persistor, store } from "../../store";
 
 import { setToken, setUser } from "../../store/auth";
+import { setLoading } from "../../store/loading";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { api, formHeader } from "../api";
 
 export const AuthApi = api.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
-      query: ({ body }: any) => {
+      query: ({ data }: any) => {
         return {
           url: userRegisterEndPoint,
           method: "post",
-          body,
-          headers: formHeader,
+          body: data,
+          // headers: formHeader,
         };
       },
       transformResponse: (result) => result,
@@ -27,17 +30,17 @@ export const AuthApi = api.injectEndpoints({
             "register user response :::::::::::: ",
             JSON.stringify(data)
           );
+          // dispatch(setToken(data?.token));
 
           //   dispatch(setUser(data?.items));
           // navigation.navigate('AuthNavigator', {
           //   screen: 'LoginScreen',
           // });
-          dispatch(setToken(data?.token));
 
-          //   dispatch(setLoading(false));
+          dispatch(setLoading(false));
         } catch (e) {
           console.log("register user error :::::::::::: ", JSON.stringify(e));
-          //   dispatch(setLoading(false));
+          dispatch(setLoading(false));
           //   errorMessage(e?.error?.data?.message || e?.error?.error);
         }
       },
@@ -62,10 +65,53 @@ export const AuthApi = api.injectEndpoints({
             JSON.stringify(data)
           );
 
-          //   dispatch(setUser(data?.user));
+          dispatch(setLoading(false));
           dispatch(setToken(data?.token));
+          showSuccessToast("Login successful!");
         } catch (e: any) {
+          console.log(
+            "login user response error :::::::::::: ",
+            JSON.stringify(e)
+          );
+          dispatch(setLoading(false));
+
           //   errorMessage(e?.error?.data?.message || e?.error?.error);
+          showErrorToast("Something went wrong");
+        }
+      },
+    }),
+    updateUser: builder.mutation({
+      query: ({ data }: any) => {
+        return {
+          url: userDetailEndPoint,
+          method: "patch",
+          body: data,
+        };
+      },
+      transformResponse: (result) => result,
+      //   invalidatesTags: ['readUser'],
+      async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          const { navigation } = args;
+
+          console.log(
+            "user update response :::::::::::: ",
+            JSON.stringify(data)
+          );
+
+          dispatch(setLoading(false));
+          // dispatch(setUser(data?.));
+          showSuccessToast("User update successfully!");
+        } catch (e: any) {
+          console.log(
+            "update user response error :::::::::::: ",
+            JSON.stringify(e)
+          );
+          dispatch(setLoading(false));
+
+          //   errorMessage(e?.error?.data?.message || e?.error?.error);
+          showErrorToast("Something went wrong");
         }
       },
     }),
@@ -127,6 +173,7 @@ export const AuthApi = api.injectEndpoints({
 export const {
   useRegisterUserMutation,
   useLoginUserMutation,
+  useUpdateUserMutation,
   //   useForgotPasswordMutation,
   //   useLogoutUserMutation,
 } = AuthApi;

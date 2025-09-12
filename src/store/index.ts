@@ -16,30 +16,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { api } from "../services/api";
 
 import auth from "./auth";
+import loading from "./loading";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const reducers = combineReducers({
   auth,
+  loading,
 
   [api.reducerPath]: api.reducer,
 });
-
-// const storage = new MMKV();
-// export const reduxStorage: Storage = {
-//   setItem: (key, value) => {
-//     storage.set(key, value);
-//     return Promise.resolve(true);
-//   },
-//   getItem: key => {
-//     const value = storage.getString(key);
-//     return Promise.resolve(value);
-//   },
-
-//   removeItem: key => {
-//     storage.delete(key);
-//     return Promise.resolve();
-//   },
-// };
 
 const persistConfig = {
   key: "root",
@@ -62,11 +47,6 @@ const store = configureStore({
         serializableCheck: false,
       },
     }).concat(api.middleware);
-
-    // if (__DEV__ && !process.env.JEST_WORKER_ID) {
-    //   const createDebugger = require('redux-flipper').default;
-    //   middlewares.push(createDebugger());
-    // }
 
     return middlewares;
   },

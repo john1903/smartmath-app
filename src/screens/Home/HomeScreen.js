@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,9 +13,17 @@ import ProgressCard from "../../components/ProgressCard";
 import CategoryButton from "../../components/CategoryButton";
 import QuestionCard from "../../components/QuestionCard";
 import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
+import { useLazyUserDetailQuery } from "../../services/homeSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "../../store/loading";
 
 export default function HomeScreen({ navigation }) {
+  const [userDetail] = useLazyUserDetailQuery();
+
+  const dispatch = useDispatch();
   const { t } = useTranslation(); // ✅ Initialize translations
+
+  const { user } = useSelector((state) => state?.auth);
 
   const categories = ["all_exercises", "mcqs", "true_false", "matching"];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
@@ -70,7 +78,6 @@ export default function HomeScreen({ navigation }) {
       taskType: "Matching Pair",
     },
   ];
-
   const handleCategoryPress = (category) => {
     setActiveCategory(category);
   };
@@ -87,12 +94,19 @@ export default function HomeScreen({ navigation }) {
           return true;
         });
 
+  useEffect(() => {
+    dispatch(setLoading(true));
+    userDetail();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>{t("hi")}! Jhon</Text>
+          <Text style={styles.greeting}>
+            {t("hi")}! {user?.firstName}
+          </Text>
           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
         <View style={styles.rightHeader}>

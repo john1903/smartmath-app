@@ -17,18 +17,53 @@ import * as Progress from "react-native-progress"; // Install this library
 import FONTS from "../../theme/fonts";
 import FONTSIZE from "../../theme/fontsSize";
 import CustomButton from "../../components/CustomButton";
+import { useUpdateUserMutation } from "../../services/authSlice";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../store/loading";
+import { useAppSelector } from "../../store";
 
 const EditProfileScreen = ({ navigation }: any) => {
+  const dispatch = useDispatch();
+  const { user } = useAppSelector((state) => state?.auth);
+
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+
   const { t } = useTranslation();
-  const [FName, setFName] = useState("");
-  const [LName, setLName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [FName, setFName] = useState(user ? user?.firstName : "");
+  const [LName, setLName] = useState(user ? user?.lastName : "");
+  const [email, setEmail] = useState(user ? user?.email : "");
+  const [phone, setPhone] = useState(user ? user?.phone : "");
   const [password, setPassword] = useState("");
+  const [userAvatar, setUserAvatar] = useState(user ? user?.avatar : "");
 
   const used = 70000;
   const total = 100000;
   const progress = used / total;
+
+  const handleSave = async () => {
+    dispatch(setLoading(true));
+
+    try {
+      let obj = {
+        data: {
+          firstName: FName,
+          lastName: LName,
+          username: email,
+          phone: phone,
+          password: password,
+          avatarFileId: 6793,
+        },
+      };
+      console.log("data of object user update ", obj);
+
+      await updateUser(obj).unwrap();
+      // maybe show success toast or navigate back
+    } catch (err) {
+      console.log("Update failed", JSON.stringify(err));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -44,7 +79,8 @@ const EditProfileScreen = ({ navigation }: any) => {
         <View>
           <ProfileImagePicker
             size={120}
-            onImagePicked={(uri) => console.log("Selected:", uri)}
+            initialImage={user?.avatar}
+            onImagePicked={(uri) => setUserAvatar(uri)}
           />
         </View>
         <View>
@@ -122,7 +158,7 @@ const EditProfileScreen = ({ navigation }: any) => {
               fontFamily: FONTS.UrbanistSemiBold,
               includeFontPadding: false,
             }}
-            onPress={() => navigation.navigate("SelectLanguage")}
+            onPress={() => handleSave()}
           />
         </View>
       </ScrollView>

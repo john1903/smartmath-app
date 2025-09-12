@@ -20,13 +20,35 @@ import AppleIcon from "../../../assets/svgs/Apple.svg";
 import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
 import { useTranslation } from "react-i18next";
+import { useRegisterUserMutation } from "../../services/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function SignUpScreen({ navigation }) {
+  const dispatch = useDispatch();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
   const { t } = useTranslation();
   const [FName, setFName] = useState("");
   const [LName, setLName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const signupFunc = async () => {
+    let obj = {
+      data: {
+        email: email,
+        firstName: FName,
+        lastName: LName,
+        password: password,
+      },
+    };
+
+    registerUser(obj);
+    dispatch(setLoading(true));
+    console.log("obj :::: ", JSON.stringify(obj));
+
+    // navigation.navigate("Main")
+  };
 
   return (
     <CustomBackground showImage={false} showGradient={true}>
@@ -79,7 +101,7 @@ export default function SignUpScreen({ navigation }) {
                   fontSize: 14,
                   includeFontPadding: false,
                 }}
-                onPress={() => navigation.navigate("Main")}
+                onPress={() => signupFunc()}
               />
 
               <View style={styles.createAccountContainer}>

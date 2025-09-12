@@ -36,7 +36,7 @@ const AnimatedInput = ({
     left: 20,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [32, -4],
+      outputRange: [32, -6],
     }),
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistMedium,

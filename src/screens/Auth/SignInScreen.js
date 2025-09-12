@@ -19,8 +19,11 @@ import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
 import { useTranslation } from "react-i18next";
 import { useLoginUserMutation } from "../../services/authSlice";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../store/loading";
 
 export default function SignInScreen({ navigation }) {
+  const dispatch = useDispatch();
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const { t } = useTranslation();
@@ -28,14 +31,14 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword] = useState("");
 
   const loginFunc = async () => {
+    dispatch(setLoading(true));
     let obj = {
       data: {
         username: email,
         password: password,
       },
     };
-
-    console.log("obj :::: ", JSON.stringify(obj));
+    // console.log("obj :::: ", JSON.stringify(obj));
     loginUser(obj);
   };
 

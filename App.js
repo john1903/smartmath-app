@@ -11,6 +11,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./src/store";
+import GlobalLoader from "./src/components/GlobalLoader";
+import Toast from "react-native-toast-message";
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -59,9 +61,11 @@ export default function App() {
         <I18nextProvider i18n={i18n}>
           <NavigationContainer>
             <RootNavigator />
+            <Toast />
           </NavigationContainer>
         </I18nextProvider>
       </PersistGate>
+      <GlobalLoader />
     </Provider>
   );
 }

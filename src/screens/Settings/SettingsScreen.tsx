@@ -23,6 +23,7 @@ import LogoutIcon from "../../../assets/svgs/LogoutIcon.svg";
 import SettingItem from "./SettingItem";
 import SwitchItem from "./SwitchItem";
 import { useTranslation } from "react-i18next";
+import { logoutUser } from "../../utils/logout";
 
 // ✅ Types
 type RootStackParamList = {
@@ -47,8 +48,13 @@ export default function SettingsScreen({ navigation }: Props) {
   const [appNotification, setAppNotification] = useState<boolean>(true);
   const [darkMode, setDarkMode] = useState<boolean>(true);
 
-  const logoutFunc = () => {
-    navigation.replace("SignIn");
+  const handleLogout = async () => {
+    console.log("logout");
+    await logoutUser();
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: "SignIn" }],
+    // });
   };
 
   return (
@@ -146,7 +152,7 @@ export default function SettingsScreen({ navigation }: Props) {
         />
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logout} onPress={() => logoutFunc()}>
+        <TouchableOpacity style={styles.logout} onPress={() => handleLogout()}>
           <LogoutIcon width={22} height={22} />
           <Text style={styles.logoutText}>{t("logout")}</Text>
         </TouchableOpacity>
