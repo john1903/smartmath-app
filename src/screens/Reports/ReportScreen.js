@@ -1,5 +1,11 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../theme/colors";
@@ -10,10 +16,16 @@ import ReportTile from "../../components/ReportTile";
 import { MenuProvider } from "react-native-popup-menu";
 import CustomButton from "../../components/CustomButton";
 
-import TokenIcon from "../../../assets/svgs/TokenIcon.svg";
+import TokenWhiteIcon from "../../../assets/svgs/TokenWhiteIcon.svg";
+import TokenBlackIcon from "../../../assets/svgs/TokenBlackIcon.svg";
+
+import FONTSIZE from "../../theme/fontsSize";
+import FONTS from "../../theme/fonts";
 
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
+
+  const [appToken, setAppToken] = useState(0);
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -39,15 +51,71 @@ const ReportScreen = ({ navigation }) => {
           onSelect={(date) => console.log("To:", date)}
         />
 
-        <View>
-          <CustomButton
-            title="50 Token to generate report"
-            buttonStyle={styles.socialButton}
-            textStyle={styles.socialButtonTitle}
-            onPress={() => navigation.navigate("SignIn")}
-            svg={<TokenIcon width={22} height={22} fill="#ffffff" />}
-          />
-        </View>
+        {appToken > 0 ? (
+          <View style={styles.whiteSheetFooter}>
+            <CustomButton
+              title="50 Token to generate report"
+              buttonStyle={styles.generateReportBtn}
+              textStyle={styles.generateReportBtnTitle}
+              onPress={() => navigation.navigate("SignIn")}
+              svg={<TokenWhiteIcon width={22} height={22} />}
+            />
+            <Text style={styles.whiteSheetFooterText}>
+              {appToken} Token available
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.whiteSheetFooter}>
+            <CustomButton
+              title="50 Token to generate report"
+              buttonStyle={[
+                styles.generateReportBtn,
+                {
+                  backgroundColor: COLORS.D9Gray,
+                  borderWidth: 0,
+                },
+              ]}
+              textStyle={[
+                styles.generateReportBtnTitle,
+                {
+                  color: COLORS.black,
+                },
+              ]}
+              onPress={() => navigation.navigate("SignIn")}
+              svg={<TokenBlackIcon width={22} height={22} />}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                // justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={[
+                  styles.whiteSheetFooterText,
+                  {
+                    marginRight: 10,
+                  },
+                ]}
+              >
+                {appToken} Token available
+              </Text>
+              <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
+                <Text
+                  style={[
+                    styles.whiteSheetFooterText,
+                    {
+                      color: COLORS.primary,
+                    },
+                  ]}
+                >
+                  Buy Tokens
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
 
       <MenuProvider>
@@ -76,6 +144,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   container: {
+    paddingTop: 15,
     paddingHorizontal: 20,
   },
   whiteSheet: {
@@ -83,6 +152,25 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     marginHorizontal: 20,
     borderRadius: 30,
+    alignItems: "center",
     // marginBottom: 20,
+  },
+  whiteSheetFooter: {
+    alignItems: "center",
+  },
+  generateReportBtn: {
+    width: "85%",
+    alignItems: "center",
+  },
+  generateReportBtnTitle: {
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.white,
+  },
+  whiteSheetFooterText: {
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistMedium,
+    marginTop: 10,
+    color: COLORS.black,
   },
 });

@@ -131,6 +131,7 @@ export default AnimatedDropdown;
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    width: "100%",
   },
   dropdown: {
     height: 50,

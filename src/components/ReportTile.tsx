@@ -2,12 +2,18 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
+import ReportFileIcon from "../../assets/svgs/ReportFileIcon.svg";
+
 import {
   Menu,
   MenuOptions,
   MenuOption,
   MenuTrigger,
 } from "react-native-popup-menu";
+import FONTSIZE from "../theme/fontsSize";
+import FONTS from "../theme/fonts";
+import COLORS from "../theme/colors";
 
 interface Props {
   title: string;
@@ -18,7 +24,15 @@ interface Props {
 const ReportTile: React.FC<Props> = ({ title, date, onOptionSelect }) => {
   return (
     <View style={styles.card}>
-      <Ionicons name="document-text-outline" size={28} color="#3b82f6" />
+      <View
+        style={{
+          backgroundColor: "rgba(36,117,252,0.1)",
+          padding: 12,
+          borderRadius: 60,
+        }}
+      >
+        <ReportFileIcon width={28} height={28} />
+      </View>
       <View style={{ flex: 1, marginLeft: 10 }}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.date}>{date}</Text>
@@ -28,12 +42,16 @@ const ReportTile: React.FC<Props> = ({ title, date, onOptionSelect }) => {
         <MenuTrigger>
           <Ionicons name="ellipsis-vertical" size={22} />
         </MenuTrigger>
-        <MenuOptions>
-          <MenuOption onSelect={() => onOptionSelect("View")}>
-            <Text>View</Text>
+        <MenuOptions customStyles={optionsStyles}>
+          <MenuOption
+            onSelect={() => onOptionSelect("View")}
+            customStyles={optionStyles}
+          >
+            <Text style={[styles.optionText]}>View</Text>
           </MenuOption>
+          <View style={styles.divider} />
           <MenuOption onSelect={() => onOptionSelect("Delete")}>
-            <Text style={{ color: "red" }}>Delete</Text>
+            <Text style={[styles.optionText, { color: "red" }]}>Delete</Text>
           </MenuOption>
         </MenuOptions>
       </Menu>
@@ -46,13 +64,55 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 12,
-    borderRadius: 12,
-    backgroundColor: "#fff",
+    borderRadius: 15,
+    backgroundColor: COLORS.white,
     marginVertical: 6,
-    elevation: 2,
+    // elevation: 2,
   },
-  title: { fontWeight: "600", fontSize: 16 },
-  date: { fontSize: 12, color: "#888" },
+  title: {
+    fontSize: FONTSIZE.size16,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.black,
+  },
+  date: {
+    fontSize: FONTSIZE.size12,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.secondary,
+  },
+
+  optionText: {
+    fontSize: 16,
+    padding: 2,
+    color: COLORS.black,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.borderColor2, // light gray line
+    marginHorizontal: -5, // extend to full width inside options
+  },
 });
+
+const optionsStyles = {
+  optionsContainer: {
+    backgroundColor: "#fff",
+    padding: 5,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+};
+
+const optionStyles = {
+  optionWrapper: {
+    padding: 8,
+  },
+  optionTouchable: {
+    underlayColor: "#f2f2f2", // pressed effect
+    activeOpacity: 70,
+  },
+};
 
 export default ReportTile;

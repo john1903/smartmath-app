@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Ionicons } from "@expo/vector-icons";
+import CalendarIcon from "../../assets/svgs/CalendarIcon.svg";
 
 interface Props {
   label: string;
@@ -29,7 +30,8 @@ const AnimatedDatePicker: React.FC<Props> = ({ label, onSelect }) => {
         <Text style={{ color: date ? "#000" : "#aaa" }}>
           {date ? date.toDateString() : label}
         </Text>
-        <Ionicons name="calendar" size={20} />
+        {/* <Ionicons name="calendar" size={20} /> */}
+        <CalendarIcon width={22} height={22} />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -44,7 +46,7 @@ const AnimatedDatePicker: React.FC<Props> = ({ label, onSelect }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
+  container: { marginBottom: 16, width: "100%" },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",

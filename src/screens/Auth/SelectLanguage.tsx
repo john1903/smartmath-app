@@ -16,6 +16,7 @@ import CustomButton from "../../components/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "../../i18n/i18n";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 const languages = [
   { id: "1", key: "english", code: "en" },
@@ -26,6 +27,9 @@ const LANGUAGE_KEY = "appLanguage";
 
 const SelectLanguage = ({ navigation }: any) => {
   const { t } = useTranslation();
+
+  const { token } = useSelector((state: any) => state?.auth);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLang, setSelectedLang] = useState("en"); // store code instead of name
 
@@ -123,21 +127,27 @@ const SelectLanguage = ({ navigation }: any) => {
         </View>
 
         {/* Next Button */}
-        <View
-          style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
-        >
-          <CustomButton
-            title={t("next")}
-            buttonStyle={{ width: "50%" }}
-            textStyle={{
-              color: COLORS.white,
-              fontSize: FONTSIZE.size20,
-              fontFamily: FONTS.UrbanistSemiBold,
-              includeFontPadding: false,
+        {!token && (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
             }}
-            onPress={() => navigation.navigate("SignIn")}
-          />
-        </View>
+          >
+            <CustomButton
+              title={t("next")}
+              buttonStyle={{ width: "50%" }}
+              textStyle={{
+                color: COLORS.white,
+                fontSize: FONTSIZE.size20,
+                fontFamily: FONTS.UrbanistSemiBold,
+                includeFontPadding: false,
+              }}
+              onPress={() => navigation.navigate("SignIn")}
+            />
+          </View>
+        )}
       </ScrollView>
     </CustomBackground>
   );
