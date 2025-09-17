@@ -25,22 +25,23 @@ export const AuthApi = api.injectEndpoints({
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
-
+          const { navigation } = args;
           console.log(
             "register user response :::::::::::: ",
             JSON.stringify(data)
           );
-          // dispatch(setToken(data?.token));
 
-          //   dispatch(setUser(data?.items));
-          // navigation.navigate('AuthNavigator', {
-          //   screen: 'LoginScreen',
+          showSuccessToast("User created successfully!");
+          navigation.navigate("SignIn");
+          // navigation.navigate("AuthNavigator", {
+          //   screen: "LoginScreen",
           // });
 
           dispatch(setLoading(false));
         } catch (e) {
           console.log("register user error :::::::::::: ", JSON.stringify(e));
           dispatch(setLoading(false));
+          showErrorToast("Something went wrong");
           //   errorMessage(e?.error?.data?.message || e?.error?.error);
         }
       },

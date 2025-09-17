@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +16,7 @@ import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
 import { useLazyUserDetailQuery } from "../../services/homeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const [userDetail] = useLazyUserDetailQuery();
@@ -94,10 +95,17 @@ export default function HomeScreen({ navigation }) {
           return true;
         });
 
-  useEffect(() => {
-    dispatch(setLoading(true));
-    userDetail();
-  }, []);
+  // useEffect(() => {
+  //   dispatch(setLoading(true));
+  //   userDetail();
+  // }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setLoading(true));
+      userDetail(); // refetch data when tab is focused
+    }, [dispatch, userDetail])
+  );
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>

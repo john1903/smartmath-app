@@ -41,6 +41,7 @@ export default function SignUpScreen({ navigation }) {
         lastName: LName,
         password: password,
       },
+      navigation,
     };
 
     registerUser(obj);
