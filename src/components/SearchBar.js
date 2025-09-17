@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Voice from "@react-native-voice/voice";
 
 import { RFValue } from "react-native-responsive-fontsize";
 import COLORS from "../theme/colors";
@@ -17,22 +16,6 @@ export default function SearchBar({
   placeholder = "Search",
 }) {
   const [searchText, setSearchText] = useState("");
-
-  // Start voice recognition
-  const startVoiceRecognition = async () => {
-    try {
-      await Voice.start("en-US");
-      Voice.onSpeechResults = (event) => {
-        if (event.value && event.value.length > 0) {
-          const spokenText = event.value[0];
-          setSearchText(spokenText);
-          onSearch(spokenText);
-        }
-      };
-    } catch (error) {
-      console.log("Voice error:", error);
-    }
-  };
 
   return (
     <View style={[styles.container, style]}>
@@ -53,7 +36,7 @@ export default function SearchBar({
           }}
         />
 
-        <TouchableOpacity onPress={startVoiceRecognition}>
+        <TouchableOpacity>
           <Ionicons name="mic-outline" size={22} color="#555" />
         </TouchableOpacity>
       </View>
