@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next"; // ✅ Import i18n hook
+
 import CustomBackground from "../../components/CustomBackground";
 import COLORS from "../../theme/colors";
 import FONTSIZE from "../../theme/fontsSize";
@@ -8,56 +11,111 @@ import FONTS from "../../theme/fonts";
 import StatCard from "../../components/StatCard";
 import ProgressCard from "../../components/ProgressCard";
 import CategoryButton from "../../components/CategoryButton";
-import { SafeAreaView } from "react-native-safe-area-context";
 import QuestionCard from "../../components/QuestionCard";
 import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
+import { useLazyUserDetailQuery } from "../../services/homeSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "../../store/loading";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
-  const categories = ["All Exercises", "MCQs", "True / False", "Matching"];
+  const [userDetail] = useLazyUserDetailQuery();
+
+  const dispatch = useDispatch();
+  const { t } = useTranslation(); // ✅ Initialize translations
+
+  const { user } = useSelector((state) => state?.auth);
+
+  const categories = ["all_exercises", "mcqs", "true_false", "matching"];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
-  // const questions = [
-  //   { id: 1, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 2, text: "What is the sum of 130+125+191?", status: "Completed" },
-  //   { id: 3, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 4, text: "What is the sum of 130+125+191?", status: "Failed" },
-  //   {
-  //     id: 5,
-  //     text: "What is the sum of 130+125+191?",
-  //     status: "Limit Exceeded.",
-  //   },
-  //   { id: 6, text: "What is the sum of 130+125+191?", status: "Completed" },
-  //   { id: 7, text: "What is the sum of 130+125+191?", status: "Solve" },
-  //   { id: 8, text: "What is the sum of 130+125+191?", status: "Pending" },
-  // ];
-
   const questions = [
-    { id: 1, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 2, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 3, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 4, text: "What is the sum of 130+125+191?", status: "Solve" },
+    {
+      id: 1,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "MCQs",
+    },
+    {
+      id: 2,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "Matching Pair",
+    },
+    {
+      id: 3,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "True/False",
+    },
+    {
+      id: 4,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "MCQs",
+    },
     {
       id: 5,
-      text: "What is the sum of 130+125+191?",
-      status: "Solve",
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "Matching Pair",
     },
-    { id: 6, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 7, text: "What is the sum of 130+125+191?", status: "Solve" },
-    { id: 8, text: "What is the sum of 130+125+191?", status: "Solve" },
+    {
+      id: 6,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "True/False",
+    },
+    {
+      id: 7,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "MCQs",
+    },
+    {
+      id: 8,
+      text: t("question_sample"),
+      status: "solve",
+      taskType: "Matching Pair",
+    },
   ];
-
   const handleCategoryPress = (category) => {
     setActiveCategory(category);
-    console.log("Selected:", category); // ✅ parent handles press
   };
+
+  const filteredQuestions =
+    activeCategory === "all_exercises"
+      ? questions
+      : questions.filter((q) => {
+          if (activeCategory === "mcqs") return q.taskType === "MCQs";
+          if (activeCategory === "true_false")
+            return q.taskType === "True/False";
+          if (activeCategory === "matching")
+            return q.taskType === "Matching Pair";
+          return true;
+        });
+
+  // useEffect(() => {
+  //   dispatch(setLoading(true));
+  //   userDetail();
+  // }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setLoading(true));
+      userDetail(); // refetch data when tab is focused
+    }, [dispatch, userDetail])
+  );
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hi! Jhon</Text>
-          <Text style={styles.subGreeting}>Welcome back</Text>
+          <Text style={styles.greeting}>
+            {t("hi")}! {user?.firstName}
+          </Text>
+          <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
         <View style={styles.rightHeader}>
           <View style={styles.notifyCircle}>
@@ -75,7 +133,7 @@ export default function HomeScreen({ navigation }) {
       {/* Cards */}
       <View style={styles.cardsRow}>
         <StatCard value="225" />
-        <ProgressCard title="Accuracy" percentage={50} total="50/100" />
+        <ProgressCard title={t("accuracy")} percentage={50} total="50/100" />
       </View>
 
       {/* Categories */}
@@ -88,7 +146,7 @@ export default function HomeScreen({ navigation }) {
           {categories.map((cat) => (
             <CategoryButton
               key={cat}
-              label={cat}
+              label={t(`${cat}`)}
               active={cat === activeCategory}
               onPress={() => handleCategoryPress(cat)}
             />
@@ -97,14 +155,8 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       {/* Recommended Tasks */}
-
       <View style={styles.recommendedContainer}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            flex: 1,
-          }}
-        >
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           <View style={styles.recommendedInnerContainer}>
             <View style={styles.recommendedHeader}>
               <View>
@@ -115,7 +167,7 @@ export default function HomeScreen({ navigation }) {
                     color: COLORS.black,
                   }}
                 >
-                  Recommended Tasks
+                  {t("recommended_tasks")}
                 </Text>
                 <Text
                   style={{
@@ -124,14 +176,15 @@ export default function HomeScreen({ navigation }) {
                     color: COLORS.secondary,
                   }}
                 >
-                  20 Tasks Pending
+                  {t("pending_tasks", { count: 20 })}
                 </Text>
               </View>
               <View>
                 <FilterIcon />
               </View>
             </View>
-            {questions.map((q, index) => (
+
+            {filteredQuestions.map((q, index) => (
               <QuestionCard
                 key={q.id}
                 number={index + 1}

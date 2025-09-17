@@ -15,8 +15,8 @@ const AnimatedInput = ({
   label,
   value,
   onChangeText,
-  secureTextEntry,
-  style,
+  secureTextEntry = false,
+  style = {},
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +36,7 @@ const AnimatedInput = ({
     left: 20,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [32, 0],
+      outputRange: [32, -6],
     }),
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistMedium,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
     borderRadius: 25,
     paddingHorizontal: 15,
-    fontSize: FONTSIZE.size12,
+    fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistMedium,
     paddingRight: 40, // 👈 space for eye icon
   },

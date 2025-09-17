@@ -1,0 +1,130 @@
+{
+  "getstarted": "Get Started",
+  "your": "Your",
+  "shortcut": "Shortcut",
+  "to": "to",
+  "math": "Math",
+  "success": "Success",
+  "language": "Language",
+  "search": "Search",
+  "select_language": "Select Language",
+  "english": "English",
+  "polish": "Polish",
+  "next": "Next",
+  "login": "Login",
+  "login_subtitle": "Please login to continue!",
+  "email_or_phone": "Email or Phone",
+  "phone": "Phone",
+  "password": "Password",
+  "forgot_password": "Forgot Password?",
+  "sign_in": "Sign In",
+  "no_account": "If you haven’t already an account?",
+  "create_account": "Create account",
+  "or": "OR",
+  "sign_in_with_email": "Sign in with Email",
+  "sign_in_with_google": "Sign in with Google",
+  "sign_in_with_apple": "Sign in with Apple",
+  "terms_text": "By using our services you are agreeing to our",
+  "terms": "Terms",
+  "and": "and",
+  "privacy": "Privacy Statement",
+  "register": "Register",
+  "register_subtitle": "Please register to login!",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "sign_up": "Sign Up",
+  "already_account": "If you have already an account?",
+  "hi": "Hi",
+  "welcome_back": "Welcome back",
+  "all_exercises": "All Exercises",
+  "mcqs": "MCQs",
+  "true_false": "True / False",
+  "matching": "Matching",
+  "accuracy": "Accuracy",
+  "recommended_tasks": "Recommended Tasks",
+  "pending_tasks": "{{count}} Tasks Pending",
+  "question_sample": "What is the sum of 130+125+191?",
+  "solve": "Solve",
+
+  "status": {
+    "solve": "Solve",
+    "completed": "Completed",
+    "failed": "Failed",
+    "limitexceeded": "Limit Exceeded",
+    "pending": "Pending"
+  },
+
+  "tasks": {
+    "title": "Tasks",
+    "noData": "No questions found"
+  },
+
+  "categories": {
+    "all": "All tasks",
+    "completed": "Completed",
+    "notCompleted": "Not Completed",
+    "pending": "Pending",
+    "limitexceeded": "Limit Exceeded",
+    "solve": "Solve",
+    "failed": "Failed"
+  },
+
+  "questions": {
+    "q1": "What is the sum of 130+125+191?",
+    "q2": "What is the subtract of 130-125-191?",
+    "q3": "What is the subtract of 130-125+191?",
+    "q4": "What is the multiply of 130*125*191?"
+  },
+
+  "filter": {
+    "title": "Filter By:",
+    "status": "Exercise Status",
+    "difficulty": "Difficulty",
+    "taskType": "Task Type"
+  },
+
+  "difficulty": {
+    "hard": "Hard",
+    "normal": "Normal",
+    "easy": "Easy"
+  },
+
+  "taskType": {
+    "mcq": "MCQs",
+    "trueFalse": "True/False",
+    "matching": "Matching Pair"
+  },
+
+  "actions": {
+    "cancel": "Cancel",
+    "apply": "Apply Filter"
+  },
+
+  "tabs": {
+    "home": "Home",
+    "tasks": "Tasks",
+    "reports": "Reports",
+    "setting": "Setting"
+  },
+  "account": "Account",
+  "editProfile": "Edit Profile",
+  "changePassword": "Change Password",
+  "subscription": "Subscription",
+  "tokens": "Tokens",
+  "token": "Token",
+  "affiliateLink": "Affiliate Link & Stats",
+  "notification": "Notification",
+  "appNotification": "App Notification",
+  "more": "More",
+  "country": "Country",
+  "theme": "Theme",
+  "dark/light": "Dark/Light",
+  "logout": "Logout",
+  "used": "Used",
+  "total": "Total",
+  "buyToken": "Buy Token",
+  "save": "Save",
+
+  "report": "Report"
+
+}

@@ -17,10 +17,30 @@ import GoogleIcon from "../../../assets/svgs/Google.svg";
 import AppleIcon from "../../../assets/svgs/Apple.svg";
 import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
+import { useTranslation } from "react-i18next";
+import { useLoginUserMutation } from "../../services/authSlice";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../store/loading";
 
 export default function SignInScreen({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
+  const { t } = useTranslation();
+  const [email, setEmail] = useState("hani4u13@gmail.com");
+  const [password, setPassword] = useState("1234567890");
+
+  const loginFunc = async () => {
+    dispatch(setLoading(true));
+    let obj = {
+      data: {
+        username: email,
+        password: password,
+      },
+    };
+    // console.log("obj :::: ", JSON.stringify(obj));
+    loginUser(obj);
+  };
 
   return (
     <CustomBackground showImage={false} showGradient={true}>
@@ -29,80 +49,72 @@ export default function SignInScreen({ navigation }) {
         <View style={styles.innerContainer}>
           <View>
             <View style={styles.mainTitleContainer}>
-              <Text style={styles.title}>Login</Text>
-              <Text style={styles.subtitle}>Please login to continue!</Text>
+              <Text style={styles.title}>{t("login")}</Text>
+              <Text style={styles.subtitle}>{t("login_subtitle")}</Text>
             </View>
 
             <View style={styles.inputContainer}>
               <AnimatedInput
-                label="Email or Phone"
+                label={t("email_or_phone")}
                 value={email}
                 onChangeText={setEmail}
               />
               <AnimatedInput
-                label="Password"
+                label={t("password")}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
               />
 
               <TouchableOpacity style={styles.forgotBtn}>
-                <Text style={styles.forgotText}>Forgot Password?</Text>
+                <Text style={styles.forgotText}>{t("forgot_password")}</Text>
               </TouchableOpacity>
             </View>
 
             <CustomButton
-              title="Sign In"
+              title={t("sign_in")}
               buttonStyle={{
                 width: "100%",
                 marginVertical: 10,
               }}
-              textStyle={{ color: COLORS.white, fontSize: 14 }}
-              onPress={() => navigation.navigate("Main")}
+              textStyle={{
+                color: COLORS.white,
+                fontSize: 14,
+                includeFontPadding: false,
+              }}
+              onPress={() => loginFunc()}
             />
 
             <View style={styles.createAccountContainer}>
-              <Text style={styles.createAccount}>
-                If you haven’t already an account?{" "}
-              </Text>
+              <Text style={styles.createAccount}>{t("no_account")}</Text>
               <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                <Text style={styles.createLink}> Create account </Text>
+                <Text style={styles.createLink}> {t("create_account")} </Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.divider}>
               <View style={styles.line} />
-              <Text style={styles.orText}>OR</Text>
+              <Text style={styles.orText}>{t("or")}</Text>
               <View style={styles.line} />
             </View>
 
             <CustomButton
-              title="Sign in with Email"
+              title={t("sign_in_with_email")}
               buttonStyle={styles.socialButton}
               textStyle={styles.socialButtonTitle}
               onPress={() => navigation.navigate("SignIn")}
               svg={<EmailIcon width={22} height={22} fill="#fff" />}
             />
             <CustomButton
-              title="Sign in with Google"
-              buttonStyle={[
-                styles.socialButton,
-                {
-                  marginTop: 10,
-                },
-              ]}
+              title={t("sign_in_with_google")}
+              buttonStyle={[styles.socialButton, { marginTop: 10 }]}
               textStyle={styles.socialButtonTitle}
               onPress={() => navigation.navigate("SignIn")}
               svg={<GoogleIcon width={22} height={22} fill="#fff" />}
             />
             <CustomButton
-              title="Sign in with Apple"
-              buttonStyle={[
-                styles.socialButton,
-                {
-                  marginTop: 10,
-                },
-              ]}
+              title={t("sign_in_with_apple")}
+              buttonStyle={[styles.socialButton, { marginTop: 10 }]}
               textStyle={styles.socialButtonTitle}
               onPress={() => navigation.navigate("SignIn")}
               svg={<AppleIcon width={22} height={22} fill="#fff" />}
@@ -110,9 +122,8 @@ export default function SignInScreen({ navigation }) {
           </View>
 
           <Text style={styles.footerText}>
-            By using our services you are agreeing to our{" "}
-            <Text style={styles.link}>Terms</Text> and{" "}
-            <Text style={styles.link}>Privacy Statement</Text>.
+            {t("terms_text")} <Text style={styles.link}>{t("terms")}</Text>{" "}
+            {t("and")} <Text style={styles.link}>{t("privacy")}</Text>.
           </Text>
         </View>
       </ScrollView>
@@ -126,9 +137,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 20,
     paddingBottom: 40,
-    // backgroundColor: "#00000010",
   },
-
   innerContainer: {
     marginHorizontal: 20,
     flex: 1,
@@ -137,11 +146,9 @@ const styles = StyleSheet.create({
   mainTitleContainer: {
     marginVertical: 10,
   },
-
   inputContainer: {
     marginTop: 10,
   },
-
   title: {
     fontSize: FONTSIZE.size40,
     fontFamily: FONTS.UrbanistSemiBold,
@@ -160,18 +167,6 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size12,
     fontFamily: FONTS.UrbanistSemiBold,
     marginBottom: 5,
-  },
-  signInBtn: {
-    backgroundColor: "#007AFF",
-    borderRadius: 25,
-    paddingVertical: 15,
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  signInText: {
-    color: "#fff",
-    fontSize: FONTSIZE.size16,
-    fontFamily: FONTS.UrbanistSemiBold,
   },
   createAccountContainer: {
     flexDirection: "row",
@@ -205,7 +200,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     color: COLORS.secondary,
   },
-
   socialButton: {
     width: "100%",
     marginTop: 5,
@@ -217,10 +211,9 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size12,
     fontFamily: FONTS.UrbanistMedium,
     paddingVertical: 2,
+    includeFontPadding: false,
   },
-
   footerText: {
-    // marginHorizontal: 5,
     marginTop: 20,
     textAlign: "center",
     fontSize: FONTSIZE.size12,
