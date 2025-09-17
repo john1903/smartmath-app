@@ -13,6 +13,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./src/store";
 import GlobalLoader from "./src/components/GlobalLoader";
 import Toast from "react-native-toast-message";
+import { enableScreens } from "react-native-screens";
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -69,6 +70,8 @@ export default function App() {
     </Provider>
   );
 }
+
+enableScreens();
 
 const styles = StyleSheet.create({
   container: {
