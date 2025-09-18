@@ -24,6 +24,7 @@ import SettingItem from "./SettingItem";
 import SwitchItem from "./SwitchItem";
 import { useTranslation } from "react-i18next";
 import { logoutUser } from "../../utils/logout";
+import { useDispatch } from "react-redux";
 
 // ✅ Types
 type RootStackParamList = {
@@ -43,6 +44,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 // ✅ Main Settings Screen
 export default function SettingsScreen({ navigation }: Props) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const [notification, setNotification] = useState<boolean>(false);
   const [appNotification, setAppNotification] = useState<boolean>(true);
@@ -50,7 +52,7 @@ export default function SettingsScreen({ navigation }: Props) {
 
   const handleLogout = async () => {
     console.log("logout");
-    await logoutUser();
+    await logoutUser(dispatch);
     // navigation.reset({
     //   index: 0,
     //   routes: [{ name: "SignIn" }],
