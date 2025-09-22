@@ -131,7 +131,7 @@ export default function HomeScreen({ navigation }) {
             // }}
             source={
               user?.avatar
-                ? { uri: user?.avatar }
+                ? { uri: user?.avatar?.uri }
                 : require("../../../assets/images/avatar.png") // ✅ local placeholder
             }
             style={styles.avatar}

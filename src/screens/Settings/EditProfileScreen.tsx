@@ -34,7 +34,7 @@ const EditProfileScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState(user ? user?.email : "");
   const [phone, setPhone] = useState(user ? user?.phone : "");
   const [password, setPassword] = useState("");
-  const [userAvatar, setUserAvatar] = useState(user ? user?.avatar : "");
+  const [userAvatar, setUserAvatar] = useState(user ? user?.avatar?.uri : "");
 
   const used = 70000;
   const total = 100000;
@@ -51,7 +51,7 @@ const EditProfileScreen = ({ navigation }: any) => {
           username: email,
           phone: phone,
           password: password,
-          avatarFileId: 6793,
+          avatarFileId: user?.avatar?.id,
         },
       };
       console.log("data of object user update ", obj);
@@ -79,7 +79,7 @@ const EditProfileScreen = ({ navigation }: any) => {
         <View>
           <ProfileImagePicker
             size={120}
-            initialImage={user?.avatar}
+            initialImage={user?.avatar?.uri}
             onImagePicked={(uri) => setUserAvatar(uri)}
           />
         </View>

@@ -1,5 +1,6 @@
 import {
   userDetailEndPoint,
+  userFileEndPoint,
   userLoginEndPoint,
   userRegisterEndPoint,
 } from "../../config/endPoints";
@@ -81,12 +82,70 @@ export const AuthApi = api.injectEndpoints({
         }
       },
     }),
+    // updateUser: builder.mutation({
+    //   query: ({ data }: any) => {
+    //     return {
+    //       url: userDetailEndPoint,
+    //       method: "patch",
+    //       body: data,
+    //     };
+    //   },
+    //   transformResponse: (result) => result,
+    //   //   invalidatesTags: ['readUser'],
+    //   async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+    //     try {
+    //       const result = await queryFulfilled;
+    //       const { navigation } = args;
+
+    //       console.log(
+    //         "user update response :::::::::::: ",
+    //         JSON.stringify(result)
+    //       );
+
+    //       dispatch(setLoading(false));
+    //       // dispatch(setUser(data?.));
+    //       showSuccessToast("User update successfully!");
+    //     } catch (e: any) {
+    //       console.log(
+    //         "update user response error :::::::::::: ",
+    //         JSON.stringify(e)
+    //       );
+    //       dispatch(setLoading(false));
+
+    //       //   errorMessage(e?.error?.data?.message || e?.error?.error);
+    //       showErrorToast("Something went wrong");
+    //     }
+    //   },
+    // }),
     updateUser: builder.mutation({
+      query: ({ data }: any) => ({
+        url: "/users/me",
+        method: "PATCH",
+        body: data,
+      }),
+      async onQueryStarted(args, { dispatch, queryFulfilled }) {
+        try {
+          const { meta } = await queryFulfilled; // meta has response info
+          const status = meta.response?.status;
+
+          if (status === 204) {
+            showSuccessToast("User updated successfully!");
+          }
+        } catch (err) {
+          console.log("Update user error ::::::::::: ", err);
+          showErrorToast("Something went wrong!");
+        } finally {
+          dispatch(setLoading(false));
+        }
+      },
+    }),
+    updateFile: builder.mutation({
       query: ({ data }: any) => {
         return {
-          url: userDetailEndPoint,
-          method: "patch",
+          url: userFileEndPoint,
+          method: "post",
           body: data,
+          formData: true,
         };
       },
       transformResponse: (result) => result,
@@ -97,16 +156,16 @@ export const AuthApi = api.injectEndpoints({
           const { navigation } = args;
 
           console.log(
-            "user update response :::::::::::: ",
+            "user update file response :::::::::::: ",
             JSON.stringify(data)
           );
 
           dispatch(setLoading(false));
           // dispatch(setUser(data?.));
-          showSuccessToast("User update successfully!");
+          showSuccessToast("User update file successfully!");
         } catch (e: any) {
           console.log(
-            "update user response error :::::::::::: ",
+            "update user file response error :::::::::::: ",
             JSON.stringify(e)
           );
           dispatch(setLoading(false));
@@ -175,6 +234,7 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useUpdateUserMutation,
+  useUpdateFileMutation,
   //   useForgotPasswordMutation,
   //   useLogoutUserMutation,
 } = AuthApi;
