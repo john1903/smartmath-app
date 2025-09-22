@@ -14,6 +14,7 @@ import { store, persistor } from "./src/store";
 import GlobalLoader from "./src/components/GlobalLoader";
 import Toast from "react-native-toast-message";
 import { enableScreens } from "react-native-screens";
+import { ThemeProvider } from "./src/context/ThemeContext";
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -61,8 +62,10 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <I18nextProvider i18n={i18n}>
           <NavigationContainer>
-            <RootNavigator />
-            <Toast />
+            <ThemeProvider>
+              <RootNavigator />
+              <Toast />
+            </ThemeProvider>
           </NavigationContainer>
         </I18nextProvider>
       </PersistGate>

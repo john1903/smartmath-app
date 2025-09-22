@@ -125,6 +125,8 @@
   "buyToken": "Buy Token",
   "save": "Save",
 
-  "report": "Report"
+  "report": "Report",
+
+  "retry": "Retry"
 
 }

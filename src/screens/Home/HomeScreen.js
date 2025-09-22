@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next"; // ✅ Import i18n hook
@@ -94,12 +101,6 @@ export default function HomeScreen({ navigation }) {
             return q.taskType === "Matching Pair";
           return true;
         });
-
-  // useEffect(() => {
-  //   dispatch(setLoading(true));
-  //   userDetail();
-  // }, [user]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setLoading(true));
@@ -118,13 +119,21 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
         <View style={styles.rightHeader}>
-          <View style={styles.notifyCircle}>
+          <TouchableOpacity
+            onPress={() => console.log("notification button")}
+            style={styles.notifyCircle}
+          >
             <Ionicons name="notifications-outline" size={22} color="black" />
-          </View>
+          </TouchableOpacity>
           <Image
-            source={{
-              uri: "https://lh3.googleusercontent.com/a/ACg8ocLERh1J801wC08MLmV6_oTFduriLSIU-ukH0Yuqf0ouklQMEyi1=s360-c-no",
-            }}
+            // source={{
+            //   uri: "https://lh3.googleusercontent.com/a/ACg8ocLERh1J801wC08MLmV6_oTFduriLSIU-ukH0Yuqf0ouklQMEyi1=s360-c-no",
+            // }}
+            source={
+              user?.avatar
+                ? { uri: user?.avatar }
+                : require("../../../assets/images/avatar.png") // ✅ local placeholder
+            }
             style={styles.avatar}
           />
         </View>
@@ -236,7 +245,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 45,
     height: 45,
-    borderRadius: 20,
+    borderRadius: 100,
     marginLeft: 12,
   },
   cardsRow: {

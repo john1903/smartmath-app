@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import CustomHeader from "../../components/CustomHeader";
-import COLORS from "../../theme/colors";
+// import COLORS from "../../theme/colors";
 import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
 import AccountIcon from "../../../assets/svgs/accountIcon.svg";
@@ -25,10 +25,13 @@ import SwitchItem from "./SwitchItem";
 import { useTranslation } from "react-i18next";
 import { logoutUser } from "../../utils/logout";
 import { useDispatch } from "react-redux";
+import { useTheme } from "../../context/ThemeContext";
+import { makeStyles } from "../../utils/makeStyles";
 
 // ✅ Types
 type RootStackParamList = {
   Settings: undefined;
+
   SelectLanguage: undefined;
   EditProfile: undefined;
   Changepassword: undefined;
@@ -46,6 +49,9 @@ export default function SettingsScreen({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const { theme, COLORS, toggleTheme } = useTheme();
+  const styles = useStyles(); // 👈 Always up-to-date
+
   const [notification, setNotification] = useState<boolean>(false);
   const [appNotification, setAppNotification] = useState<boolean>(true);
   const [darkMode, setDarkMode] = useState<boolean>(true);
@@ -57,6 +63,15 @@ export default function SettingsScreen({ navigation }: Props) {
     //   index: 0,
     //   routes: [{ name: "SignIn" }],
     // });
+  };
+
+  const changeThemeFunc = () => {
+    toggleTheme();
+    if (theme === "light") {
+      setDarkMode(false);
+    } else {
+      setDarkMode(true);
+    }
   };
 
   return (
@@ -150,8 +165,10 @@ export default function SettingsScreen({ navigation }: Props) {
         <SwitchItem
           label={t("dark/light")}
           value={darkMode}
-          onValueChange={setDarkMode}
+          onValueChange={() => changeThemeFunc()}
         />
+
+        <Text style={{ color: COLORS.black }}>Current theme: {theme}</Text>
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logout} onPress={() => handleLogout()}>
@@ -163,8 +180,49 @@ export default function SettingsScreen({ navigation }: Props) {
   );
 }
 
-// ✅ Styles
-const styles = StyleSheet.create({
+// // ✅ Styles
+// const styles = StyleSheet.create({
+//   safeContent: { flex: 1, backgroundColor: COLORS.background },
+//   header: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     marginHorizontal: 20,
+//     marginVertical: 20,
+//   },
+//   container: {
+//     paddingHorizontal: 20,
+//   },
+//   sectionContainer: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     marginVertical: 10,
+//     paddingBottom: 10,
+//     borderBottomWidth: 1,
+//     borderBottomColor: COLORS.borderColor2,
+//   },
+//   section: {
+//     fontSize: FONTSIZE.size16,
+//     fontFamily: FONTS.UrbanistSemiBold,
+//     color: COLORS.black,
+//     marginLeft: 5,
+//   },
+
+//   logout: {
+//     flexDirection: "row",
+//     justifyContent: "center",
+//     alignItems: "center",
+//     marginVertical: 40,
+//   },
+//   logoutText: {
+//     fontSize: FONTSIZE.size16,
+//     fontFamily: FONTS.UrbanistMedium,
+//     marginLeft: 6,
+//     color: COLORS.black,
+//   },
+// });
+
+const useStyles = makeStyles((COLORS) => ({
   safeContent: { flex: 1, backgroundColor: COLORS.background },
   header: {
     flexDirection: "row",
@@ -203,4 +261,4 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     color: COLORS.black,
   },
-});
+}));
