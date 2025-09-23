@@ -16,9 +16,11 @@ export default function QuestionCard({ number, question, status, onPress }) {
           {question}
         </Text>
       </View>
-      <View style={styles.rightContainer}>
-        <StatusBadge status={status} />
-      </View>
+      {status && (
+        <View style={styles.rightContainer}>
+          <StatusBadge status={status} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

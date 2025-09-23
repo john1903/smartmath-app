@@ -3,3 +3,6 @@ export const userLoginEndPoint = "auth/login/credentials";
 
 export const userDetailEndPoint = "users/me";
 export const userFileEndPoint = "users/me/files";
+
+// Get all recommended exercises
+export const recommendedExerciseEndPoint = "users/me/exercises/recommendations";

@@ -20,20 +20,34 @@ import ProgressCard from "../../components/ProgressCard";
 import CategoryButton from "../../components/CategoryButton";
 import QuestionCard from "../../components/QuestionCard";
 import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
-import { useLazyUserDetailQuery } from "../../services/homeSlice";
+import {
+  useLazyGetAllRecommendedExerciseQuery,
+  useLazyUserDetailQuery,
+} from "../../services/homeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const [userDetail] = useLazyUserDetailQuery();
+  const [getAllRecommendedExercise, { isLoading }] =
+    useLazyGetAllRecommendedExerciseQuery();
 
   const dispatch = useDispatch();
   const { t } = useTranslation(); // ✅ Initialize translations
 
   const { user } = useSelector((state) => state?.auth);
+  const { allRecommendedExercise } = useSelector((state) => state?.home);
 
-  const categories = ["all_exercises", "mcqs", "true_false", "matching"];
+  const categories = [
+    "all_exercises",
+    "Mcqs",
+    "True/False",
+    "Matching",
+    "Open Ended",
+    "Single Choice",
+  ];
+  // const categories = ["all_exercises", "mcqs", "true_false", "matching"];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   const questions = [
@@ -92,19 +106,25 @@ export default function HomeScreen({ navigation }) {
 
   const filteredQuestions =
     activeCategory === "all_exercises"
-      ? questions
-      : questions.filter((q) => {
-          if (activeCategory === "mcqs") return q.taskType === "MCQs";
-          if (activeCategory === "true_false")
-            return q.taskType === "True/False";
-          if (activeCategory === "matching")
-            return q.taskType === "Matching Pair";
+      ? allRecommendedExercise
+      : allRecommendedExercise.filter((q) => {
+          if (activeCategory === "Mcqs")
+            return q.exerciseType === "MULTIPLE_CHOICE";
+          if (activeCategory === "Open Ended")
+            return q.exerciseType === "OPEN_ENDED";
+          if (activeCategory === "Single Choice")
+            return q.exerciseType === "SINGLE_CHOICE";
+          if (activeCategory === "True/False")
+            return q.exerciseType === "TRUE_FALSE";
+          if (activeCategory === "Matching")
+            return q.exerciseType === "MATCHING";
           return true;
         });
   useFocusEffect(
     useCallback(() => {
       dispatch(setLoading(true));
       userDetail(); // refetch data when tab is focused
+      getAllRecommendedExercise();
     }, [dispatch, userDetail])
   );
 
@@ -126,9 +146,6 @@ export default function HomeScreen({ navigation }) {
             <Ionicons name="notifications-outline" size={22} color="black" />
           </TouchableOpacity>
           <Image
-            // source={{
-            //   uri: "https://lh3.googleusercontent.com/a/ACg8ocLERh1J801wC08MLmV6_oTFduriLSIU-ukH0Yuqf0ouklQMEyi1=s360-c-no",
-            // }}
             source={
               user?.avatar
                 ? { uri: user?.avatar?.uri }
@@ -193,14 +210,15 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
 
-            {filteredQuestions.map((q, index) => (
-              <QuestionCard
-                key={q.id}
-                number={index + 1}
-                question={q.text}
-                status={q.status}
-              />
-            ))}
+            {allRecommendedExercise &&
+              filteredQuestions.map((q, index) => (
+                <QuestionCard
+                  key={q.id}
+                  number={index + 1}
+                  question={q.title}
+                  status={q.status}
+                />
+              ))}
           </View>
         </ScrollView>
       </View>

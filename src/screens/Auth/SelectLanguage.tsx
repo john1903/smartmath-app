@@ -13,35 +13,36 @@ import FONTS from "../../theme/fonts";
 import FONTSIZE from "../../theme/fontsSize";
 import COLORS from "../../theme/colors";
 import CustomButton from "../../components/CustomButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "../../i18n/i18n";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setLanguage } from "../../store/lang";
 
 const languages = [
-  { id: "1", key: "english", code: "en" },
-  { id: "2", key: "polish", code: "pl" },
+  { id: "1", key: "english", code: "en-GB" },
+  { id: "2", key: "polish", code: "pl-PL" },
 ];
-
-const LANGUAGE_KEY = "appLanguage";
 
 const SelectLanguage = ({ navigation }: any) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const { token } = useSelector((state: any) => state?.auth);
+  const { language } = useSelector((state: any) => state?.lang);
+
+  console.log("language from redux ::::: ", language);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLang, setSelectedLang] = useState("en"); // store code instead of name
+  const [selectedLang, setSelectedLang] = useState(language); // store code instead of name
 
   useEffect(() => {
     const loadLang = async () => {
       try {
-        const saved = await AsyncStorage.getItem(LANGUAGE_KEY);
-        if (saved) {
-          setSelectedLang(saved);
-          await i18n.changeLanguage(saved);
+        if (language) {
+          setSelectedLang(language);
+          await i18n.changeLanguage(language);
         } else {
-          setSelectedLang(i18n.language || "en");
+          setSelectedLang(language);
         }
       } catch (err) {
         console.warn("Error loading saved language:", err);
@@ -59,7 +60,7 @@ const SelectLanguage = ({ navigation }: any) => {
   const languageSelectionFunc = async (item: { key: string; code: string }) => {
     try {
       setSelectedLang(item.code);
-      await AsyncStorage.setItem(LANGUAGE_KEY, item.code);
+      dispatch(setLanguage(item.code));
       await i18n.changeLanguage(item.code);
     } catch (err) {
       console.warn("Error selecting language:", err);

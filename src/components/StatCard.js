@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import CalanderIcon from "../../assets/svgs/CalendarIcon.svg";
+import CalanderWhiteIcon from "../../assets/svgs/CalendarWhiteIcon.svg";
 import ArrowIcon from "../../assets/svgs/ArrowIcon.svg";
 
 import FONTSIZE from "../theme/fontsSize";
@@ -23,7 +23,7 @@ export default function StatCard({ value }) {
           <Text style={styles.title}>{t("task")}</Text>
           <Text style={styles.title}>{t("completed")}</Text>
         </View>
-        <CalanderIcon />
+        <CalanderWhiteIcon />
       </View>
       <View
         style={{

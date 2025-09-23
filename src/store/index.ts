@@ -82,6 +82,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "../services/api";
 import auth from "./auth";
 import loading from "./loading";
+import home from "./home";
+import lang from "./lang";
 
 // ✅ Only persist the auth slice
 const authPersistConfig = {
@@ -92,6 +94,8 @@ const authPersistConfig = {
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, auth),
   loading,
+  home,
+  lang,
   [api.reducerPath]: api.reducer, // RTK Query slice (not persisted)
 });
 

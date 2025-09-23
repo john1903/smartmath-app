@@ -101,11 +101,16 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../config";
 import { logoutUser } from "../utils/logout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  prepareHeaders: (headers, { getState }) => {
+  prepareHeaders: (headers, { getState }: any) => {
     const { auth } = getState() as any;
+
+    const lang = getState()?.lang?.language; // 👈 from Redux
+
+    headers.set("Accept-Language", lang);
 
     if (auth?.token) {
       headers.set("Authorization", `Bearer ${auth?.token}`);
