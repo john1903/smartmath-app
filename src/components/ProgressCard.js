@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
   total: {
     fontSize: FONTSIZE.size10,
     color: COLORS.secondary,
-    lineHeight: 10,
     fontFamily: FONTS.UrbanistMedium,
   },
 });

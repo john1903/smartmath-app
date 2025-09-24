@@ -78,7 +78,7 @@ const AnimatedInput = ({
 const styles = StyleSheet.create({
   container: {
     paddingTop: 18,
-    marginVertical: 5,
+    marginVertical: 10,
     justifyContent: "center",
   },
   input: {
