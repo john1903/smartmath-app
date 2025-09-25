@@ -24,7 +24,7 @@ import { useAppSelector } from "../../store";
 
 const EditProfileScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
-  const { user } = useAppSelector((state) => state?.auth);
+  const { user } = useAppSelector((state: any) => state?.auth);
 
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
@@ -104,12 +104,12 @@ const EditProfileScreen = ({ navigation }: any) => {
             value={phone}
             onChangeText={setPhone}
           />
-          <AnimatedInput
+          {/* <AnimatedInput
             label={t("password")}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-          />
+          /> */}
         </View>
 
         <View style={{}}>

@@ -127,6 +127,8 @@
 
   "report": "Report",
 
-  "retry": "Retry"
-
+  "retry": "Retry",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "rePassword": "Repeat Password"
 }

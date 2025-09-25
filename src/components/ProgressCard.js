@@ -26,6 +26,7 @@ export default function ProgressCard({ title, percentage, total }) {
           tintColor={COLORS.primary}
           backgroundColor={COLORS.D9Gray}
           rotation={0}
+          lineCap="round"
         >
           {() => (
             <Text style={styles.percent}>
