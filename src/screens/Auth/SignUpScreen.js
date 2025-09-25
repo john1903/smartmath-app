@@ -57,10 +57,13 @@ export default function SignUpScreen({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           <BackButton onPress={() => navigation.goBack()} />
           <View style={styles.innerContainer}>
-            <View style={{ marginBottom: 30 }}>
+            <View style={{ marginBottom: 20 }}>
               <View style={styles.mainTitleContainer}>
                 <Text style={styles.title}>{t("register")}</Text>
                 <Text style={styles.subtitle}>{t("register_subtitle")}</Text>
@@ -96,10 +99,11 @@ export default function SignUpScreen({ navigation }) {
 
               <CustomButton
                 title={t("sign_up")}
-                buttonStyle={{ width: "100%", marginVertical: 10 }}
+                buttonStyle={{ width: "100%", marginVertical: 12 }}
                 textStyle={{
-                  color: COLORS.white,
-                  fontSize: 14,
+                  olor: COLORS.white,
+                  fontSize: FONTSIZE.size16,
+                  fontFamily: FONTS.UrbanistSemiBold,
                   includeFontPadding: false,
                 }}
                 onPress={() => signupFunc()}
@@ -118,13 +122,13 @@ export default function SignUpScreen({ navigation }) {
                 <View style={styles.line} />
               </View>
 
-              <CustomButton
+              {/* <CustomButton
                 title={t("sign_in_with_email")}
                 buttonStyle={styles.socialButton}
                 textStyle={styles.socialButtonTitle}
                 onPress={() => navigation.navigate("SignIn")}
                 svg={<EmailIcon width={22} height={22} fill="#fff" />}
-              />
+              /> */}
               <CustomButton
                 title={t("sign_in_with_google")}
                 buttonStyle={[styles.socialButton, { marginTop: 10 }]}
@@ -157,7 +161,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginTop: 20,
     marginHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 30,
   },
   innerContainer: {
     marginHorizontal: 20,
@@ -168,15 +172,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   inputContainer: {
-    marginTop: 10,
+    marginTop: 0,
   },
   title: {
-    fontSize: FONTSIZE.size40,
+    fontSize: FONTSIZE.size41,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.primary,
   },
   subtitle: {
-    fontSize: FONTSIZE.size16,
+    fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
     color: COLORS.secondary,
   },
@@ -207,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
   },
   orText: {
-    fontSize: FONTSIZE.size12,
+    fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistSemiBold,
     marginHorizontal: 10,
     color: COLORS.secondary,

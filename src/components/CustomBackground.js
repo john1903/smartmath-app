@@ -2,6 +2,7 @@ import React from "react";
 import { View, Image, StyleSheet, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import COLORS from "../theme/colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -10,11 +11,20 @@ const CustomBackground = ({
   showImage = false,
   imageSource = require("../../assets/images/student.png"),
   showGradient = false,
-  gradientColors = ["#cce5fcff", "#ffffff"],
+  gradientColors = ["#2475FC80", "#ffffff"],
+
   style = {},
 }) => {
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[
+        styles.container,
+        style,
+        {
+          backgroundColor: showGradient ? COLORS.white : COLORS.background,
+        },
+      ]}
+    >
       {/* Top Gradient */}
       {showGradient && (
         <LinearGradient
@@ -45,6 +55,7 @@ const CustomBackground = ({
           />
         </View>
       )}
+      {/* {children} */}
 
       {/* Main Safe Content Area */}
       <SafeAreaView style={styles.safeContent}>{children}</SafeAreaView>
@@ -55,7 +66,7 @@ const CustomBackground = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    // backgroundColor: "white",
   },
   gradient: {
     position: "absolute",

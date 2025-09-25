@@ -20,7 +20,7 @@ export default function StatCard({ value }) {
         }}
       >
         <View>
-          <Text style={styles.title}>{t("task")}</Text>
+          <Text style={styles.title}>{t("tasks.title")}</Text>
           <Text style={styles.title}>{t("completed")}</Text>
         </View>
         <CalanderWhiteIcon />

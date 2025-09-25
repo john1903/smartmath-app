@@ -68,7 +68,7 @@ const SelectLanguage = ({ navigation }: any) => {
   };
 
   return (
-    <CustomBackground showImage={false} showGradient={true}>
+    <CustomBackground showImage={false} showGradient={token ? false : true}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -138,10 +138,10 @@ const SelectLanguage = ({ navigation }: any) => {
           >
             <CustomButton
               title={t("next")}
-              buttonStyle={{ width: "50%" }}
+              buttonStyle={{ width: "40%" }}
               textStyle={{
                 color: COLORS.white,
-                fontSize: FONTSIZE.size20,
+                fontSize: FONTSIZE.size16,
                 fontFamily: FONTS.UrbanistSemiBold,
                 includeFontPadding: false,
               }}
@@ -193,8 +193,9 @@ const styles = StyleSheet.create({
   },
   languageText: {
     fontFamily: FONTS.UrbanistMedium,
-    fontSize: FONTSIZE.size14,
+    fontSize: FONTSIZE.size15,
     color: COLORS.black,
+    marginLeft: 10,
   },
   selectedText: {
     color: COLORS.white,

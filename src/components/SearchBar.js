@@ -7,6 +7,7 @@ import COLORS from "../theme/colors";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import FilterIcon from "../../assets/svgs/FilterIcon.svg";
+import { useSelector } from "react-redux";
 
 export default function SearchBar({
   onSearch,
@@ -15,11 +16,20 @@ export default function SearchBar({
   style = {},
   placeholder = "Search",
 }) {
+  const { token } = useSelector((state) => state?.auth);
+
   const [searchText, setSearchText] = useState("");
 
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.searchContainer}>
+      <View
+        style={[
+          styles.searchContainer,
+          {
+            borderColor: token ? COLORS.borderColor : COLORS.secondary,
+          },
+        ]}
+      >
         <Ionicons
           name="search-outline"
           size={22}
@@ -29,6 +39,8 @@ export default function SearchBar({
         <TextInput
           style={styles.input}
           placeholder={placeholder}
+          placeholderTextColor={COLORS.black}
+          plac
           value={searchText}
           onChangeText={(text) => {
             setSearchText(text);
@@ -65,15 +77,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     borderWidth: 1,
-    borderColor: COLORS.borderColor,
     borderRadius: 10,
     paddingHorizontal: 10,
   },
   input: {
     flex: 1,
-    fontSize: FONTSIZE.size14,
+    fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistRegular,
-    paddingVertical: 8,
+    paddingVertical: 10,
     color: COLORS.black,
   },
   filterButton: {

@@ -45,6 +45,9 @@
   "pending_tasks": "{{count}} Tasks Pending",
   "question_sample": "What is the sum of 130+125+191?",
   "solve": "Solve",
+  "tasks_solve": "Tasks Solve",
+  "correct_answers": "Correct Answers",
+  
 
   "status": {
     "solve": "Solve",

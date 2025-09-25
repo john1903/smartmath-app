@@ -79,7 +79,8 @@ export default function SignInScreen({ navigation }) {
               }}
               textStyle={{
                 color: COLORS.white,
-                fontSize: 14,
+                fontSize: FONTSIZE.size16,
+                fontFamily: FONTS.UrbanistSemiBold,
                 includeFontPadding: false,
               }}
               onPress={() => loginFunc()}
@@ -98,13 +99,13 @@ export default function SignInScreen({ navigation }) {
               <View style={styles.line} />
             </View>
 
-            <CustomButton
+            {/* <CustomButton
               title={t("sign_in_with_email")}
               buttonStyle={styles.socialButton}
               textStyle={styles.socialButtonTitle}
               onPress={() => navigation.navigate("SignIn")}
               svg={<EmailIcon width={22} height={22} fill="#fff" />}
-            />
+            /> */}
             <CustomButton
               title={t("sign_in_with_google")}
               buttonStyle={[styles.socialButton, { marginTop: 10 }]}
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginTop: 20,
     marginHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   innerContainer: {
     marginHorizontal: 20,
@@ -150,12 +151,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {
-    fontSize: FONTSIZE.size40,
+    fontSize: FONTSIZE.size41,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.primary,
   },
   subtitle: {
-    fontSize: FONTSIZE.size16,
+    fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
     color: COLORS.secondary,
   },
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   },
   forgotText: {
     color: COLORS.black,
-    fontSize: FONTSIZE.size12,
+    fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistSemiBold,
     marginBottom: 5,
   },
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
   },
   orText: {
-    fontSize: FONTSIZE.size12,
+    fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistSemiBold,
     marginHorizontal: 10,
     color: COLORS.secondary,

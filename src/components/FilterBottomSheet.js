@@ -354,7 +354,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
             }}
             textStyle={{
               color: COLORS.black,
-              fontSize: FONTSIZE.size14,
+              fontSize: FONTSIZE.size16,
               fontFamily: FONTS.UrbanistSemiBold,
               includeFontPadding: false,
             }}
@@ -366,7 +366,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
             buttonStyle={{ flex: 1 }}
             textStyle={{
               color: COLORS.white,
-              fontSize: FONTSIZE.size14,
+              fontSize: FONTSIZE.size16,
               fontFamily: FONTS.UrbanistSemiBold,
               includeFontPadding: false,
             }}

@@ -33,12 +33,12 @@ const AnimatedInput = ({
 
   const labelStyle = {
     position: "absolute",
-    left: 20,
+    left: 25,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [32, -6],
+      outputRange: [32, -4],
     }),
-    fontSize: FONTSIZE.size14,
+    fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
     color: animatedIsFocused.interpolate({
       inputRange: [0, 1],
@@ -78,16 +78,17 @@ const AnimatedInput = ({
 const styles = StyleSheet.create({
   container: {
     paddingTop: 18,
-    marginVertical: 10,
+    marginVertical: 6,
     justifyContent: "center",
   },
   input: {
+    paddingLeft: 25,
     height: 50,
     borderWidth: 1,
     borderColor: COLORS.secondary,
     borderRadius: 25,
     paddingHorizontal: 15,
-    fontSize: FONTSIZE.size14,
+    fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
     paddingRight: 40, // 👈 space for eye icon
   },

@@ -20,11 +20,7 @@ const GetStartedScreen = ({ navigation }) => {
   );
 
   return (
-    <CustomBackground
-      showImage={true}
-      showGradient={true}
-      gradientColors={["#cce5fcff", "#ffffff"]}
-    >
+    <CustomBackground showImage={true} showGradient={true}>
       <View style={styles.container}>
         <View style={styles.bottomText}>
           <Text style={styles.text}>
@@ -37,11 +33,11 @@ const GetStartedScreen = ({ navigation }) => {
         <CustomButton
           title={t("getstarted")}
           buttonStyle={{
-            width: "50%",
+            width: "40%",
           }}
           textStyle={{
             color: COLORS.white,
-            fontSize: FONTSIZE.size20,
+            fontSize: FONTSIZE.size21,
             fontFamily: FONTS.UrbanistSemiBold,
             includeFontPadding: false,
           }}
@@ -64,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: FONTSIZE.size37,
+    fontSize: FONTSIZE.size38,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.black,
     textAlign: "center",

@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    fontSize: FONTSIZE.size24,
+    fontSize: FONTSIZE.size28,
     fontFamily: FONTS.UrbanistMedium,
     color: COLORS.black,
     textAlign: "center",
