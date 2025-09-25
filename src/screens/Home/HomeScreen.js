@@ -239,13 +239,11 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     fontSize: FONTSIZE.size32,
     fontFamily: FONTS.UrbanistMedium,
-    lineHeight: 32,
   },
   subGreeting: {
     color: COLORS.black,
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistRegular,
-    lineHeight: 14,
   },
   rightHeader: {
     flexDirection: "row",

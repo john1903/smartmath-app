@@ -15,6 +15,7 @@ import GlobalLoader from "./src/components/GlobalLoader";
 import Toast from "react-native-toast-message";
 import { enableScreens } from "react-native-screens";
 import { ThemeProvider } from "./src/context/ThemeContext";
+import { ToastConfigComponent } from "./src/utils/toast";
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -64,7 +65,7 @@ export default function App() {
           <NavigationContainer>
             <ThemeProvider>
               <RootNavigator />
-              <Toast />
+              <ToastConfigComponent />
             </ThemeProvider>
           </NavigationContainer>
         </I18nextProvider>

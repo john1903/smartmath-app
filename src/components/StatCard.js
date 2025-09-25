@@ -67,12 +67,10 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: FONTSIZE.size10,
     fontFamily: FONTS.UrbanistMedium,
-    lineHeight: 10,
   },
   value: {
     color: COLORS.white,
     fontSize: FONTSIZE.size48,
     fontFamily: FONTS.UrbanistRegular,
-    lineHeight: 48,
   },
 });
