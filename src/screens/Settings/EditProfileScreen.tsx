@@ -33,7 +33,6 @@ const EditProfileScreen = ({ navigation }: any) => {
   const [LName, setLName] = useState(user ? user?.lastName : "");
   const [email, setEmail] = useState(user ? user?.email : "");
   const [phone, setPhone] = useState(user ? user?.phone : "");
-  const [password, setPassword] = useState("");
   const [userAvatar, setUserAvatar] = useState(user ? user?.avatar?.uri : "");
 
   const used = 70000;
@@ -50,7 +49,7 @@ const EditProfileScreen = ({ navigation }: any) => {
           lastName: LName,
           username: email,
           phone: phone,
-          password: password,
+
           avatarFileId: user?.avatar?.id,
         },
       };
@@ -104,12 +103,6 @@ const EditProfileScreen = ({ navigation }: any) => {
             value={phone}
             onChangeText={setPhone}
           />
-          {/* <AnimatedInput
-            label={t("password")}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          /> */}
         </View>
 
         <View style={{}}>

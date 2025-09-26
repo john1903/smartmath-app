@@ -88,14 +88,16 @@
 
   "difficulty": {
     "hard": "Hard",
-    "normal": "Normal",
+    "medium": "Medium",
     "easy": "Easy"
   },
 
   "taskType": {
-    "mcq": "MCQs",
-    "trueFalse": "True/False",
-    "matching": "Matching Pair"
+    "multiple_choice": "MCQs",
+    "true_false": "True/False",
+    "matching": "Matching Pair",
+    "open_ended": "Open Ended",
+    "single_choice": "Single Choice"
   },
 
   "actions": {
@@ -133,5 +135,10 @@
   "retry": "Retry",
   "currentPassword": "Current Password",
   "newPassword": "New Password",
-  "rePassword": "Repeat Password"
+  "rePassword": "Repeat Password",
+
+  "currentPasswordRequired": "Current password is required",
+  "passwordLengthError": "Password must be at least 8 characters",
+  "passwordMismatch": "Passwords do not match"
+
 }

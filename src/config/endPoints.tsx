@@ -6,3 +6,6 @@ export const userFileEndPoint = "users/me/files";
 
 // Get all recommended exercises
 export const recommendedExerciseEndPoint = "users/me/exercises/recommendations";
+
+export const ExerciseEndPoint = "users/me/exercises";
+export const SingleExerciseEndPoint = "users/me/exercises";

@@ -84,6 +84,7 @@ import auth from "./auth";
 import loading from "./loading";
 import home from "./home";
 import lang from "./lang";
+import tasks from "./tasks";
 
 // ✅ Only persist the auth slice
 const authPersistConfig = {
@@ -96,6 +97,7 @@ const rootReducer = combineReducers({
   loading,
   home,
   lang,
+  tasks,
   [api.reducerPath]: api.reducer, // RTK Query slice (not persisted)
 });
 

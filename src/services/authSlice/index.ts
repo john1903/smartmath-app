@@ -125,8 +125,10 @@ export const AuthApi = api.injectEndpoints({
       }),
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          const { meta } = await queryFulfilled; // meta has response info
-          const status = meta.response?.status;
+          const { meta, data } = await queryFulfilled; // meta has response info
+          const status = meta?.response?.status;
+
+          console.log("user data ::: ", JSON.stringify(data));
 
           if (status === 204) {
             showSuccessToast("User updated successfully!");
