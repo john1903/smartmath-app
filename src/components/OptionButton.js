@@ -120,31 +120,64 @@ import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import MathRenderer from "./MathRenderer";
 
-export default function OptionButton({ optionKey, label, selected, onPress }) {
-  console.log("label :::::::: ", label);
+export default function OptionButton({
+  optionKey,
+  label,
+  selected,
+  onPress,
+  correct,
+  disabled,
+}) {
+  const getContainerStyle = () => {
+    if (selected && correct === true)
+      return [styles.container, styles.correctContainer];
+    if (selected && correct === false)
+      return [styles.container, styles.incorrectContainer];
+    if (selected) return [styles.container, styles.selectedContainer];
+    return styles.container;
+  };
+
+  const getCircleStyle = () => {
+    if (selected && correct === true)
+      return [styles.circle, styles.correctCircle];
+    if (selected && correct === false)
+      return [styles.circle, styles.incorrectCircle];
+    if (selected) return [styles.circle, styles.selectedCircle];
+    return styles.circle;
+  };
+  // console.log("label :::::::: ", label);
   return (
     <TouchableOpacity
-      style={[styles.container, selected && styles.selectedContainer]}
-      onPress={onPress}
+      // disabled={disabled}
+      style={getContainerStyle()}
+      onPress={!disabled ? onPress : null}
       activeOpacity={0.7}
     >
-      <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flex: 1,
+          alignItems: "center",
+          marginRight: 5,
+        }}
+      >
         {/* Circle with option key (A, B, C, D) */}
         <View
           style={[styles.optionCircle, selected && styles.selectedOptionLetter]}
         >
-          <Text style={[styles.optionLetter]}>{optionKey}</Text>
+          <Text style={[styles.optionLetter]}>{`${optionKey})`}</Text>
         </View>
 
         {/* Math label */}
         <MathRenderer
           formula={label}
           style={[styles.label, selected && styles.selectedLabel]}
+          selected={selected}
         />
       </View>
 
       {/* Right-side radio circle */}
-      <View style={[styles.circle, selected && styles.selectedCircle]}>
+      <View style={getCircleStyle()}>
         {selected && <View style={styles.innerDot} />}
       </View>
     </TouchableOpacity>
@@ -167,6 +200,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.green,
     borderColor: COLORS.green,
   },
+  correctContainer: {
+    backgroundColor: COLORS.green,
+    borderColor: COLORS.green,
+  },
+  incorrectContainer: {
+    backgroundColor: COLORS.danger,
+    borderColor: COLORS.danger,
+  },
+
   label: {
     fontSize: FONTSIZE.size14,
     color: COLORS.black,
@@ -178,8 +220,8 @@ const styles = StyleSheet.create({
   selectedLabel: { color: COLORS.white },
   optionCircle: {
     backgroundColor: COLORS.F5Gray,
-    width: 45,
-    height: 45,
+    width: 35,
+    height: 35,
     borderRadius: 400,
     justifyContent: "center",
     alignItems: "center",
@@ -192,9 +234,9 @@ const styles = StyleSheet.create({
   },
   selectedOptionLetter: { backgroundColor: COLORS.white },
   circle: {
-    width: 25,
-    height: 25,
-    borderRadius: 25 / 2,
+    width: 20,
+    height: 20,
+    borderRadius: 20 / 2,
     borderWidth: 1,
     borderColor: COLORS.borderColor2,
     alignItems: "center",
@@ -205,9 +247,18 @@ const styles = StyleSheet.create({
     borderColor: COLORS.white,
     backgroundColor: COLORS.green,
   },
+  correctCircle: {
+    borderColor: COLORS.white,
+    backgroundColor: COLORS.green,
+  },
+  incorrectCircle: {
+    borderColor: COLORS.white,
+    backgroundColor: COLORS.danger,
+  },
+
   innerDot: {
-    width: 18,
-    height: 18,
+    width: 14,
+    height: 14,
     borderRadius: 100,
     backgroundColor: COLORS.white,
   },

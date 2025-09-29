@@ -470,30 +470,22 @@ import TokenBlackIcon from "../../../assets/svgs/TokenBlackIcon.svg";
 import { useLazyGetExerciseQuery } from "../../services/tasksSlice";
 import MathRenderer from "../../components/MathRenderer";
 import { splitMathString } from "../../utils/helpers";
+import MultipleChoice from "./Components/MultipleChoice";
+import TrueFalse from "./Components/TrueFalse";
+import SingleChoice from "./Components/SingleChoice";
+import OpenEnded from "./Components/OpenEnded";
+import Matching from "./Components/Matching";
 
 const TaskDetail = ({ navigation, route }) => {
   const { t } = useTranslation();
   const [appToken, setAppToken] = useState(10);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null);
+
   const [question, setQuestion] = useState(null);
 
   const [getExercise] = useLazyGetExerciseQuery();
 
-  const handleSelect = (id) => {
-    if (selectedOption === id) {
-      setSelectedOption(null); // deselect if already selected
-    } else {
-      setSelectedOption(id); // select new option
-    }
-  };
-
-  const handleSubmit = () => {
-    if (selectedOption) {
-      alert(`You selected: ${selectedOption}`);
-      setSubmitted(true);
-    }
+  const gobackScreen = () => {
+    navigation.goBack();
   };
 
   const renderQuestion = (q) => {
@@ -501,95 +493,16 @@ const TaskDetail = ({ navigation, route }) => {
 
     switch (q.exerciseType) {
       case "MULTIPLE_CHOICE":
-        return (
-          <>
-            {/* Question Image */}
-            {q?.image ? (
-              <Image source={{ uri: q?.image }} style={styles.image} />
-            ) : (
-              <View style={{ height: 30 }} />
-            )}
+        return <MultipleChoice question={q} onPress={gobackScreen} />;
 
-            {/* Question */}
-            <Text style={styles.question}>Question 1:</Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {splitMathString(q.description).map((part, idx) =>
-                part.startsWith("$") ? (
-                  <MathRenderer
-                    key={idx}
-                    formula={part}
-                    style={{ marginRight: 4 }}
-                  />
-                ) : (
-                  <Text key={idx} style={styles.question}>
-                    {part}
-                  </Text>
-                )
-              )}
-            </View>
-
-            {/* Options */}
-            {Object.entries(q.options).map(([key, value], indx) => (
-              <OptionButton
-                key={key}
-                optionKey={key}
-                label={value}
-                selected={selectedOption === key}
-                onPress={() => handleSelect(key)}
-                index={indx}
-              />
-            ))}
-          </>
-        );
-
-      case "truefalse":
-        return (
-          <>
-            {q?.image ? (
-              <Image source={{ uri: q?.image }} style={styles.image} />
-            ) : (
-              <View style={{ height: 30 }} />
-            )}
-
-            <Text style={styles.question}>Question 1: {q.text}</Text>
-
-            <View style={[styles.tfContainer]}>
-              {["True", "False"].map((label) => {
-                const value = label;
-                let bgColor = "#eee";
-                let bdColor = COLORS.borderColor2;
-                let txtColor = COLORS.black;
-
-                if (selectedOption === value) {
-                  if (submitted) {
-                    bgColor = isCorrect ? COLORS.green : COLORS.danger;
-                  } else {
-                    bgColor = COLORS.green;
-                    bdColor = COLORS.green;
-                    txtColor = COLORS.white;
-                  }
-                }
-
-                return (
-                  <CustomButton
-                    key={label}
-                    title={label}
-                    buttonStyle={[
-                      styles.btnStyle,
-                      styles.tfBtn,
-                      { backgroundColor: bgColor, borderColor: bdColor },
-                    ]}
-                    textStyle={[
-                      styles.tfText,
-                      { color: txtColor, includeFontPadding: false },
-                    ]}
-                    onPress={() => setSelectedOption(value)}
-                  />
-                );
-              })}
-            </View>
-          </>
-        );
+      case "TRUE_FALSE":
+        return <TrueFalse question={q} onPress={gobackScreen} />;
+      case "SINGLE_CHOICE":
+        return <SingleChoice question={q} onPress={gobackScreen} />;
+      case "OPEN_ENDED":
+        return <OpenEnded question={q} onPress={gobackScreen} />;
+      case "MATCHING":
+        return <Matching question={q} onPress={gobackScreen} />;
 
       default:
         return null;
@@ -624,7 +537,7 @@ const TaskDetail = ({ navigation, route }) => {
         {renderQuestion(question)}
 
         {/* Submit Button */}
-        {question?.exerciseType !== "upload" && (
+        {/* {question?.exerciseType !== "upload" && (
           <View style={styles.buttons}>
             {submitted && (
               <CustomButton
@@ -654,9 +567,9 @@ const TaskDetail = ({ navigation, route }) => {
               onPress={() => handleSubmit()}
             />
           </View>
-        )}
+        )} */}
 
-        {question?.exerciseType === "upload" && (
+        {/* {question?.exerciseType === "upload" && (
           <View>
             {appToken > 0 ? (
               <View style={styles.whiteSheetFooter}>
@@ -703,7 +616,7 @@ const TaskDetail = ({ navigation, route }) => {
               </View>
             )}
           </View>
-        )}
+        )} */}
       </ScrollView>
     </SafeAreaView>
   );

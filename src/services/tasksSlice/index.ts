@@ -53,8 +53,41 @@ export const TasksApi = api.injectEndpoints({
         }
       },
     }),
+
+    submitExerciseAnswer: builder.mutation({
+      query: (payload: any) => {
+        console.log("payload ::::::::::::::::::::", payload?.data);
+        return {
+          url: `${SingleExerciseEndPoint}/${payload?.id}/answers`,
+          method: "put",
+          body: payload?.data,
+        };
+      },
+      transformResponse: (result) => result,
+      //   invalidatesTags: ['readUser'],
+      async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          const { navigation } = args;
+
+          dispatch(setLoading(false));
+          // showSuccessToast("Submit answer successful!");
+        } catch (e: any) {
+          dispatch(setLoading(false));
+
+          console.log("error submit answer ::: ", JSON.stringify(e));
+
+          //   errorMessage(e?.error?.data?.message || e?.error?.error);
+          showErrorToast("Something went wrong");
+        }
+      },
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useLazyGetAllExerciseQuery, useLazyGetExerciseQuery } = TasksApi;
+export const {
+  useLazyGetAllExerciseQuery,
+  useLazyGetExerciseQuery,
+  useSubmitExerciseAnswerMutation,
+} = TasksApi;

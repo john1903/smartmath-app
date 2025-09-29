@@ -295,6 +295,8 @@ export default function TasksScreen({ navigation }) {
   const [getAllExercise] = useLazyGetAllExerciseQuery();
   const { allExercise } = useSelector((state) => state?.tasks);
 
+  // console.log("all exercise ::::::::::::; ", JSON.stringify(allExercise));
+
   // ✅ Normalize API response
   const exercises = (allExercise || []).map((item) => ({
     id: item.exercise?.id,
