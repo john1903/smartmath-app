@@ -149,6 +149,6 @@ export const formHeader = {
 export const api = createApi({
   reducerPath: "api", // optional but recommended
   baseQuery: baseQueryWithInterceptor,
-  tagTypes: [],
+  tagTypes: ["Reports"],
   endpoints: (builder) => ({}), // ✅ Correct way
 });

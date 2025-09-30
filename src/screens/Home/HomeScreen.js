@@ -217,6 +217,13 @@ export default function HomeScreen({ navigation }) {
                   number={index + 1}
                   question={q.title}
                   status={q.status}
+                  onPress={() =>
+                    // navigation.navigate("TaskDetail", { exerciseId: q?.id })
+                    navigation.navigate("TasksTab", {
+                      screen: "TaskDetail",
+                      params: { exerciseId: q?.id }, // optional params
+                    })
+                  }
                 />
               ))}
           </View>

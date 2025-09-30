@@ -146,7 +146,7 @@ export default function SignUpScreen({ navigation }) {
             </View>
 
             <Text style={styles.footerText}>
-              {t("terms_text")} <Text style={styles.link}>{t("terms")}</Text>{" "}
+              {t("terms_text")} <Text style={styles.link}>{t("terms")}</Text>
               {t("and")} <Text style={styles.link}>{t("privacy")}</Text>.
             </Text>
           </View>

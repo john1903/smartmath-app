@@ -4,8 +4,9 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Linking,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../theme/colors";
@@ -21,11 +22,131 @@ import TokenBlackIcon from "../../../assets/svgs/TokenBlackIcon.svg";
 
 import FONTSIZE from "../../theme/fontsSize";
 import FONTS from "../../theme/fonts";
+import {
+  useGenerateReportMutation,
+  useLazyGetAllReportsQuery,
+} from "../../services/reportSlice";
+import { useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "../../store/loading";
+import { showErrorToast } from "../../utils/toast";
 
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  const [appToken, setAppToken] = useState(0);
+  const [getAllReports] = useLazyGetAllReportsQuery();
+  const [generateReport] = useGenerateReportMutation();
+
+  const { allReports } = useSelector((state) => state?.reports);
+
+  const [appToken, setAppToken] = useState(10);
+
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+
+  // ✅ fetch reports on screen focus
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setLoading(true));
+      getAllReports();
+    }, [dispatch])
+  );
+
+  console.log(" reports res :::::::>>>>  ", JSON.stringify(allReports));
+
+  // ✅ format date for API
+  const formatDateForApi = (date) => {
+    const pad = (n) => (n < 10 ? "0" + n : n);
+    return (
+      date.getFullYear() +
+      "-" +
+      pad(date.getMonth() + 1) +
+      "-" +
+      pad(date.getDate()) +
+      "T" +
+      pad(date.getHours()) +
+      ":" +
+      pad(date.getMinutes()) +
+      ":" +
+      pad(date.getSeconds())
+    );
+  };
+
+  // ✅ format for UI (dd-mm-yyyy)
+  const formatDateForUI = (dateString) => {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
+  // // ✅ Generate report handler
+  // const handleGenerateReport = async () => {
+  //   if (!fromDate || !toDate) {
+  //     showErrorToast("Please select both From and To dates");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     from: fromDate,
+  //     to: toDate,
+  //   };
+
+  //   try {
+  //     dispatch(setLoading(true));
+  //     await generateReport(payload).unwrap();
+  //   } catch (err) {
+  //     console.error("Error generating report:", err);
+  //   } finally {
+  //     dispatch(setLoading(false));
+  //   }
+  // };
+
+  // ✅ Generate report handler
+  const handleGenerateReport = async () => {
+    if (!fromDate || !toDate) {
+      showErrorToast("Please select both From and To dates");
+      return;
+    }
+
+    const payload = {
+      from: fromDate,
+      to: toDate,
+    };
+
+    try {
+      dispatch(setLoading(true));
+      await generateReport(payload).unwrap();
+
+      // ✅ clear dates
+      setFromDate(null);
+      setToDate(null);
+
+      // ✅ refresh report list
+      getAllReports();
+    } catch (err) {
+      console.error("Error generating report:", err);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  // ✅ Handle View/Delete
+  const handleOptionSelect = (val, report) => {
+    if (val === "View") {
+      if (report?.reportFile?.uri) {
+        Linking.openURL(report.reportFile.uri);
+      } else {
+        showErrorToast("No file available");
+      }
+    } else if (val === "Delete") {
+      console.log("Delete report:", report.id);
+      // TODO: add delete API if available
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -33,7 +154,7 @@ const ReportScreen = ({ navigation }) => {
       <View style={styles.header}>
         <CustomHeader title={t("report")} onPress={() => navigation.goBack()} />
       </View>
-
+      {/* Generate report section */}
       <View style={styles.whiteSheet}>
         <AnimatedDropdown
           label="Generate report by"
@@ -41,14 +162,30 @@ const ReportScreen = ({ navigation }) => {
           onSelect={(val) => console.log("Selected:", val)}
         />
 
-        <AnimatedDatePicker
+        {/* <AnimatedDatePicker
           label="Select Date From"
-          onSelect={(date) => console.log("From:", date)}
+          type="from"
+          onSelect={(date) => setFromDate(formatDateForApi(date))}
         />
 
         <AnimatedDatePicker
           label="Select Date To"
-          onSelect={(date) => console.log("To:", date)}
+          type="to"
+          onSelect={(date) => setToDate(formatDateForApi(date))}
+        /> */}
+
+        <AnimatedDatePicker
+          label="Select Date From"
+          selectedDate={fromDate ? new Date(fromDate) : null}
+          maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
+          onSelect={(date) => setFromDate(formatDateForApi(date))}
+        />
+
+        <AnimatedDatePicker
+          label="Select Date To"
+          selectedDate={toDate ? new Date(toDate) : null}
+          minimumDate={fromDate ? new Date(fromDate) : undefined} // if From selected → restrict To
+          onSelect={(date) => setToDate(formatDateForApi(date))}
         />
 
         {appToken > 0 ? (
@@ -57,7 +194,7 @@ const ReportScreen = ({ navigation }) => {
               title="50 Token to generate report"
               buttonStyle={styles.generateReportBtn}
               textStyle={styles.generateReportBtnTitle}
-              onPress={() => navigation.navigate("SignIn")}
+              onPress={handleGenerateReport}
               svg={<TokenWhiteIcon width={22} height={22} />}
             />
             <Text style={styles.whiteSheetFooterText}>
@@ -70,44 +207,24 @@ const ReportScreen = ({ navigation }) => {
               title="50 Token to generate report"
               buttonStyle={[
                 styles.generateReportBtn,
-                {
-                  backgroundColor: COLORS.D9Gray,
-                  borderWidth: 0,
-                },
+                { backgroundColor: COLORS.D9Gray, borderWidth: 0 },
               ]}
               textStyle={[
                 styles.generateReportBtnTitle,
-                {
-                  color: COLORS.black,
-                },
+                { color: COLORS.black },
               ]}
               onPress={() => navigation.navigate("SignIn")}
               svg={<TokenBlackIcon width={22} height={22} />}
             />
-            <View
-              style={{
-                flexDirection: "row",
-                // justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={[
-                  styles.whiteSheetFooterText,
-                  {
-                    marginRight: 10,
-                  },
-                ]}
-              >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={[styles.whiteSheetFooterText, { marginRight: 10 }]}>
                 {appToken} Token available
               </Text>
               <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
                 <Text
                   style={[
                     styles.whiteSheetFooterText,
-                    {
-                      color: COLORS.primary,
-                    },
+                    { color: COLORS.primary },
                   ]}
                 >
                   Buy Tokens
@@ -117,14 +234,23 @@ const ReportScreen = ({ navigation }) => {
           </View>
         )}
       </View>
-
+      {/* Reports list */}
       <MenuProvider>
         <ScrollView contentContainerStyle={styles.container}>
-          <ReportTile
-            title="Report Title"
-            date="23-08-2025"
-            onOptionSelect={(val) => console.log("Option:", val)}
-          />
+          {allReports && allReports.length > 0 ? (
+            allReports.map((report) => (
+              <ReportTile
+                key={report.id}
+                title={report.status || "Report"}
+                date={formatDateForUI(report.createdAt)}
+                onOptionSelect={(val) => handleOptionSelect(val, report)}
+              />
+            ))
+          ) : (
+            <Text style={{ textAlign: "center", marginTop: 20 }}>
+              No reports found
+            </Text>
+          )}
         </ScrollView>
       </MenuProvider>
     </SafeAreaView>
@@ -153,7 +279,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 30,
     alignItems: "center",
-    // marginBottom: 20,
   },
   whiteSheetFooter: {
     alignItems: "center",
