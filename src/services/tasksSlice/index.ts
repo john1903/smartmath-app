@@ -56,7 +56,6 @@ export const TasksApi = api.injectEndpoints({
 
     submitExerciseAnswer: builder.mutation({
       query: (payload: any) => {
-        console.log("payload ::::::::::::::::::::", payload?.data);
         return {
           url: `${SingleExerciseEndPoint}/${payload?.id}/answers`,
           method: "put",

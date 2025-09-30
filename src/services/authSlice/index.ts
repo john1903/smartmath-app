@@ -164,10 +164,40 @@ export const AuthApi = api.injectEndpoints({
 
           dispatch(setLoading(false));
           // dispatch(setUser(data?.));
-          showSuccessToast("User update file successfully!");
+          showSuccessToast("File update successfully!");
         } catch (e: any) {
           console.log(
             "update user file response error :::::::::::: ",
+            JSON.stringify(e)
+          );
+          dispatch(setLoading(false));
+
+          //   errorMessage(e?.error?.data?.message || e?.error?.error);
+          showErrorToast("Something went wrong");
+        }
+      },
+    }),
+
+    deleteFile: builder.mutation({
+      query: ({ id }: any) => {
+        console.log("datta ", id);
+        return {
+          url: `${userFileEndPoint}/${id}`,
+          method: "delete",
+        };
+      },
+      transformResponse: (result) => result,
+      //   invalidatesTags: ['readUser'],
+      async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+          const { navigation } = args;
+
+          dispatch(setLoading(false));
+          showSuccessToast("File deleted successfully!");
+        } catch (e: any) {
+          console.log(
+            "delete file response error :::::::::::: ",
             JSON.stringify(e)
           );
           dispatch(setLoading(false));
@@ -237,6 +267,7 @@ export const {
   useLoginUserMutation,
   useUpdateUserMutation,
   useUpdateFileMutation,
+  useDeleteFileMutation,
   //   useForgotPasswordMutation,
   //   useLogoutUserMutation,
 } = AuthApi;

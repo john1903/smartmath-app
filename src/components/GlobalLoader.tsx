@@ -10,8 +10,6 @@ const GlobalLoader = () => {
   // const { isLoading } = useSelector((state) => state?.loading);
   const { isLoading } = useAppSelector((state) => state.loading);
 
-  console.log("isLoading ", isLoading);
-
   return (
     <Modal visible={isLoading} transparent animationType="fade">
       <View style={styles.container}>

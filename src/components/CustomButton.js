@@ -12,6 +12,8 @@ const CustomButton = ({
   icon = null, // { name: "add", size: 20, color: "#fff", style: {} }
   svg = null, // pass React element: <MySvg width={20} height={20} />
   disabled = false,
+  contentStyle = {},
+  iconStyle = {},
 }) => {
   return (
     <TouchableOpacity
@@ -24,7 +26,7 @@ const CustomButton = ({
       onPress={onPress}
       disabled={disabled}
     >
-      <View style={styles.content}>
+      <View style={[styles.content, contentStyle]}>
         {icon && (
           <Ionicons
             name={icon.name}
@@ -34,7 +36,7 @@ const CustomButton = ({
           />
         )}
 
-        {svg && <View style={styles.icon}>{svg}</View>}
+        {svg && <View style={[styles.icon, iconStyle]}>{svg}</View>}
 
         <Text style={[styles.title, textStyle]}>{title}</Text>
       </View>
