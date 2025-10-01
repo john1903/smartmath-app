@@ -5,8 +5,10 @@ import COLORS from "../theme/colors";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import { useAppSelector } from "../store";
+import { useTranslation } from "react-i18next";
 
 const GlobalLoader = () => {
+  const { t } = useTranslation();
   // const { isLoading } = useSelector((state) => state?.loading);
   const { isLoading } = useAppSelector((state) => state.loading);
 
@@ -15,7 +17,7 @@ const GlobalLoader = () => {
       <View style={styles.container}>
         <View style={styles.loaderBox}>
           <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.textStyle}>Wait for a while...</Text>
+          <Text style={styles.textStyle}>{t("waitForaWhile")}</Text>
         </View>
       </View>
     </Modal>

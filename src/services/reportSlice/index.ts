@@ -15,7 +15,7 @@ export const ReportsApi = api.injectEndpoints({
           method: "get",
         };
       },
-      providesTags: ["Reports"],
+      providesTags: ["reports"],
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
           dispatch(setLoading(true));
@@ -39,7 +39,7 @@ export const ReportsApi = api.injectEndpoints({
         };
       },
       transformResponse: (result) => result,
-      invalidatesTags: ["Reports"],
+      invalidatesTags: ["reports"],
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const res = await queryFulfilled;

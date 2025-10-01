@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  RefreshControl,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import CustomHeader from "../../components/CustomHeader";
@@ -44,16 +45,39 @@ const ReportScreen = ({ navigation }) => {
 
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // ✅ fetch reports on screen focus
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     console.log("useeffect call ???????????");
+
+  //     dispatch(setLoading(true));
+  //     getAllReports();
+  //   }, [dispatch])
+  // );
+
   useFocusEffect(
     useCallback(() => {
-      dispatch(setLoading(true));
-      getAllReports();
-    }, [dispatch])
+      const fetchReports = async () => {
+        try {
+          dispatch(setLoading(true));
+          await getAllReports().unwrap(); // 👈 this ensures onQueryStarted runs
+        } catch (err) {
+          console.log("fetch error", err);
+        } finally {
+          dispatch(setLoading(false));
+        }
+      };
+
+      fetchReports();
+    }, [dispatch, getAllReports])
   );
 
-  console.log(" reports res :::::::>>>>  ", JSON.stringify(allReports));
+  // console.log(
+  //   " reports res ::::::>>>>>>>>>>>>>>:>>>>  ",
+  //   JSON.stringify(allReports)
+  // );
 
   // ✅ format date for API
   const formatDateForApi = (date) => {
@@ -82,29 +106,6 @@ const ReportScreen = ({ navigation }) => {
     const yyyy = d.getFullYear();
     return `${dd}-${mm}-${yyyy}`;
   };
-
-  // // ✅ Generate report handler
-  // const handleGenerateReport = async () => {
-  //   if (!fromDate || !toDate) {
-  //     showErrorToast("Please select both From and To dates");
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     from: fromDate,
-  //     to: toDate,
-  //   };
-
-  //   try {
-  //     dispatch(setLoading(true));
-  //     await generateReport(payload).unwrap();
-  //   } catch (err) {
-  //     console.error("Error generating report:", err);
-  //   } finally {
-  //     dispatch(setLoading(false));
-  //   }
-  // };
-
   // ✅ Generate report handler
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
@@ -126,7 +127,7 @@ const ReportScreen = ({ navigation }) => {
       setToDate(null);
 
       // ✅ refresh report list
-      getAllReports();
+      // getAllReports();
     } catch (err) {
       console.error("Error generating report:", err);
     } finally {
@@ -148,6 +149,17 @@ const ReportScreen = ({ navigation }) => {
     }
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await getAllReports().unwrap(); // 👈
+    } catch (e) {
+      console.log("Refresh error", e);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [getAllReports]);
+
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
@@ -156,22 +168,10 @@ const ReportScreen = ({ navigation }) => {
       </View>
       {/* Generate report section */}
       <View style={styles.whiteSheet}>
-        <AnimatedDropdown
+        {/* <AnimatedDropdown
           label="Generate report by"
           options={["Daily", "Weekly", "Monthly"]}
           onSelect={(val) => console.log("Selected:", val)}
-        />
-
-        {/* <AnimatedDatePicker
-          label="Select Date From"
-          type="from"
-          onSelect={(date) => setFromDate(formatDateForApi(date))}
-        />
-
-        <AnimatedDatePicker
-          label="Select Date To"
-          type="to"
-          onSelect={(date) => setToDate(formatDateForApi(date))}
         /> */}
 
         <AnimatedDatePicker
@@ -236,12 +236,17 @@ const ReportScreen = ({ navigation }) => {
       </View>
       {/* Reports list */}
       <MenuProvider>
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {allReports && allReports.length > 0 ? (
             allReports.map((report) => (
               <ReportTile
                 key={report.id}
-                title={report.status || "Report"}
+                title={report.id || "Report"}
                 date={formatDateForUI(report.createdAt)}
                 onOptionSelect={(val) => handleOptionSelect(val, report)}
               />

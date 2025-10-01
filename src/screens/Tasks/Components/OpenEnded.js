@@ -5,6 +5,8 @@ import {
   FlatList,
   StyleSheet,
   Image,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
@@ -33,7 +35,7 @@ import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
 
-const OpenEnded = ({ question, onPress }) => {
+const OpenEnded = ({ question, onPress, navigation }) => {
   console.log(" question ssssssssssssssssss", JSON.stringify(question));
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -42,6 +44,8 @@ const OpenEnded = ({ question, onPress }) => {
   const [deleteFile] = useDeleteFileMutation();
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
   const [submitted, setSubmitted] = useState(false);
+
+  const [waitingPopup, setWaitingPopup] = useState(false);
 
   const [files, setFiles] = useState([]);
   const [appToken, setAppToken] = useState(10);
@@ -149,8 +153,13 @@ const OpenEnded = ({ question, onPress }) => {
       const response = await submitExerciseAnswer(payload).unwrap();
 
       dispatch(setLoading(false));
+
       console.log("Submit response :::::::::::::", response);
       showSuccessToast("Answer submitted successfully!");
+
+      if (response?.feedbackStatus === "PENDING") {
+        setWaitingPopup(true);
+      }
       setSubmitted(true);
     } catch (err) {
       dispatch(setLoading(false));
@@ -348,6 +357,63 @@ const OpenEnded = ({ question, onPress }) => {
           )}
         </View>
       </View>
+
+      <Modal
+        transparent
+        visible={waitingPopup}
+        animationType="fade"
+        onRequestClose={() => setVisible(false)}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.loaderContainer}>
+            {/* Loader */}
+            <ActivityIndicator size="large" color={COLORS.white} />
+
+            {/* Message */}
+            <Text style={styles.title}>Your answer has been submitted</Text>
+            <Text style={styles.subtitle}>
+              You'll get feedback in few minutes!
+            </Text>
+
+            {/* Buttons */}
+            <View style={styles.buttonRow}>
+              <CustomButton
+                title="Go to Home"
+                buttonStyle={[styles.button]}
+                textStyle={[styles.buttonText]}
+                onPress={() => {
+                  setWaitingPopup(false);
+
+                  navigation.goBack();
+
+                  setTimeout(() => {
+                    navigation.navigate("HomeTab", { screen: "HomeMain" });
+                  }, 100);
+                }}
+              />
+
+              <CustomButton
+                title="Back to Tasks"
+                buttonStyle={[
+                  styles.button,
+                  {
+                    backgroundColor: COLORS.white,
+                  },
+                ]}
+                textStyle={[
+                  styles.buttonText,
+                  {
+                    color: COLORS.black,
+                  },
+                ]}
+                onPress={() => {
+                  setWaitingPopup(false);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -462,4 +528,82 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: COLORS.black,
   },
+
+  // =============================================
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)", // dim background
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loaderContainer: {
+    backgroundColor: "transparent",
+    borderRadius: 16,
+    padding: 20,
+    alignItems: "center",
+    width: "100%",
+  },
+  title: {
+    color: COLORS.white,
+    fontSize: FONTSIZE.size22,
+    fontFamily: FONTS.UrbanistSemiBold,
+    marginTop: 15,
+    textAlign: "center",
+  },
+  subtitle: {
+    color: COLORS.white,
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistMedium,
+    marginTop: 5,
+    textAlign: "center",
+  },
+  buttonRow: {
+    flexDirection: "row",
+    marginTop: 15,
+    justifyContent: "space-between",
+    gap: 10,
+    // width: "100%",
+  },
+
+  button: {
+    width: "40%",
+    paddingVertical: 14,
+    borderRadius: 100,
+    marginTop: 20,
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderColor: COLORS.white,
+    borderWidth: 1,
+  },
+
+  buttonText: {
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.white,
+  },
+
+  // button: {
+  //   flex: 1,
+  //   paddingVertical: 12,
+  //   borderRadius: 25,
+  //   marginHorizontal: 5,
+  //   alignItems: "center",
+  // },
+  // outlineButton: {
+  //   borderWidth: 1,
+  //   borderColor: "#000",
+  //   backgroundColor: "#fff",
+  // },
+  // fillButton: {
+  //   backgroundColor: "#000",
+  // },
+  // outlineText: {
+  //   color: "#000",
+  //   fontWeight: "500",
+  // },
+  // fillText: {
+  //   color: "#fff",
+  //   fontWeight: "500",
+  // },
 });

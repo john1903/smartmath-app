@@ -500,7 +500,13 @@ const TaskDetail = ({ navigation, route }) => {
       case "SINGLE_CHOICE":
         return <SingleChoice question={q} onPress={gobackScreen} />;
       case "OPEN_ENDED":
-        return <OpenEnded question={q} onPress={gobackScreen} />;
+        return (
+          <OpenEnded
+            question={q}
+            onPress={gobackScreen}
+            navigation={navigation}
+          />
+        );
       case "MATCHING":
         return <Matching question={q} onPress={gobackScreen} />;
 

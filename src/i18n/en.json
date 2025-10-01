@@ -139,6 +139,8 @@
 
   "currentPasswordRequired": "Current password is required",
   "passwordLengthError": "Password must be at least 8 characters",
-  "passwordMismatch": "Passwords do not match"
+  "passwordMismatch": "Passwords do not match",
+
+  "waitForaWhile": "Wait for a while..."
 
 }
