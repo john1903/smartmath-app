@@ -34,6 +34,7 @@ import { setLoading } from "../../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
+import { useLazyGetPromptsQuery } from "../../../services/prompts";
 
 const OpenEnded = ({ question, onPress, navigation }) => {
   console.log(" question ssssssssssssssssss", JSON.stringify(question));
@@ -43,12 +44,15 @@ const OpenEnded = ({ question, onPress, navigation }) => {
   const [updateFile] = useUpdateFileMutation();
   const [deleteFile] = useDeleteFileMutation();
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
+
+  const [getPrompts] = useLazyGetPromptsQuery();
+
   const [submitted, setSubmitted] = useState(false);
 
   const [waitingPopup, setWaitingPopup] = useState(false);
 
   const [files, setFiles] = useState([]);
-  const [appToken, setAppToken] = useState(10);
+  const [appToken, setAppToken] = useState();
 
   const pickFile = async () => {
     try {
@@ -134,6 +138,13 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       return;
     }
 
+    if (appToken < 50) {
+      showErrorToast(
+        "Not enough tokens available. You need at least 50 tokens to submit."
+      );
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
       const duration = stopTimer(); // e.g. "PT2M15S"
@@ -170,6 +181,23 @@ const OpenEnded = ({ question, onPress, navigation }) => {
 
   useEffect(() => {
     startTimer(); // start when screen loads
+
+    const fetchPrompts = async () => {
+      try {
+        const res = await getPrompts().unwrap();
+
+        console.log("res::::::::: ", res);
+        if (res?.usage !== undefined && res?.limit !== undefined) {
+          const available = res.limit - res.usage;
+          setAppToken(available >= 0 ? available : 0); // set state
+          // setAppToken( available ); // set state
+        }
+      } catch (error) {
+        console.error("Error fetching prompts:", error);
+      }
+    };
+
+    fetchPrompts();
   }, []);
 
   return (
@@ -271,14 +299,6 @@ const OpenEnded = ({ question, onPress, navigation }) => {
         >
           {appToken > 0 ? (
             <View style={styles.whiteSheetFooter}>
-              {/* <CustomButton
-                title="50 Token to Submit"
-                buttonStyle={styles.generateReportBtn}
-                textStyle={styles.generateReportBtnTitle}
-                onPress={() => navigation.navigate("SignIn")}
-                svg={<TokenWhiteIcon width={22} height={22} />}
-              /> */}
-
               <CustomButton
                 title="50 Token to Submit"
                 buttonStyle={[
@@ -356,6 +376,80 @@ const OpenEnded = ({ question, onPress, navigation }) => {
             </View>
           )}
         </View>
+
+        {/* <View
+          style={{
+            marginHorizontal: 30,
+          }}
+        >
+          <View style={styles.whiteSheetFooter}>
+            <CustomButton
+              title="50 Token to Submit"
+              buttonStyle={[
+                styles.generateReportBtn,
+                (files.length === 0 || appToken < 50) && {
+                  backgroundColor: COLORS.D9Gray,
+                  borderWidth: 0,
+                },
+              ]}
+              textStyle={[
+                styles.generateReportBtnTitle,
+                (files.length === 0 || appToken < 50) && {
+                  color: COLORS.black,
+                },
+              ]}
+              onPress={() => {
+                if (files.length === 0) {
+                  showErrorToast(
+                    "Please upload at least one answer file before submitting."
+                  );
+                  return;
+                }
+                if (appToken < 50) {
+                  showErrorToast(
+                    "Not enough tokens available. You need at least 50 tokens to submit."
+                  );
+                  return;
+                }
+                handleSubmit(); // ✅ only submit when conditions are valid
+              }}
+              svg={
+                files.length === 0 || appToken < 50 ? (
+                  <TokenBlackIcon width={22} height={22} />
+                ) : (
+                  <TokenWhiteIcon width={22} height={22} />
+                )
+              }
+            />
+          </View>
+
+          {appToken < 50 && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
+              <Text style={[styles.whiteSheetFooterText, { marginRight: 10 }]}>
+                {appToken} Token available
+              </Text>
+              <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
+                <Text
+                  style={[
+                    styles.whiteSheetFooterText,
+                    {
+                      color: COLORS.primary,
+                      fontFamily: FONTS.UrbanistSemiBold,
+                    },
+                  ]}
+                >
+                  Buy Tokens
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View> */}
       </View>
 
       <Modal

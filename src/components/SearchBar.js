@@ -48,9 +48,9 @@ export default function SearchBar({
           }}
         />
 
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Ionicons name="mic-outline" size={22} color="#555" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {showFilter && (

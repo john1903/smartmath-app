@@ -31,55 +31,24 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
 import { showErrorToast } from "../../utils/toast";
+import { useLazyGetPromptsQuery } from "../../services/prompts";
 
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [getAllReports] = useLazyGetAllReportsQuery();
+  const [getPrompts] = useLazyGetPromptsQuery();
   const [generateReport] = useGenerateReportMutation();
 
   const { allReports } = useSelector((state) => state?.reports);
 
-  const [appToken, setAppToken] = useState(10);
+  const [appToken, setAppToken] = useState(0);
 
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // ✅ fetch reports on screen focus
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     console.log("useeffect call ???????????");
-
-  //     dispatch(setLoading(true));
-  //     getAllReports();
-  //   }, [dispatch])
-  // );
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchReports = async () => {
-        try {
-          dispatch(setLoading(true));
-          await getAllReports().unwrap(); // 👈 this ensures onQueryStarted runs
-        } catch (err) {
-          console.log("fetch error", err);
-        } finally {
-          dispatch(setLoading(false));
-        }
-      };
-
-      fetchReports();
-    }, [dispatch, getAllReports])
-  );
-
-  // console.log(
-  //   " reports res ::::::>>>>>>>>>>>>>>:>>>>  ",
-  //   JSON.stringify(allReports)
-  // );
-
-  // ✅ format date for API
   const formatDateForApi = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
     return (
@@ -113,6 +82,13 @@ const ReportScreen = ({ navigation }) => {
       return;
     }
 
+    if (appToken < 50) {
+      showErrorToast(
+        "Not enough tokens available. You need at least 50 tokens to generate report."
+      );
+      return;
+    }
+
     const payload = {
       from: fromDate,
       to: toDate,
@@ -120,14 +96,10 @@ const ReportScreen = ({ navigation }) => {
 
     try {
       dispatch(setLoading(true));
-      await generateReport(payload).unwrap();
+      await generateReport(payload);
 
-      // ✅ clear dates
       setFromDate(null);
       setToDate(null);
-
-      // ✅ refresh report list
-      // getAllReports();
     } catch (err) {
       console.error("Error generating report:", err);
     } finally {
@@ -149,16 +121,43 @@ const ReportScreen = ({ navigation }) => {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const fetchReportsAndTokens = async () => {
+        try {
+          // Fetch reports
+          await getAllReports().unwrap();
+
+          // Fetch prompts usage for tokens
+          const res = await getPrompts().unwrap();
+          if (res?.usage !== undefined && res?.limit !== undefined) {
+            const available = res.limit - res.usage;
+            setAppToken(available >= 0 ? available : 0); // set state
+          }
+        } catch (err) {
+          console.log("❌ Error fetching reports or tokens", err);
+        }
+      };
+      fetchReportsAndTokens();
+    }, [getAllReports, getPrompts])
+  );
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await getAllReports().unwrap(); // 👈
-    } catch (e) {
-      console.log("Refresh error", e);
+      await getAllReports().unwrap();
+
+      const res = await getPrompts().unwrap();
+      if (res?.usage !== undefined && res?.limit !== undefined) {
+        const available = res.limit - res.usage;
+        setAppToken(available >= 0 ? available : 0);
+      }
+    } catch (err) {
+      console.log("❌ Refresh error", err);
     } finally {
       setRefreshing(false);
     }
-  }, [getAllReports]);
+  }, [getAllReports, getPrompts]);
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -213,7 +212,7 @@ const ReportScreen = ({ navigation }) => {
                 styles.generateReportBtnTitle,
                 { color: COLORS.black },
               ]}
-              onPress={() => navigation.navigate("SignIn")}
+              onPress={handleGenerateReport}
               svg={<TokenBlackIcon width={22} height={22} />}
             />
             <View style={{ flexDirection: "row", alignItems: "center" }}>

@@ -11,3 +11,5 @@ export const ExerciseEndPoint = "users/me/exercises";
 export const SingleExerciseEndPoint = "users/me/exercises";
 
 export const GetReportEndPoint = "users/me/reports";
+
+export const GetPromptsEndPoint = "users/me/prompts/usage";
