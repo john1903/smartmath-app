@@ -77,8 +77,8 @@ export const AuthApi = api.injectEndpoints({
           );
           dispatch(setLoading(false));
 
-          //   errorMessage(e?.error?.data?.message || e?.error?.error);
-          showErrorToast("Something went wrong");
+          showErrorToast(e?.error?.data?.message || e?.error?.error);
+          // showErrorToast("Something went wrong");
         }
       },
     }),
