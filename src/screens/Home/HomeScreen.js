@@ -364,11 +364,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
 import { useFocusEffect } from "@react-navigation/native";
 import { useLazyGetUserExerciseStatusQuery } from "../../services/tasksSlice";
-import { getDateRange } from "../../utils/helpers";
+import { setUser } from "../../store/auth"; // ✅ make sure this exists
 import AnimatedDatePicker from "../../components/AnimatedDatePicker";
 
 export default function HomeScreen({ navigation }) {
-  const [userDetail] = useLazyUserDetailQuery();
+  const [triggerUserDetail] = useLazyUserDetailQuery();
   const [getAllRecommendedExercise, { isLoading }] =
     useLazyGetAllRecommendedExerciseQuery();
   const [getUserExerciseStatus] = useLazyGetUserExerciseStatusQuery();
@@ -400,7 +400,6 @@ export default function HomeScreen({ navigation }) {
     const now = new Date();
 
     if (type === "from") {
-      // Start of selected day (00:00:00 local time)
       d = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
     } else if (type === "to") {
       if (
@@ -408,15 +407,12 @@ export default function HomeScreen({ navigation }) {
         d.getMonth() === now.getMonth() &&
         d.getDate() === now.getDate()
       ) {
-        // If today → current time - 5 minutes
         d = new Date(now.getTime() - 5 * 60000);
       } else {
-        // If past day → end of day (23:59:59 local time)
         d = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
       }
     }
 
-    // Manual formatting (local time, no UTC shift)
     const pad = (n) => String(n).padStart(2, "0");
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
       d.getDate()
@@ -427,6 +423,7 @@ export default function HomeScreen({ navigation }) {
     dispatch(setLoading(true));
     getUserExerciseStatus({ from, to })
       .then((res) => {
+        console.log("ressssssssssssssssssss", res?.data);
         if (res) {
           setUserExerciseStatus(res?.data);
         }
@@ -454,6 +451,16 @@ export default function HomeScreen({ navigation }) {
 
       console.log("Default payload ::::::::::::::", payload);
       fetchExerciseStatus(payload.from, payload.to);
+
+      // ✅ Fetch user detail again whenever Home gains focus
+      triggerUserDetail()
+        .unwrap()
+        .then((res) => {
+          if (res) {
+            dispatch(setUser(res)); // update redux store
+          }
+        })
+        .catch((err) => console.log("User detail error:", err));
     }, [])
   );
 
@@ -469,6 +476,13 @@ export default function HomeScreen({ navigation }) {
       setCalendarVisible(false);
     }
   };
+
+  const total = userExerciseStatus?.totalAnswers ?? 0;
+  const correct = userExerciseStatus?.correctAnswers ?? 0;
+
+  const accuracyPercent =
+    total > 0 ? ((correct / total) * 100).toFixed(1) : "0";
+  const accuracyProgress = total > 0 ? correct / total : 0;
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -508,14 +522,9 @@ export default function HomeScreen({ navigation }) {
         {userExerciseStatus && (
           <ProgressCard
             title={t("accuracy")}
-            percentage={parseFloat(
-              (
-                (userExerciseStatus.correctAnswers /
-                  userExerciseStatus.totalAnswers) *
-                100
-              ).toFixed(1)
-            )}
-            total={`${userExerciseStatus.correctAnswers}/${userExerciseStatus.totalAnswers}`}
+            percentage={parseFloat(accuracyPercent)} // shows "0%" or "75%"
+            progress={accuracyProgress} // 0 → 1 for the bar
+            total={`${correct}/${total}`}
           />
         )}
       </View>
@@ -560,7 +569,9 @@ export default function HomeScreen({ navigation }) {
                     color: COLORS.secondary,
                   }}
                 >
-                  {t("pending_tasks", { count: 20 })}
+                  {t("pending_tasks", {
+                    count: allRecommendedExercise?.length,
+                  })}
                 </Text>
               </View>
               <View>

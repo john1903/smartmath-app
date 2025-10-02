@@ -9,7 +9,7 @@ import { persistor, store } from "../../store";
 import { setToken, setUser } from "../../store/auth";
 import { setLoading } from "../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
-import { api, formHeader } from "../api";
+import { api } from "../api";
 
 export const AuthApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -19,7 +19,6 @@ export const AuthApi = api.injectEndpoints({
           url: userRegisterEndPoint,
           method: "post",
           body: data,
-          // headers: formHeader,
         };
       },
       transformResponse: (result) => result,
