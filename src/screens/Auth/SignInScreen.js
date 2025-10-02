@@ -27,8 +27,8 @@ export default function SignInScreen({ navigation }) {
   const [loginUser, { isLoading }] = useLoginUserMutation();
 
   const { t } = useTranslation();
-  const [email, setEmail] = useState("hani4u13@gmail.com");
-  const [password, setPassword] = useState("1234567890");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const loginFunc = async () => {
     dispatch(setLoading(true));
