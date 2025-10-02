@@ -179,7 +179,13 @@
   "yourAnswerIsWrong": "Your answer is wrong!",
   "yourAnswerIsCorrect": "Your answer is correct!",
   "true": "True",
-  "false": "False"
+  "false": "False",
+
+  "select_date_range": "Select Date",
+
+  "apply": "Apply",
+  "cancel": "Cancel"
+
 
 
 }

@@ -7,3 +7,22 @@ export function splitMathString(str) {
 export function normalizeLatex(str) {
   return str.replace(/\\\\/g, "\\"); // convert \\frac → \frac
 }
+
+export const getDateRange = (daysBack = 30) => {
+  const now = new Date();
+
+  // subtract 5 minutes for "to"
+  const toDate = new Date(now.getTime() - 5 * 60 * 1000);
+
+  // subtract days for "from"
+  const fromDate = new Date();
+  fromDate.setDate(now.getDate() - daysBack);
+
+  // format into "yyyy-MM-ddTHH:mm:ss" (Spring-friendly ISO, no ms, no Z)
+  const format = (d) => d.toISOString().slice(0, 19);
+
+  return {
+    from: format(fromDate),
+    to: format(toDate),
+  };
+};

@@ -178,5 +178,9 @@
   "yourAnswerIsWrong": "Twoja odpowiedź jest błędna!",
   "yourAnswerIsCorrect": "Twoja odpowiedź jest poprawna!",
   "true": "Prawda",
-  "false": "Fałsz"
+  "false": "Fałsz",
+
+  "select_date_range": "Wybierz datę",
+  "apply": "Zastosuj",
+  "cancel": "Anuluj"
 }
