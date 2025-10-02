@@ -24,7 +24,7 @@ const GetStartedScreen = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.bottomText}>
           <Text style={styles.text}>
-            {t("your")} <Text style={styles.highlight}>{t("shortcut")}</Text>
+            {t("your")} <Text style={styles.highlight}>{t("shortcut")} </Text>
             {t("to")}
             {"\n"}
             {t("math")} <Text style={styles.highlight}>{t("success")}</Text>
