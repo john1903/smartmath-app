@@ -3,6 +3,7 @@
     "name": "SmartMath",
     "slug": "SmartMath",
     "version": "1.0.0",
+   "platforms": ["ios", "android"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,6 +29,17 @@
     "plugins": [
       "expo-font",
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "f61905c9-ee9f-4931-bbae-bb6102a51c66"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f61905c9-ee9f-4931-bbae-bb6102a51c66"
+    }
   }
 }
