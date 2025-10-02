@@ -43,7 +43,8 @@ export default ({ config }) => {
     },
     plugins: [
       'expo-font',
-      'expo-asset'
+      'expo-asset',
+      "expo-localization"
     ],
     extra: {
       API_URL: process.env.API_URL, // read from your .env file
