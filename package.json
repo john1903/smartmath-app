@@ -23,6 +23,7 @@
     "expo-linear-gradient": "~14.1.5",
     "expo-localization": "^16.1.6",
     "expo-status-bar": "~2.2.3",
+    "expo-updates": "~29.0.12",
     "i18next": "^25.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
