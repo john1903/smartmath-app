@@ -78,14 +78,12 @@ const ReportScreen = ({ navigation }) => {
   // ✅ Generate report handler
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
-      showErrorToast("Please select both From and To dates");
+      showErrorToast(t("pleaseSelectBothFromAndToDates"));
       return;
     }
 
     if (appToken < 50) {
-      showErrorToast(
-        "Not enough tokens available. You need at least 50 tokens to generate report."
-      );
+      showErrorToast(t("notEnoughTokens"));
       return;
     }
 
@@ -174,14 +172,14 @@ const ReportScreen = ({ navigation }) => {
         /> */}
 
         <AnimatedDatePicker
-          label="Select Date From"
+          label={t("selectDateFrom")}
           selectedDate={fromDate ? new Date(fromDate) : null}
           maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
           onSelect={(date) => setFromDate(formatDateForApi(date))}
         />
 
         <AnimatedDatePicker
-          label="Select Date To"
+          label={t("selectDateTo")}
           selectedDate={toDate ? new Date(toDate) : null}
           minimumDate={fromDate ? new Date(fromDate) : undefined} // if From selected → restrict To
           onSelect={(date) => setToDate(formatDateForApi(date))}
@@ -190,7 +188,7 @@ const ReportScreen = ({ navigation }) => {
         {appToken > 0 ? (
           <View style={styles.whiteSheetFooter}>
             <CustomButton
-              title="50 Token to generate report"
+              title={t("50TokenToGenerateReport")}
               buttonStyle={styles.generateReportBtn}
               textStyle={styles.generateReportBtnTitle}
               onPress={handleGenerateReport}
@@ -203,7 +201,7 @@ const ReportScreen = ({ navigation }) => {
         ) : (
           <View style={styles.whiteSheetFooter}>
             <CustomButton
-              title="50 Token to generate report"
+              title={t("50TokenToGenerateReport")}
               buttonStyle={[
                 styles.generateReportBtn,
                 { backgroundColor: COLORS.D9Gray, borderWidth: 0 },
@@ -217,7 +215,7 @@ const ReportScreen = ({ navigation }) => {
             />
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={[styles.whiteSheetFooterText, { marginRight: 10 }]}>
-                {appToken} Token available
+                {appToken} {t("tokenAvailable")}
               </Text>
               <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
                 <Text
@@ -226,7 +224,7 @@ const ReportScreen = ({ navigation }) => {
                     { color: COLORS.primary },
                   ]}
                 >
-                  Buy Tokens
+                  {t("buyTokens")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -252,7 +250,7 @@ const ReportScreen = ({ navigation }) => {
             ))
           ) : (
             <Text style={{ textAlign: "center", marginTop: 20 }}>
-              No reports found
+              {t("noReportsFound")}
             </Text>
           )}
         </ScrollView>

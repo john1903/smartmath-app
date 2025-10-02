@@ -11,8 +11,10 @@ import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import CustomButton from "../../../components/CustomButton";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { setLoading } from "../../../store/loading";
+import { useTranslation } from "react-i18next";
 
 const TrueFalse = ({ question, onPress }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [answers, setAnswers] = useState({}); // { "1": true, "2": false }
   const [submitted, setSubmitted] = useState(false);
@@ -47,9 +49,9 @@ const TrueFalse = ({ question, onPress }) => {
     submitExerciseAnswer(payload).then((res) => {
       if (res?.data?.feedbackStatus === "INCORRECT") {
         setIsCorrect(false);
-        showErrorToast("Your answer is wrong!");
+        showErrorToast(t("yourAnswerIsWrong"));
       } else {
-        showSuccessToast("Your answer is correct!");
+        showSuccessToast(t("yourAnswerIsCorrect"));
         setIsCorrect(true);
       }
 
@@ -135,7 +137,7 @@ const TrueFalse = ({ question, onPress }) => {
 
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>
                   <CustomButton
-                    title={"True"}
+                    title={t("true")}
                     buttonStyle={[
                       styles.btnStyle,
                       styles.tfBtn,
@@ -177,7 +179,7 @@ const TrueFalse = ({ question, onPress }) => {
                   />
 
                   <CustomButton
-                    title={"False"}
+                    title={t("false")}
                     buttonStyle={[
                       styles.btnStyle,
                       styles.tfBtn,
@@ -274,7 +276,7 @@ const TrueFalse = ({ question, onPress }) => {
       <View style={styles.buttons}>
         {submitted && isCorrect === false && (
           <CustomButton
-            title="Retry"
+            title={t("retry")}
             buttonStyle={[styles.btnStyle, styles.retryBtn]}
             textStyle={[styles.retryText, { includeFontPadding: false }]}
             onPress={handleRetry}
@@ -282,7 +284,7 @@ const TrueFalse = ({ question, onPress }) => {
         )}
 
         <CustomButton
-          title={submitted ? "Next" : "Submit"}
+          title={submitted ? t("next") : t("submit")}
           buttonStyle={[
             styles.btnStyle,
             styles.submitBtn,

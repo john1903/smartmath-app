@@ -12,8 +12,11 @@ import FONTSIZE from "../../../theme/fontsSize";
 import FONTS from "../../../theme/fonts";
 import COLORS from "../../../theme/colors";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 const Matching = ({ question, onPress }) => {
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
 
   const [selectedFirst, setSelectedFirst] = useState(null); // A or B
@@ -40,10 +43,10 @@ const Matching = ({ question, onPress }) => {
       console.log("resssssssssss", JSON.stringify(res));
       if (res?.data?.feedbackStatus === "INCORRECT") {
         setIsCorrect(false);
-        showErrorToast("Your answer is wrong!");
+        showErrorToast(t("yourAnswerIsWrong"));
       } else {
         setIsCorrect(true);
-        showSuccessToast("Your answer is correct!");
+        showSuccessToast(t("yourAnswerIsCorrect"));
       }
       setSubmitted(true);
     });
@@ -97,47 +100,6 @@ const Matching = ({ question, onPress }) => {
         ))}
       </View>
 
-      {/* Buttons */}
-      {/* <View style={styles.buttons}>
-        {submitted && isCorrect === false && (
-          <CustomButton
-            title={"Retry"}
-            buttonStyle={[styles.btnStyle, styles.retryBtn]}
-            textStyle={styles.retryText}
-            onPress={() => {
-              setSubmitted(false);
-              setIsCorrect(null);
-              setSelectedFirst(null);
-              setSelectedSecond(null);
-              startTimer();
-            }}
-          />
-        )}
-
-        <CustomButton
-          title={submitted ? "Next" : "Submit"}
-          buttonStyle={[
-            styles.btnStyle,
-            styles.submitBtn,
-            (!selectedFirst || !selectedSecond || submitted) &&
-              styles.submitBtnDisabled,
-          ]}
-          textStyle={[
-            styles.submitText,
-            (!selectedFirst || !selectedSecond || submitted) &&
-              styles.submitTextDisabled,
-          ]}
-          disabled={!selectedFirst || !selectedSecond || submitted}
-          onPress={() => {
-            if (submitted) {
-              onPress?.(); // call parent next handler
-            } else {
-              handleSubmit();
-            }
-          }}
-        />
-      </View> */}
-
       <View style={styles.buttons}>
         {submitted && isCorrect === false && (
           <CustomButton
@@ -155,7 +117,7 @@ const Matching = ({ question, onPress }) => {
         )}
 
         <CustomButton
-          title={submitted ? "Next" : "Submit"}
+          title={submitted ? t("next") : t("submit")}
           buttonStyle={[
             styles.btnStyle,
             submitted ? styles.nextBtn : styles.submitBtn,

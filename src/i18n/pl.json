@@ -1,10 +1,10 @@
 {
   "getstarted": "Rozpocznij",
-  "your": "Twój",
+  "your": "Twoja",
   "shortcut": "Skrót",
   "to": "do",
-  "math": "Matematyki",
-  "success": "Sukcesu",
+  "math": "Matematyka",
+  "success": "Sukces",
   "language": "Język",
   "search": "Szukaj",
   "select_language": "Wybierz język",
@@ -13,7 +13,7 @@
   "next": "Dalej",
   "login": "Zaloguj się",
   "login_subtitle": "Zaloguj się, aby kontynuować!",
-  "email_or_phone": "Email lub telefon",
+  "email_or_phone": "Email lub Telefon",
   "phone": "Telefon",
   "password": "Hasło",
   "forgot_password": "Zapomniałeś hasła?",
@@ -24,33 +24,37 @@
   "sign_in_with_email": "Zaloguj się przez Email",
   "sign_in_with_google": "Zaloguj się przez Google",
   "sign_in_with_apple": "Zaloguj się przez Apple",
-  "terms_text": "Korzystając z naszych usług zgadzasz się na nasze",
-  "terms": "Zasady",
+  "terms_text": "Korzystając z naszych usług zgadzasz się na",
+  "terms": "Regulamin",
   "and": "oraz",
-  "privacy": "Politykę prywatności",
-  "register": "Zarejestruj się",
+  "privacy": "Politykę Prywatności",
+  "register": "Rejestracja",
   "register_subtitle": "Zarejestruj się, aby się zalogować!",
   "first_name": "Imię",
   "last_name": "Nazwisko",
   "sign_up": "Zarejestruj się",
   "already_account": "Masz już konto?",
   "hi": "Cześć",
-  "welcome_back": "Witamy z powrotem",
+  "welcome_back": "Witaj ponownie",
   "all_exercises": "Wszystkie ćwiczenia",
-  "mcqs": "Pytania wielokrotnego wyboru",
+  "mcqs": "Testy wielokrotnego wyboru",
   "true_false": "Prawda / Fałsz",
+  "single_choice": "Jednokrotny wybór",
+  "open_ended": "Otwarte pytanie",
   "matching": "Dopasowywanie",
   "accuracy": "Dokładność",
-  "recommended_tasks": "Zalecane zadania",
+  "recommended_tasks": "Polecane zadania",
   "pending_tasks": "{{count}} zadań oczekujących",
   "question_sample": "Jaka jest suma 130+125+191?",
   "solve": "Rozwiąż",
+  "tasks_solve": "Zadania rozwiązane",
+  "correct_answers": "Poprawne odpowiedzi",
 
   "status": {
     "solve": "Rozwiąż",
     "completed": "Ukończone",
     "failed": "Niepowodzenie",
-    "limitexceeded": "Przekroczono limit",
+    "limitexceeded": "Limit przekroczony",
     "pending": "Oczekujące"
   },
 
@@ -64,35 +68,37 @@
     "completed": "Ukończone",
     "notCompleted": "Nieukończone",
     "pending": "Oczekujące",
-    "limitexceeded": "Przekroczony limit",
+    "limitexceeded": "Limit przekroczony",
     "solve": "Rozwiąż",
-    "failed": "Nieudane"
+    "failed": "Niepowodzenie"
   },
 
   "questions": {
     "q1": "Jaka jest suma 130+125+191?",
     "q2": "Jaki jest wynik odejmowania 130-125-191?",
-    "q3": "Jaki jest wynik odejmowania 130-125+191?",
+    "q3": "Jaki jest wynik 130-125+191?",
     "q4": "Jaki jest wynik mnożenia 130*125*191?"
   },
 
   "filter": {
     "title": "Filtruj według:",
     "status": "Status ćwiczenia",
-    "difficulty": "Poziom trudności",
-    "taskType": "Rodzaj zadania"
+    "difficulty": "Trudność",
+    "taskType": "Typ zadania"
   },
 
   "difficulty": {
     "hard": "Trudny",
-    "normal": "Normalny",
+    "medium": "Średni",
     "easy": "Łatwy"
   },
 
   "taskType": {
-    "mcq": "Test wielokrotnego wyboru",
-    "trueFalse": "Prawda/Fałsz",
-    "matching": "Dopasowywanie"
+    "multiple_choice": "Testy wielokrotnego wyboru",
+    "true_false": "Prawda/Fałsz",
+    "matching": "Dopasowywanie par",
+    "open_ended": "Otwarte pytanie",
+    "single_choice": "Jednokrotny wybór"
   },
 
   "actions": {
@@ -114,14 +120,63 @@
   "token": "Token",
   "affiliateLink": "Link partnerski i statystyki",
   "notification": "Powiadomienie",
-  "appNotification": "Powiadomienie w aplikacji",
+  "appNotification": "Powiadomienia aplikacji",
   "more": "Więcej",
   "country": "Kraj",
   "theme": "Motyw",
   "dark/light": "Ciemny/Jasny",
   "logout": "Wyloguj się",
-  "used": "Wykorzystano",
+  "used": "Użyto",
   "total": "Razem",
-  "buyToken": "Kup token",
-  "save": "Zapisz"
+  "buyToken": "Kup Token",
+  "save": "Zapisz",
+
+  "report": "Raport",
+
+  "retry": "Spróbuj ponownie",
+  "currentPassword": "Obecne hasło",
+  "newPassword": "Nowe hasło",
+  "rePassword": "Powtórz hasło",
+
+  "currentPasswordRequired": "Wymagane jest obecne hasło",
+  "passwordLengthError": "Hasło musi mieć co najmniej 8 znaków",
+  "passwordMismatch": "Hasła nie są zgodne",
+
+  "waitForaWhile": "Poczekaj chwilę...",
+
+  "selectDateFrom": "Wybierz datę od",
+  "selectDateTo": "Wybierz datę do",
+
+  "50TokenToGenerateReport": "50 Tokenów, aby wygenerować raport",
+  "buyTokens": "Kup Tokeny",
+  "noReportsFound": "Nie znaleziono raportów",
+  "pleaseSelectBothFromAndToDates": "Wybierz zarówno datę od, jak i do.",
+  "notEnoughTokens": "Za mało tokenów. Potrzebujesz co najmniej 50 tokenów, aby wygenerować raport.",
+
+  "pleaseUploadOneFile": "Prześlij co najmniej jeden plik z odpowiedzią przed wysłaniem.",
+  "notEnoughTokenstoSubmit": "Za mało tokenów. Potrzebujesz co najmniej 50 tokenów, aby wysłać.",
+
+  "answerSubmittedSuccessfully": "Odpowiedź wysłana pomyślnie!",
+  "somethingWentWrong": "Coś poszło nie tak!",
+  "question1": "Pytanie 1:",
+  "selectFileToUpload": "Wybierz plik do przesłania",
+  "sypportedFormate": "Obsługiwane formaty: Jpeg, PNG i PDF",
+  "maxSize": "(maks. 10 MB)",
+  "selectFile": "Wybierz plik",
+  "solutionOfQuestion": "Rozwiązanie pytania",
+  "50TokenToSubmit": "50 Tokenów, aby wysłać",
+
+  "tokenAvailable": "Token dostępny",
+  "goToHome": "Przejdź do Strony Głównej",
+  "yourAnswerhasBeenSubmitted": "Twoja odpowiedź została przesłana",
+  "feedbackInFewMins": "Otrzymasz opinię w ciągu kilku minut!",
+  "backToTasks": "Wróć do Zadań",
+  "taskDetail": "Szczegóły zadania",
+
+  "submit": "Wyślij",
+
+  "yourAnswerIsWrong": "Twoja odpowiedź jest błędna!",
+  "yourAnswerIsCorrect": "Twoja odpowiedź jest poprawna!",
+  "true": "Prawda",
+  "false": "Fałsz"
 }

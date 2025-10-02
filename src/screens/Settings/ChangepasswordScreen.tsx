@@ -27,25 +27,22 @@ const ChangepasswordScreen = ({ navigation }: any) => {
     let newErrors: { [key: string]: string } = {};
 
     if (!currentPassword) {
-      newErrors.currentPassword =
-        t("currentPasswordRequired") || "Current password is required";
+      newErrors.currentPassword = t("currentPasswordRequired");
       valid = false;
     }
 
     if (newPassword.length < 8) {
-      newErrors.newPassword =
-        t("passwordLengthError") || "Password must be at least 8 characters";
+      newErrors.newPassword = t("passwordLengthError");
       valid = false;
     }
 
     if (rePassword.length < 8) {
-      newErrors.rePassword =
-        t("passwordLengthError") || "Password must be at least 8 characters";
+      newErrors.rePassword = t("passwordLengthError");
       valid = false;
     }
 
     if (newPassword !== rePassword) {
-      newErrors.rePassword = t("passwordMismatch") || "Passwords do not match";
+      newErrors.rePassword = t("passwordMismatch");
       valid = false;
     }
 
@@ -80,7 +77,7 @@ const ChangepasswordScreen = ({ navigation }: any) => {
       {/* Header */}
       <View style={styles.header}>
         <CustomHeader
-          title="Change Password"
+          title={t("changePassword")}
           onPress={() => navigation.goBack()}
         />
       </View>

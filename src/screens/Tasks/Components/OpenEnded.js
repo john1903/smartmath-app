@@ -132,16 +132,12 @@ const OpenEnded = ({ question, onPress, navigation }) => {
 
   const handleSubmit = async () => {
     if (files.length === 0) {
-      showErrorToast(
-        "Please upload at least one answer file before submitting."
-      );
+      showErrorToast(t("pleaseUploadOneFile"));
       return;
     }
 
     if (appToken < 50) {
-      showErrorToast(
-        "Not enough tokens available. You need at least 50 tokens to submit."
-      );
+      showErrorToast(t("notEnoughTokenstoSubmit"));
       return;
     }
 
@@ -166,7 +162,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       dispatch(setLoading(false));
 
       console.log("Submit response :::::::::::::", response);
-      showSuccessToast("Answer submitted successfully!");
+      showSuccessToast(t("answerSubmittedSuccessfully"));
 
       if (response?.feedbackStatus === "PENDING") {
         setWaitingPopup(true);
@@ -175,7 +171,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
     } catch (err) {
       dispatch(setLoading(false));
       console.log("Submit failed :::::::::::::", err);
-      showErrorToast("Something went wrong!");
+      showErrorToast(t("somethingWentWrong"));
     }
   };
 
@@ -215,7 +211,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
         }}
       >
         {/* Question */}
-        <Text style={styles.question}>Question 1:</Text>
+        <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
@@ -236,14 +232,12 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       <View>
         <View style={styles.container}>
           <CloudIcon />
-          <Text style={styles.uploadText}>Select File to Upload</Text>
-          <Text style={styles.supported}>
-            Supported Format: Jpeg, PNG & PDF
-          </Text>
-          <Text style={styles.supported}>(10mb max)</Text>
+          <Text style={styles.uploadText}>{t("selectFileToUpload")}</Text>
+          <Text style={styles.supported}>{t("sypportedFormate")}</Text>
+          <Text style={styles.supported}>{t("maxSize")}</Text>
 
           <CustomButton
-            title="Select File"
+            title={t("selectFile")}
             buttonStyle={[styles.btnStyle, styles.submitBtn]}
             textStyle={[
               styles.submitText,
@@ -275,7 +269,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
               </View>
               <View style={{ flex: 1, marginLeft: 8 }}>
                 <Text style={styles.fileName}>
-                  Solution Of Question
+                  {t("solutionOfQuestion")}
                   {/* {item.name} */}
                 </Text>
                 <Text style={styles.fileInfo}>
@@ -300,7 +294,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
           {appToken > 0 ? (
             <View style={styles.whiteSheetFooter}>
               <CustomButton
-                title="50 Token to Submit"
+                title={t("50TokenToSubmit")}
                 buttonStyle={[
                   styles.generateReportBtn,
                   files.length === 0 && {
@@ -325,7 +319,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
           ) : (
             <View style={styles.whiteSheetFooter}>
               <CustomButton
-                title="50 Token to Submit"
+                title={t("50TokenToSubmit")}
                 buttonStyle={[
                   styles.generateReportBtn,
                   {
@@ -357,7 +351,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
                     },
                   ]}
                 >
-                  {appToken} Token available
+                  {appToken} {t("tokenAvailable")}
                 </Text>
                 <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
                   <Text
@@ -369,87 +363,13 @@ const OpenEnded = ({ question, onPress, navigation }) => {
                       },
                     ]}
                   >
-                    Buy Tokens
+                    {t("buyTokens")}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
         </View>
-
-        {/* <View
-          style={{
-            marginHorizontal: 30,
-          }}
-        >
-          <View style={styles.whiteSheetFooter}>
-            <CustomButton
-              title="50 Token to Submit"
-              buttonStyle={[
-                styles.generateReportBtn,
-                (files.length === 0 || appToken < 50) && {
-                  backgroundColor: COLORS.D9Gray,
-                  borderWidth: 0,
-                },
-              ]}
-              textStyle={[
-                styles.generateReportBtnTitle,
-                (files.length === 0 || appToken < 50) && {
-                  color: COLORS.black,
-                },
-              ]}
-              onPress={() => {
-                if (files.length === 0) {
-                  showErrorToast(
-                    "Please upload at least one answer file before submitting."
-                  );
-                  return;
-                }
-                if (appToken < 50) {
-                  showErrorToast(
-                    "Not enough tokens available. You need at least 50 tokens to submit."
-                  );
-                  return;
-                }
-                handleSubmit(); // ✅ only submit when conditions are valid
-              }}
-              svg={
-                files.length === 0 || appToken < 50 ? (
-                  <TokenBlackIcon width={22} height={22} />
-                ) : (
-                  <TokenWhiteIcon width={22} height={22} />
-                )
-              }
-            />
-          </View>
-
-          {appToken < 50 && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 10,
-              }}
-            >
-              <Text style={[styles.whiteSheetFooterText, { marginRight: 10 }]}>
-                {appToken} Token available
-              </Text>
-              <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
-                <Text
-                  style={[
-                    styles.whiteSheetFooterText,
-                    {
-                      color: COLORS.primary,
-                      fontFamily: FONTS.UrbanistSemiBold,
-                    },
-                  ]}
-                >
-                  Buy Tokens
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View> */}
       </View>
 
       <Modal
@@ -464,15 +384,13 @@ const OpenEnded = ({ question, onPress, navigation }) => {
             <ActivityIndicator size="large" color={COLORS.white} />
 
             {/* Message */}
-            <Text style={styles.title}>Your answer has been submitted</Text>
-            <Text style={styles.subtitle}>
-              You'll get feedback in few minutes!
-            </Text>
+            <Text style={styles.title}>{t("yourAnswerhasBeenSubmitted")}</Text>
+            <Text style={styles.subtitle}>{t("feedbackInFewMins")}</Text>
 
             {/* Buttons */}
             <View style={styles.buttonRow}>
               <CustomButton
-                title="Go to Home"
+                title={t("goToHome")}
                 buttonStyle={[styles.button]}
                 textStyle={[styles.buttonText]}
                 onPress={() => {
@@ -487,7 +405,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
               />
 
               <CustomButton
-                title="Back to Tasks"
+                title={t("backToTasks")}
                 buttonStyle={[
                   styles.button,
                   {

@@ -39,6 +39,8 @@
   "all_exercises": "All Exercises",
   "mcqs": "MCQs",
   "true_false": "True / False",
+  "single_choice": "Single Choice",
+  "open_ended": "Open Ended",
   "matching": "Matching",
   "accuracy": "Accuracy",
   "recommended_tasks": "Recommended Tasks",
@@ -141,6 +143,43 @@
   "passwordLengthError": "Password must be at least 8 characters",
   "passwordMismatch": "Passwords do not match",
 
-  "waitForaWhile": "Wait for a while..."
+  "waitForaWhile": "Wait for a while...",
+
+  "selectDateFrom": "Select Date From",
+  "selectDateTo": "Select Date To",
+
+  "50TokenToGenerateReport": "50 Token to generate report",
+  "buyTokens": "Buy Tokens",
+  "noReportsFound": "No reports found",
+  "pleaseSelectBothFromAndToDates": "Please select both From and To dates.",
+  "notEnoughTokens": "Not enough tokens available. You need at least 50 tokens to generate report.",
+
+  "pleaseUploadOneFile": "Please upload at least one answer file before submitting.",
+  "notEnoughTokenstoSubmit": "Not enough tokens available. You need at least 50 tokens to submit.",
+
+  "answerSubmittedSuccessfully": "Answer submitted successfully!",
+  "somethingWentWrong": "Something went wrong!",
+  "question1": "Question 1:",
+  "selectFileToUpload": "Select File to Upload",
+  "sypportedFormate": "Supported Format: Jpeg, PNG & PDF",
+  "maxSize": "(10mb max)",
+  "selectFile": "Select File",
+  "solutionOfQuestion": "Solution Of Question",
+  "50TokenToSubmit":"50 Token to Submit",
+
+  "tokenAvailable": "Token available",
+  "goToHome": "Go to Home",
+  "yourAnswerhasBeenSubmitted": "Your answer has been submitted",
+  "feedbackInFewMins": "You'll get feedback in few minutes!",
+  "backToTasks": "Back to Tasks",
+  "taskDetail": "Task Detail",
+
+  "submit": "Submit",
+
+  "yourAnswerIsWrong": "Your answer is wrong!",
+  "yourAnswerIsCorrect": "Your answer is correct!",
+  "true": "True",
+  "false": "False"
+
 
 }

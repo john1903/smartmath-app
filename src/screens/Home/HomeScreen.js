@@ -41,11 +41,11 @@ export default function HomeScreen({ navigation }) {
 
   const categories = [
     "all_exercises",
-    "Mcqs",
-    "True/False",
-    "Matching",
-    "Open Ended",
-    "Single Choice",
+    "mcqs",
+    "true_false",
+    "matching",
+    "open_ended",
+    "single_choice",
   ];
   // const categories = ["all_exercises", "mcqs", "true_false", "matching"];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
@@ -108,15 +108,15 @@ export default function HomeScreen({ navigation }) {
     activeCategory === "all_exercises"
       ? allRecommendedExercise
       : allRecommendedExercise.filter((q) => {
-          if (activeCategory === "Mcqs")
+          if (activeCategory === "mcqs")
             return q.exerciseType === "MULTIPLE_CHOICE";
-          if (activeCategory === "Open Ended")
+          if (activeCategory === "open_ended")
             return q.exerciseType === "OPEN_ENDED";
-          if (activeCategory === "Single Choice")
+          if (activeCategory === "single_choice")
             return q.exerciseType === "SINGLE_CHOICE";
-          if (activeCategory === "True/False")
+          if (activeCategory === "true_false")
             return q.exerciseType === "TRUE_FALSE";
-          if (activeCategory === "Matching")
+          if (activeCategory === "matching")
             return q.exerciseType === "MATCHING";
           return true;
         });

@@ -57,9 +57,9 @@ const MultipleChoice = ({ question, onPress }) => {
         submitExerciseAnswer(payload).then((res) => {
           if (res?.data?.feedbackStatus === "INCORRECT") {
             setIsCorrect(false);
-            showErrorToast("Your answer is wrong!");
+            showErrorToast(t("yourAnswerIsWrong"));
           } else {
-            showSuccessToast("Your answer is correct!");
+            showSuccessToast(t("yourAnswerIsCorrect"));
             setIsCorrect(true);
           }
         });
@@ -89,7 +89,7 @@ const MultipleChoice = ({ question, onPress }) => {
       >
         {/* Question */}
 
-        <Text style={styles.question}>Question 1:</Text>
+        <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
@@ -142,7 +142,7 @@ const MultipleChoice = ({ question, onPress }) => {
           )}
 
           <CustomButton
-            title={submitted ? "Next" : "Submit"}
+            title={submitted ? t("next") : t("submit")}
             buttonStyle={[
               styles.btnStyle,
               styles.submitBtn,

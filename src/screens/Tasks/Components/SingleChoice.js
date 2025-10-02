@@ -59,9 +59,9 @@ const SingleChoice = ({ question, onPress }) => {
           );
           if (res?.data?.feedbackStatus === "INCORRECT") {
             setIsCorrect(false);
-            showErrorToast("Your answer is wrong!");
+            showErrorToast(t("yourAnswerIsWrong"));
           } else {
-            showSuccessToast("Your answer is correct!");
+            showSuccessToast(t("yourAnswerIsCorrect"));
             setIsCorrect(true);
           }
         });
@@ -143,7 +143,7 @@ const SingleChoice = ({ question, onPress }) => {
           )}
 
           <CustomButton
-            title={submitted ? "Next" : "Submit"}
+            title={submitted ? t("next") : t("submit")}
             buttonStyle={[
               styles.btnStyle,
               styles.submitBtn,
