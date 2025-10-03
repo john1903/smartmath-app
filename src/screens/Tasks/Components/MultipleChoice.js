@@ -43,7 +43,7 @@ const MultipleChoice = ({ question, onPress }) => {
       if (selectedOptions.length > 0) {
         dispatch(setLoading(true));
         const duration = stopTimer(); // e.g. "PT2M15S"
-        console.log("Duration:", duration);
+        // console.log("Duration:", duration);
 
         let payload = {
           id: question?.id,

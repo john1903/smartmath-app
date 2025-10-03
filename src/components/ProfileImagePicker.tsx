@@ -154,7 +154,7 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
         console.log("FormData sending...");
 
         const res = await updateFile({ data: formData });
-        console.log("res:::::::::::::: ", res);
+        // console.log("res:::::::::::::: ", res);
       } catch (err) {
         console.log("Upload failed", err);
       } finally {

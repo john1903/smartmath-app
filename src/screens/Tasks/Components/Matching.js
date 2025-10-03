@@ -40,7 +40,7 @@ const Matching = ({ question, onPress }) => {
 
     dispatch(setLoading(true));
     submitExerciseAnswer(payload).then((res) => {
-      console.log("resssssssssss", JSON.stringify(res));
+      // console.log("resssssssssss", JSON.stringify(res));
       if (res?.data?.feedbackStatus === "INCORRECT") {
         setIsCorrect(false);
         showErrorToast(t("yourAnswerIsWrong"));

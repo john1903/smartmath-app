@@ -122,6 +122,8 @@ setupListeners(store.dispatch);
 
 export { store, persistor };
 
+export type RootState = ReturnType<typeof store.getState>;
+
 export const useAppSelector: TypedUseSelectorHook<
   ReturnType<typeof store.getState>
 > = useSelector;

@@ -41,7 +41,7 @@ const SingleChoice = ({ question, onPress }) => {
       if (selectedOption) {
         dispatch(setLoading(true));
         const duration = stopTimer(); // e.g. "PT2M15S"
-        console.log("Duration:", duration);
+        // console.log("Duration:", duration);
 
         let payload = {
           id: question?.id,

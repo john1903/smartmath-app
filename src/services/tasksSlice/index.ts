@@ -1,6 +1,7 @@
 import {
   ExerciseEndPoint,
   SingleExerciseEndPoint,
+  userExerciseStatusEndPoint,
 } from "../../config/endPoints";
 
 import { setLoading } from "../../store/loading";
@@ -81,6 +82,32 @@ export const TasksApi = api.injectEndpoints({
         }
       },
     }),
+
+    getUserExerciseStatus: builder.query({
+      query: (payload) => {
+        console.log("calenday from and to payload ", payload);
+        return {
+          url: `${userExerciseStatusEndPoint}?from=${payload?.from}&to=${payload?.to}`,
+          method: "get",
+        };
+      },
+      async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
+        try {
+          dispatch(setLoading(true));
+          const res = await queryFulfilled;
+
+          //   console.log(" exercise res :::::::>>>>  ", JSON.stringify(res?.data));
+
+          dispatch(setLoading(false));
+        } catch (error) {
+          // console.log(
+          //   "recommended exercise res error :::::::>>>>  ",
+          //   JSON.stringify(error)
+          // );
+          dispatch(setLoading(false));
+        }
+      },
+    }),
   }),
   overrideExisting: true,
 });
@@ -89,4 +116,5 @@ export const {
   useLazyGetAllExerciseQuery,
   useLazyGetExerciseQuery,
   useSubmitExerciseAnswerMutation,
+  useLazyGetUserExerciseStatusQuery,
 } = TasksApi;
