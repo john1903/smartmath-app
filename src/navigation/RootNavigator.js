@@ -1,5 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { View, StyleSheet, Platform, StatusBar as RNStatusBar } from "react-native";
 import AuthStack from "./AuthStack";
 import MainTabs from "./MainTabs";
 import { useSelector } from "react-redux";
@@ -13,6 +14,7 @@ export default function RootNavigator() {
 
   return (
     <>
+     <View style={styles.statusBarBg} />
       <StatusBar style="light" backgroundColor={COLORS.primary} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!token ? (
@@ -24,3 +26,18 @@ export default function RootNavigator() {
     </>
   );
 }
+const STATUSBAR_HEIGHT = Platform.OS === "ios" ? 60 : RNStatusBar.currentHeight || 0;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  statusBarBg: {
+    height: STATUSBAR_HEIGHT,
+    backgroundColor: COLORS.primary, // your desired BG color
+  },
+  content: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+});
