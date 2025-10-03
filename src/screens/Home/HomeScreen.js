@@ -428,7 +428,11 @@ export default function HomeScreen({ navigation }) {
           setUserExerciseStatus(res?.data);
         }
       })
-      .finally(() => dispatch(setLoading(false)));
+      .finally(() => {
+        dispatch(setLoading(false))
+      setCalendarVisible(false);
+        
+      });
   };
 
   useFocusEffect(
@@ -473,7 +477,7 @@ export default function HomeScreen({ navigation }) {
       // console.log("itself select from to payload::::::::::::::", payload);
 
       fetchExerciseStatus(from, to);
-      setCalendarVisible(false);
+   
     }
   };
 
