@@ -528,7 +528,7 @@ export default function HomeScreen({ navigation }) {
           }}
         >
           <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
-            {t("hi")}! {user?.firstName} asdasdas dsadasdasd sadasdas dasd
+            {t("hi")}! {user?.firstName}
           </Text>
           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
