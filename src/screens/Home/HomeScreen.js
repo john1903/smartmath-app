@@ -435,37 +435,48 @@ export default function HomeScreen({ navigation }) {
       });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const now = new Date();
-      const from = new Date(now);
-      from.setDate(from.getDate() - 30);
-      from.setHours(0, 0, 0, 0);
+useFocusEffect(
+  useCallback(() => {
+    const now = new Date();
 
-      const to = new Date(now.getTime() - 5 * 60000);
+    // ✅ FROM = 30 days ago at 00:00:00 UTC
+    const from = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() - 30,
+      0, 0, 0, 0
+    ));
 
-      setFromDate(from);
-      setToDate(to);
+    // ✅ TO = current UTC time minus 5 minutes
+    const to = new Date(now.getTime() - 5 * 60 * 1000);
 
-      const payload = {
-        from: formatDateTime(from, "from"),
-        to: formatDateTime(to, "to"),
-      };
+    // Store raw dates (optional, if you need them elsewhere)
+    setFromDate(from);
+    setToDate(to);
 
-      // console.log("Default payload ::::::::::::::", payload);
-      fetchExerciseStatus(payload.from, payload.to);
+    // Format for API payload (no ms, no Z)
+    const formatForApi = (date) => date.toISOString().slice(0, 19);
 
-      // ✅ Fetch user detail again whenever Home gains focus
-      triggerUserDetail()
-        .unwrap()
-        .then((res) => {
-          if (res) {
-            dispatch(setUser(res)); // update redux store
-          }
-        })
-        .catch((err) => console.log("User detail error:", err));
-    }, [])
-  );
+    const payload = {
+      from: formatForApi(from),
+      to: formatForApi(to),
+    };
+
+    // console.log("Default payload ::::::::::::::", payload);
+    fetchExerciseStatus(payload.from, payload.to);
+
+    // ✅ Fetch user detail again whenever Home gains focus
+    triggerUserDetail()
+      .unwrap()
+      .then((res) => {
+        if (res) {
+          dispatch(setUser(res)); // update redux store
+        }
+      })
+      .catch((err) => console.log("User detail error:", err));
+  }, [dispatch, triggerUserDetail])
+);
+
 
   const handleApplyFilter = () => {
     if (fromDate && toDate) {
@@ -632,6 +643,7 @@ export default function HomeScreen({ navigation }) {
               label="From Date"
               selectedDate={fromDate}
               onSelect={(date) => setFromDate(date)}
+              maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
             />
 
             <AnimatedDatePicker
@@ -639,6 +651,7 @@ export default function HomeScreen({ navigation }) {
               selectedDate={toDate}
               minimumDate={fromDate || undefined}
               onSelect={(date) => setToDate(date)}
+              maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
             />
 
             <TouchableOpacity
