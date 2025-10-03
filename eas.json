@@ -8,20 +8,29 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": { "buildType": "apk" },
-      "ios": { "simulator": true }
+      "ios": { "simulator": true },
+      "env" : {
+        "API_URL": "https://smartmath-api.pl/api/v1"
+      }
     },
      "preview": {
       "distribution": "internal",
       "channel": "preview",
         "android": {
         "buildType": "apk"
+      },
+      "env" : {
+        "API_URL": "https://smartmath-api.pl/api/v1"
       }
     },
     "production": {
       "developmentClient": false,
       "distribution": "store",
       "android": { "buildType": "app-bundle" },
-      "ios": { "simulator": false }
+      "ios": { "simulator": false },
+      "env" : {
+        "API_URL": "https://smartmath-api.pl/api/v1"
+      }
     }
   },
   "submit": {
