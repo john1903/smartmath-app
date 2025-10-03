@@ -429,9 +429,8 @@ export default function HomeScreen({ navigation }) {
         }
       })
       .finally(() => {
-        dispatch(setLoading(false))
-      setCalendarVisible(false);
-        
+        dispatch(setLoading(false));
+        setCalendarVisible(false);
       });
   };
 
@@ -487,7 +486,6 @@ useFocusEffect(
       // console.log("itself select from to payload::::::::::::::", payload);
 
       fetchExerciseStatus(from, to);
-   
     }
   };
 
@@ -593,7 +591,7 @@ useFocusEffect(
               </View>
             </View>
 
-            {allRecommendedExercise &&
+            {allRecommendedExercise && allRecommendedExercise.length > 0 ? (
               allRecommendedExercise.map((q, index) => (
                 <QuestionCard
                   key={q.id}
@@ -607,7 +605,18 @@ useFocusEffect(
                     })
                   }
                 />
-              ))}
+              ))
+            ) : (
+              <Text
+                style={{
+                  textAlign: "center",
+                  marginTop: 20,
+                  color: COLORS.secondary,
+                }}
+              >
+                {t("noRecommendedTaskFound")}
+              </Text>
+            )}
           </View>
         </ScrollView>
       </View>

@@ -249,7 +249,13 @@ const ReportScreen = ({ navigation }) => {
               />
             ))
           ) : (
-            <Text style={{ textAlign: "center", marginTop: 20 }}>
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 20,
+                color: COLORS.secondary,
+              }}
+            >
               {t("noReportsFound")}
             </Text>
           )}
