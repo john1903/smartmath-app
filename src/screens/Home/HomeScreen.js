@@ -434,48 +434,52 @@ export default function HomeScreen({ navigation }) {
       });
   };
 
-useFocusEffect(
-  useCallback(() => {
-    const now = new Date();
+  useFocusEffect(
+    useCallback(() => {
+      const now = new Date();
 
-    // ✅ FROM = 30 days ago at 00:00:00 UTC
-    const from = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - 30,
-      0, 0, 0, 0
-    ));
+      // ✅ FROM = 30 days ago at 00:00:00 UTC
+      const from = new Date(
+        Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate() - 30,
+          0,
+          0,
+          0,
+          0
+        )
+      );
 
-    // ✅ TO = current UTC time minus 5 minutes
-    const to = new Date(now.getTime() - 5 * 60 * 1000);
+      // ✅ TO = current UTC time minus 5 minutes
+      const to = new Date(now.getTime() - 5 * 60 * 1000);
 
-    // Store raw dates (optional, if you need them elsewhere)
-    setFromDate(from);
-    setToDate(to);
+      // Store raw dates (optional, if you need them elsewhere)
+      setFromDate(from);
+      setToDate(to);
 
-    // Format for API payload (no ms, no Z)
-    const formatForApi = (date) => date.toISOString().slice(0, 19);
+      // Format for API payload (no ms, no Z)
+      const formatForApi = (date) => date.toISOString().slice(0, 19);
 
-    const payload = {
-      from: formatForApi(from),
-      to: formatForApi(to),
-    };
+      const payload = {
+        from: formatForApi(from),
+        to: formatForApi(to),
+      };
 
-    // console.log("Default payload ::::::::::::::", payload);
-    fetchExerciseStatus(payload.from, payload.to);
+      // console.log("Default payload ::::::::::::::", payload);
+      fetchExerciseStatus(payload.from, payload.to);
 
-    // ✅ Fetch user detail again whenever Home gains focus
-    triggerUserDetail()
-      .unwrap()
-      .then((res) => {
-        if (res) {
-          dispatch(setUser(res)); // update redux store
-        }
-      })
-      .catch((err) => console.log("User detail error:", err));
-  }, [dispatch, triggerUserDetail])
-);
-
+      // ✅ Fetch user detail again whenever Home gains focus
+      triggerUserDetail()
+        .unwrap()
+        .then((res) => {
+          if (res) {
+            dispatch(setUser(res)); // update redux store
+          }
+        })
+        .catch((err) => console.log("User detail error:", err));
+    }, [dispatch, triggerUserDetail])
+  );
 
   const handleApplyFilter = () => {
     if (fromDate && toDate) {
@@ -500,13 +504,24 @@ useFocusEffect(
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>
-            {t("hi")}! {user?.firstName}
+        <View
+          style={{
+            width: "70%",
+          }}
+        >
+          <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
+            {t("hi")}! {user?.firstName} asdasdas dsadasdasd sadasdas dasd
           </Text>
           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
-        <View style={styles.rightHeader}>
+        <View
+          style={[
+            styles.rightHeader,
+            {
+              width: "30%",
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => console.log("notification button")}
             style={styles.notifyCircle}
