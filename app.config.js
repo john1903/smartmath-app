@@ -5,6 +5,7 @@ export default {
     name: "SmartMath",
     slug: "SmartMath",
     version: "1.0.0",
+    platforms: ["ios", "android"],
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "automatic",
