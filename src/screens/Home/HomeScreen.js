@@ -438,7 +438,6 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const now = new Date();
-
       const from = new Date(now);
       from.setDate(from.getDate() - 30);
       from.setHours(0, 0, 0, 0);
