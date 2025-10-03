@@ -172,21 +172,38 @@ import type { RootState } from "../store"; // 👈 use your RootState type
 // Base query
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
-  prepareHeaders: (headers, { getState }) => {
-    const state = getState() as RootState;
-    const { token } = state.auth;
-    const lang = state?.lang?.language || "en";
+  // prepareHeaders: (headers, { getState }) => {
+  //   const state = getState() as RootState;
+  //   const { token } = state.auth;
+  //   const lang = state?.lang?.language || "en";
 
-    console.log("token ::::::::::::::::", token);
+  //   console.log("token ::::::::::::::::", token);
+
+  //   headers.set("Accept-Language", lang);
+  //   headers.set("Accept", "application/json");
+  //   headers.set("Content-Type", "application/json");
+
+  //   if (token) {
+  //     headers.set("Authorization", `Bearer ${token}`);
+  //   }
+
+  //   return headers;
+  // },
+
+  prepareHeaders: (headers, { getState }: any) => {
+    const { auth } = getState() as any;
+
+    const lang = getState()?.lang?.language; // 👈 from Redux
 
     headers.set("Accept-Language", lang);
-    headers.set("Accept", "application/json");
-    headers.set("Content-Type", "application/json");
 
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+    if (auth?.token) {
+      headers.set("Authorization", `Bearer ${auth?.token}`);
     }
-
+    headers.set("Accept", "application/json");
+    if (!headers?.map) {
+      headers.set("Content-Type", "application/json");
+    }
     return headers;
   },
 });
@@ -246,6 +263,10 @@ const baseQueryWithInterceptor: BaseQueryFn<
   }
 
   return result;
+};
+
+export const formHeader = {
+  "Content-Type": "multipart/form-data",
 };
 
 export const api = createApi({
