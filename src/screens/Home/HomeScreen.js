@@ -470,7 +470,7 @@ export default function HomeScreen({ navigation }) {
       const to = formatDateTime(toDate, "to");
 
       const payload = { from, to };
-      // console.log("payload::::::::::::::", payload);
+      // console.log("itself select from to payload::::::::::::::", payload);
 
       fetchExerciseStatus(from, to);
       setCalendarVisible(false);

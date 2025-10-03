@@ -85,7 +85,7 @@ export const TasksApi = api.injectEndpoints({
 
     getUserExerciseStatus: builder.query({
       query: (payload) => {
-        // console.log("payload ", payload);
+        console.log("calenday from and to payload ", payload);
         return {
           url: `${userExerciseStatusEndPoint}?from=${payload?.from}&to=${payload?.to}`,
           method: "get",
