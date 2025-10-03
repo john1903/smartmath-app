@@ -73,10 +73,10 @@ const TaskDetail = ({ navigation, route }) => {
       if (res) {
         setQuestion(res?.data?.exercise);
       }
-      console.log(
-        "single question response ::::::::::: ",
-        JSON.stringify(res?.data?.exercise)
-      );
+      // console.log(
+      //   "single question response ::::::::::: ",
+      //   JSON.stringify(res?.data?.exercise)
+      // );
     });
   }, []);
 

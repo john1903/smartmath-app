@@ -37,7 +37,7 @@ import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import { useLazyGetPromptsQuery } from "../../../services/prompts";
 
 const OpenEnded = ({ question, onPress, navigation }) => {
-  console.log(" question ssssssssssssssssss", JSON.stringify(question));
+  // console.log(" question ssssssssssssssssss", JSON.stringify(question));
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -182,7 +182,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       try {
         const res = await getPrompts().unwrap();
 
-        console.log("res::::::::: ", res);
+        // console.log("res::::::::: ", res);
         if (res?.usage !== undefined && res?.limit !== undefined) {
           const available = res.limit - res.usage;
           setAppToken(available >= 0 ? available : 0); // set state

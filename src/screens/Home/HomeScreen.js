@@ -423,7 +423,7 @@ export default function HomeScreen({ navigation }) {
     dispatch(setLoading(true));
     getUserExerciseStatus({ from, to })
       .then((res) => {
-        console.log("ressssssssssssssssssss", res?.data);
+        // console.log("ressssssssssssssssssss", res?.data);
         if (res) {
           setUserExerciseStatus(res?.data);
         }
@@ -449,7 +449,7 @@ export default function HomeScreen({ navigation }) {
         to: formatDateTime(to, "to"),
       };
 
-      console.log("Default payload ::::::::::::::", payload);
+      // console.log("Default payload ::::::::::::::", payload);
       fetchExerciseStatus(payload.from, payload.to);
 
       // ✅ Fetch user detail again whenever Home gains focus
@@ -470,7 +470,7 @@ export default function HomeScreen({ navigation }) {
       const to = formatDateTime(toDate, "to");
 
       const payload = { from, to };
-      console.log("payload::::::::::::::", payload);
+      // console.log("payload::::::::::::::", payload);
 
       fetchExerciseStatus(from, to);
       setCalendarVisible(false);

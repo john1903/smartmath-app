@@ -55,11 +55,11 @@ export const HomeApi = api.injectEndpoints({
           dispatch(setLoading(true));
           const res = await queryFulfilled;
 
-          console.log("user res :::::::>>>>  ", JSON.stringify(res?.data));
+          // console.log("user res :::::::>>>>  ", JSON.stringify(res?.data));
           dispatch(setUser(res?.data));
           dispatch(setLoading(false));
         } catch (error) {
-          console.log("user res :::::::>>>>  ", JSON.stringify(error));
+          // console.log("user res :::::::>>>>  ", JSON.stringify(error));
 
           dispatch(setLoading(false));
         }

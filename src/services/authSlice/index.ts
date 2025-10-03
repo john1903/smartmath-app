@@ -6,7 +6,7 @@ import {
 } from "../../config/endPoints";
 import { persistor, store } from "../../store";
 
-import { setToken, setUser } from "../../store/auth";
+import { setRefreshToken, setToken, setUser } from "../../store/auth";
 import { setLoading } from "../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { api } from "../api";
@@ -68,6 +68,7 @@ export const AuthApi = api.injectEndpoints({
 
           dispatch(setLoading(false));
           dispatch(setToken(data?.token));
+          dispatch(setRefreshToken(data?.refreshToken));
           showSuccessToast("Login successful!");
         } catch (e: any) {
           console.log(

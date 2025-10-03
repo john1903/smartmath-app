@@ -19,7 +19,7 @@ export const PromptsApi = api.injectEndpoints({
           dispatch(setLoading(true));
           const res = await queryFulfilled;
 
-          console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));
+          // console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));
           dispatch(setLoading(false));
         } catch (error) {
           dispatch(setLoading(false));
