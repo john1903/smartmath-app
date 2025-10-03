@@ -395,34 +395,46 @@ export default function HomeScreen({ navigation }) {
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   // ✅ Utility to return datetime in correct format
-const formatDateTime = (date, type) => {
-  let d = new Date(date);
-  const now = new Date();
+  const formatDateTime = (date, type) => {
+    let d = new Date(date);
+    const now = new Date();
 
-  if (type === "from") {
-    // ✅ 00:00:00 UTC of that day
-    d = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0));
-  } else if (type === "to") {
-    if (
-      d.getUTCFullYear() === now.getUTCFullYear() &&
-      d.getUTCMonth() === now.getUTCMonth() &&
-      d.getUTCDate() === now.getUTCDate()
-    ) {
-      // ✅ If today → current UTC time minus 5 min
-      d = new Date(Date.now() - 5 * 60000);
-    } else {
-      // ✅ 23:59:59 UTC of that day
-      d = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 23, 59, 59));
+    if (type === "from") {
+      // ✅ 00:00:00 UTC of that day
+      d = new Date(
+        Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0)
+      );
+    } else if (type === "to") {
+      if (
+        d.getUTCFullYear() === now.getUTCFullYear() &&
+        d.getUTCMonth() === now.getUTCMonth() &&
+        d.getUTCDate() === now.getUTCDate()
+      ) {
+        // ✅ If today → current UTC time minus 5 min
+        d = new Date(Date.now() - 5 * 60000);
+      } else {
+        // ✅ 23:59:59 UTC of that day
+        d = new Date(
+          Date.UTC(
+            d.getUTCFullYear(),
+            d.getUTCMonth(),
+            d.getUTCDate(),
+            23,
+            59,
+            59
+          )
+        );
+      }
     }
-  }
 
-  const pad = (n) => String(n).padStart(2, "0");
+    const pad = (n) => String(n).padStart(2, "0");
 
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
-    d.getUTCDate()
-  )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
-};
-
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
+      d.getUTCDate()
+    )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
+      d.getUTCSeconds()
+    )}`;
+  };
 
   const fetchExerciseStatus = (from, to) => {
     dispatch(setLoading(true));
@@ -512,6 +524,7 @@ const formatDateTime = (date, type) => {
         <View
           style={{
             width: "70%",
+            paddingRight: 10,
           }}
         >
           <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
