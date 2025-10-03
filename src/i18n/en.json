@@ -184,7 +184,9 @@
   "select_date_range": "Select Date",
 
   "apply": "Apply",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+
+  "noRecommendedTaskFound": "No recommended tasks found"
 
 
 

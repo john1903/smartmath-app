@@ -182,5 +182,6 @@
 
   "select_date_range": "Wybierz datę",
   "apply": "Zastosuj",
-  "cancel": "Anuluj"
+  "cancel": "Anuluj",
+  "noRecommendedTaskFound": "Nie znaleziono polecanych zadań"
 }
