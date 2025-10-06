@@ -11,7 +11,7 @@ import CountryScreen from "../screens/Settings/CountryScreen";
 
 const Stack = createNativeStackNavigator();
 
-export default function SettingsStack() {
+export default function SettingsStack({ navigation }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen

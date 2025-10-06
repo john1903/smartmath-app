@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import React, { useState } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -74,84 +81,96 @@ const ChangepasswordScreen = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <CustomHeader
-          title={t("changePassword")}
-          onPress={() => navigation.goBack()}
-        />
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{ flex: 1 }}>
+          {/* Header */}
+          <View style={styles.header}>
+            <CustomHeader
+              title={t("changePassword")}
+              onPress={() => navigation.goBack()}
+            />
+          </View>
 
-      <View style={styles.container}>
-        <View>
-          <AnimatedInput
-            label={t("currentPassword")}
-            value={currentPassword}
-            onChangeText={(text) => {
-              setCurrentPassword(text);
-              if (errors.currentPassword)
-                setErrors({ ...errors, currentPassword: "" });
-            }}
-            secureTextEntry
-          />
-          {errors.currentPassword ? (
-            <Text style={styles.errorText}>{errors.currentPassword}</Text>
-          ) : null}
+          <View style={styles.container}>
+            <View>
+              <View style={styles.inputWrapper}>
+                <AnimatedInput
+                  label={t("currentPassword")}
+                  value={currentPassword}
+                  onChangeText={(text) => {
+                    setCurrentPassword(text);
+                    if (errors.currentPassword)
+                      setErrors({ ...errors, currentPassword: "" });
+                  }}
+                  secureTextEntry
+                />
+                {errors.currentPassword ? (
+                  <Text style={styles.errorText}>{errors.currentPassword}</Text>
+                ) : null}
+              </View>
 
-          <AnimatedInput
-            label={t("newPassword")}
-            value={newPassword}
-            onChangeText={(text) => {
-              setNewPassword(text);
-              if (errors.newPassword) setErrors({ ...errors, newPassword: "" });
-            }}
-            secureTextEntry
-          />
-          {errors.newPassword ? (
-            <Text style={styles.errorText}>{errors.newPassword}</Text>
-          ) : null}
+              <View style={styles.inputWrapper}>
+                <AnimatedInput
+                  label={t("newPassword")}
+                  value={newPassword}
+                  onChangeText={(text) => {
+                    setNewPassword(text);
+                    if (errors.newPassword)
+                      setErrors({ ...errors, newPassword: "" });
+                  }}
+                  secureTextEntry
+                />
+                {errors.newPassword ? (
+                  <Text style={styles.errorText}>{errors.newPassword}</Text>
+                ) : null}
+              </View>
 
-          <AnimatedInput
-            label={t("rePassword")}
-            value={rePassword}
-            onChangeText={(text) => {
-              setRePassword(text);
-              if (errors.rePassword) setErrors({ ...errors, rePassword: "" });
-            }}
-            secureTextEntry
-          />
-          {errors.rePassword ? (
-            <Text style={styles.errorText}>{errors.rePassword}</Text>
-          ) : null}
+              <View style={styles.inputWrapper}>
+                <AnimatedInput
+                  label={t("rePassword")}
+                  value={rePassword}
+                  onChangeText={(text) => {
+                    setRePassword(text);
+                    if (errors.rePassword)
+                      setErrors({ ...errors, rePassword: "" });
+                  }}
+                  secureTextEntry
+                />
+                {errors.rePassword ? (
+                  <Text style={styles.errorText}>{errors.rePassword}</Text>
+                ) : null}
+              </View>
+            </View>
+
+            <View style={styles.bottomButton}>
+              <CustomButton
+                title={t("save")}
+                buttonStyle={{
+                  width: "50%",
+                  backgroundColor:
+                    currentPassword || newPassword || rePassword
+                      ? COLORS.primary
+                      : COLORS.D9Gray,
+                  borderColor:
+                    currentPassword || newPassword || rePassword
+                      ? COLORS.primary
+                      : COLORS.D9Gray,
+                }}
+                textStyle={{
+                  color:
+                    currentPassword || newPassword || rePassword
+                      ? COLORS.white
+                      : COLORS.black,
+                  fontSize: FONTSIZE.size20,
+                  fontFamily: FONTS.UrbanistSemiBold,
+                  includeFontPadding: false,
+                }}
+                onPress={handleSave}
+              />
+            </View>
+          </View>
         </View>
-
-        <View style={styles.bottomButton}>
-          <CustomButton
-            title={t("save")}
-            buttonStyle={{
-              width: "50%",
-              backgroundColor:
-                currentPassword || newPassword || rePassword
-                  ? COLORS.primary
-                  : COLORS.D9Gray,
-              borderColor:
-                currentPassword || newPassword || rePassword
-                  ? COLORS.primary
-                  : COLORS.D9Gray,
-            }}
-            textStyle={{
-              color:
-                currentPassword || newPassword || rePassword
-                  ? COLORS.white
-                  : COLORS.black,
-              fontSize: FONTSIZE.size20,
-              fontFamily: FONTS.UrbanistSemiBold,
-              includeFontPadding: false,
-            }}
-            onPress={handleSave}
-          />
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -180,10 +199,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   errorText: {
+    fontSize: FONTSIZE.size12,
     color: COLORS.danger,
-    fontSize: FONTSIZE.size15,
-    fontFamily: FONTS.UrbanistLight,
+    fontFamily: FONTS.UrbanistRegular,
     // marginTop: 5,
     marginLeft: 25,
+    position: "absolute",
+    bottom: -6,
+  },
+  inputWrapper: {
+    // marginBottom: 30, // leaves space for error text
+    position: "relative",
+    // flex: 1,
   },
 });

@@ -236,7 +236,12 @@ const ReportScreen = ({ navigation }) => {
         <ScrollView
           contentContainerStyle={styles.container}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.primary]}
+              tintColor={COLORS.primary}
+            />
           }
         >
           {allReports && allReports.length > 0 ? (

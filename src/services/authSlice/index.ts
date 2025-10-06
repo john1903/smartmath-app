@@ -11,6 +11,8 @@ import { setLoading } from "../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { api } from "../api";
 
+import i18n from "i18next";
+
 export const AuthApi = api.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
@@ -25,24 +27,29 @@ export const AuthApi = api.injectEndpoints({
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
+
           const { navigation } = args;
           console.log(
             "register user response :::::::::::: ",
             JSON.stringify(data)
           );
 
-          showSuccessToast("User created successfully!");
+          showSuccessToast(i18n.t("requestMessages.user_created_successfully"));
+
           navigation.navigate("SignIn");
-          // navigation.navigate("AuthNavigator", {
-          //   screen: "LoginScreen",
-          // });
 
           dispatch(setLoading(false));
         } catch (e) {
           console.log("register user error :::::::::::: ", JSON.stringify(e));
           dispatch(setLoading(false));
-          showErrorToast("Something went wrong");
-          //   errorMessage(e?.error?.data?.message || e?.error?.error);
+
+          if (e?.meta?.response?.status === 400) {
+            showErrorToast(i18n.t("requestMessages.invalid_request_data"));
+          } else if (e?.meta?.response?.status === 409) {
+            showErrorToast(i18n.t("requestMessages.email_already_use"));
+          } else {
+            showErrorToast(i18n.t("requestMessages.something_went_wrong"));
+          }
         }
       },
     }),
@@ -69,7 +76,9 @@ export const AuthApi = api.injectEndpoints({
           dispatch(setLoading(false));
           dispatch(setToken(data?.token));
           dispatch(setRefreshToken(data?.refreshToken));
-          showSuccessToast("Login successful!");
+          showSuccessToast(
+            i18n.t("requestMessages.user_authenticated_successfully")
+          );
         } catch (e: any) {
           console.log(
             "login user response error :::::::::::: ",
@@ -77,7 +86,12 @@ export const AuthApi = api.injectEndpoints({
           );
           dispatch(setLoading(false));
 
-          showErrorToast(e?.error?.data?.message || e?.error?.error);
+          if (e?.meta?.response?.status === 401) {
+            showErrorToast(i18n.t("requestMessages.invalid_credentials"));
+          } else {
+            showErrorToast(e?.error?.data?.message || e?.error?.error);
+          }
+
           // showErrorToast("Something went wrong");
         }
       },
@@ -202,62 +216,11 @@ export const AuthApi = api.injectEndpoints({
           );
           dispatch(setLoading(false));
 
-          //   errorMessage(e?.error?.data?.message || e?.error?.error);
-          showErrorToast("Something went wrong");
+          showErrorToast(e?.error?.data?.message || e?.error?.error);
+          // showErrorToast("Something went wrong");
         }
       },
     }),
-    // forgotPassword: builder.mutation({
-    //   query: ({body}: any) => {
-    //     return {
-    //       url: 'auth/forgot-password',
-    //       method: 'post',
-    //       body,
-    //     };
-    //   },
-    //   transformResponse: result => result,
-    //   invalidatesTags: ['readUser'],
-    //   async onQueryStarted(args, {dispatch, queryFulfilled, getState}) {
-    //     try {
-    //       const {data} = await queryFulfilled;
-
-    //       const {navigation, body, type} = args;
-    //       dispatch(setLoading(false));
-    //       successMessage(data?.message || 'OTP has been sent.');
-    //       if (type == 'forgotPassword') {
-    //         navigation.navigate('OtpVerifyScreen', {email: body?.email});
-    //       }
-    //     } catch (e) {
-    //       dispatch(setLoading(false));
-
-    //       errorMessage(e?.error?.data?.message || e?.error?.error);
-    //     }
-    //   },
-    // }),
-    // logoutUser: builder.mutation({
-    //   query: body => {
-    //     console.log(body);
-    //     return {
-    //       url: 'auth/logout',
-    //       method: 'post',
-    //       body,
-    //     };
-    //   },
-    //   transformResponse: result => result,
-
-    //   async onQueryStarted(args, {dispatch, queryFulfilled, getState}) {
-    //     try {
-    //       const {data} = await queryFulfilled;
-    //       await persistor.purge();
-    //       dispatch(setLogout());
-    //       dispatch(setCleanWorksite());
-    //       dispatch(setLoading(false));
-    //     } catch (e) {
-    //       dispatch(setLoading(false));
-    //       errorMessage(e?.error?.data?.message || e?.error?.error);
-    //     }
-    //   },
-    // }),
   }),
   overrideExisting: true,
 });

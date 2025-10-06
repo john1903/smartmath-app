@@ -84,10 +84,6 @@ export const HomeApi = api.injectEndpoints({
           dispatch(setAllRecommendedExercise(res?.data));
           dispatch(setLoading(false));
         } catch (error) {
-          // console.log(
-          //   "recommended exercise res error :::::::>>>>  ",
-          //   JSON.stringify(error)
-          // );
           dispatch(setLoading(false));
         }
       },

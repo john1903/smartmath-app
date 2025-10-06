@@ -95,10 +95,13 @@ import { useTranslation } from "react-i18next";
 
 const STATUS_STYLES = {
   solve: { backgroundColor: COLORS.primary },
-  completed: { backgroundColor: "#3CCB3C" },
-  failed: { backgroundColor: "#FD1207" },
-  limitexceeded: { backgroundColor: "#BCAAA4" },
-  pending: { backgroundColor: "#FFD54F" },
+  CORRECT: { backgroundColor: "#3CCB3C" },
+  PENDING: { backgroundColor: "#FFD54F" },
+  INCORRECT: { backgroundColor: "#FD1207" },
+  FAILED: { backgroundColor: "#FD1207" },
+  NOT_ENOUGH_TOKENS: { backgroundColor: "#BCAAA4" },
+  COMPLETED: { backgroundColor: "#3CCB3C" },
+  INCOMPLETE: { backgroundColor: "#FD1207" },
 };
 
 export default function StatusBadge({ status }) {

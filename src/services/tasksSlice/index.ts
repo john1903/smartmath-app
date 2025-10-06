@@ -12,30 +12,33 @@ import { api, formHeader } from "../api";
 export const TasksApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllExercise: builder.query({
-      query: (payload) => {
-        return {
-          url: ExerciseEndPoint,
-          method: "get",
-        };
-      },
+      query: ({ page = 0, size = 10 }) => ({
+        url: `${ExerciseEndPoint}?page=${page}&size=${size}`,
+        method: "get",
+      }),
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
-          dispatch(setLoading(true));
+          // dispatch(setLoading(true));
           const res = await queryFulfilled;
+          const newData = res?.data?.content || [];
 
-          //   console.log(" exercise res :::::::>>>>  ", JSON.stringify(res?.data));
-          dispatch(setAllExercise(res?.data?.content));
+          // ✅ Get existing data
+          const currentData = getState()?.tasks?.allExercise || [];
+
+          // ✅ Append if page > 0 else replace
+          if (arg.page > 0) {
+            dispatch(setAllExercise([...currentData, ...newData]));
+          } else {
+            dispatch(setAllExercise(newData));
+          }
+
           dispatch(setLoading(false));
         } catch (error) {
-          // console.log(
-          //   "recommended exercise res error :::::::>>>>  ",
-          //   JSON.stringify(error)
-          // );
+          console.log("getAllExercise error", error);
           dispatch(setLoading(false));
         }
       },
     }),
-
     getExercise: builder.query({
       query: (payload) => {
         return {
@@ -47,6 +50,8 @@ export const TasksApi = api.injectEndpoints({
         try {
           dispatch(setLoading(true));
           const res = await queryFulfilled;
+
+          console.log("exercise question :::::: ", JSON.stringify(res?.data));
 
           dispatch(setLoading(false));
         } catch (error) {
@@ -85,7 +90,7 @@ export const TasksApi = api.injectEndpoints({
 
     getUserExerciseStatus: builder.query({
       query: (payload) => {
-        console.log("calenday from and to payload ", payload);
+        // console.log("calenday from and to payload ", payload);
         return {
           url: `${userExerciseStatusEndPoint}?from=${payload?.from}&to=${payload?.to}`,
           method: "get",

@@ -66,7 +66,7 @@ export default function MainTabs() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,
-        lazy: false,
+        detachInactiveScreens: true,
         tabBarIcon: ({ focused }) => {
           if (route.name === "HomeTab") {
             return focused ? (
@@ -101,22 +101,22 @@ export default function MainTabs() {
       <Tab.Screen
         name="HomeTab"
         component={HomeStack}
-        options={{ title: t("tabs.home"), unmountOnBlur: false }}
+        options={{ title: t("tabs.home"), unmountOnBlur: true }}
       />
       <Tab.Screen
         name="TasksTab"
         component={TasksStack}
-        options={{ title: t("tabs.tasks"), unmountOnBlur: false }}
+        options={{ title: t("tabs.tasks"), unmountOnBlur: true }}
       />
       <Tab.Screen
         name="ReportsTab"
         component={ReportsStack}
-        options={{ title: t("tabs.reports"), unmountOnBlur: false }}
+        options={{ title: t("tabs.reports"), unmountOnBlur: true }}
       />
       <Tab.Screen
         name="SettingsTab"
         component={SettingsStack}
-        options={{ title: t("tabs.setting"), unmountOnBlur: false }}
+        options={{ title: t("tabs.setting"), unmountOnBlur: true }}
       />
     </Tab.Navigator>
   );

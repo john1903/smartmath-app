@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: COLORS.white,
-    fontSize: FONTSIZE.size10,
+    fontSize: FONTSIZE.size11,
     fontFamily: FONTS.UrbanistMedium,
   },
   value: {

@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
@@ -199,11 +200,45 @@ const OpenEnded = ({ question, onPress, navigation }) => {
   return (
     <View>
       {/* Question Image */}
-      {question?.image ? (
-        <Image source={{ uri: question?.image }} style={styles.image} />
-      ) : (
-        <View style={{ height: 30 }} />
-      )}
+      {Array.isArray(question?.illustrations) &&
+        question.illustrations.length > 0 &&
+        (question.illustrations.length === 1 ? (
+          // Single image: use screen width minus container margins
+          <Image
+            source={{ uri: question.illustrations[0].uri }}
+            style={{
+              width: windowWidth - 60, // 30 margin each side
+              height: 200,
+              borderRadius: 10,
+              marginBottom: 16,
+              alignSelf: "center",
+            }}
+            resizeMode="cover"
+          />
+        ) : (
+          // Multiple images: horizontal scroll
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.carouselContainer}
+            contentContainerStyle={{ paddingHorizontal: 10 }}
+          >
+            {question.illustrations.map((item, index) => (
+              <Image
+                key={index}
+                source={{ uri: item.uri }}
+                style={[
+                  styles.carouselImage,
+                  {
+                    marginRight:
+                      index === question.illustrations.length - 1 ? 0 : 10,
+                  },
+                ]}
+                resizeMode="cover"
+              />
+            ))}
+          </ScrollView>
+        ))}
 
       <View
         style={{
@@ -433,11 +468,13 @@ const OpenEnded = ({ question, onPress, navigation }) => {
 export default OpenEnded;
 
 const styles = StyleSheet.create({
-  image: {
-    width: "100%",
+  carouselContainer: {
+    marginBottom: 16,
+  },
+  carouselImage: {
+    width: 280,
     height: 200,
     borderRadius: 10,
-    marginBottom: 16,
   },
   question: {
     fontSize: FONTSIZE.size20,

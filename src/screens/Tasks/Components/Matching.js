@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
@@ -58,17 +58,65 @@ const Matching = ({ question, onPress }) => {
 
   return (
     <View>
-      {/* Description */}
-      <View style={{ marginHorizontal: 20 }}>
-        {splitMathString(question.description).map((part, idx) =>
-          part.startsWith("$") ? (
-            <MathRenderer key={idx} formula={part} style={{ marginRight: 4 }} />
-          ) : (
-            <Text key={idx} style={styles.description}>
-              {part}
-            </Text>
-          )
-        )}
+      {/* Illustrations */}
+      {Array.isArray(question?.illustrations) &&
+        question.illustrations.length > 0 &&
+        (question.illustrations.length === 1 ? (
+          // Single image: use screen width minus container margins
+          <Image
+            source={{ uri: question.illustrations[0].uri }}
+            style={{
+              width: windowWidth - 60, // 30 margin each side
+              height: 200,
+              borderRadius: 10,
+              marginBottom: 16,
+              alignSelf: "center",
+            }}
+            resizeMode="cover"
+          />
+        ) : (
+          // Multiple images: horizontal scroll
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.carouselContainer}
+            contentContainerStyle={{ paddingHorizontal: 10 }}
+          >
+            {question.illustrations.map((item, index) => (
+              <Image
+                key={index}
+                source={{ uri: item.uri }}
+                style={[
+                  styles.carouselImage,
+                  {
+                    marginRight:
+                      index === question.illustrations.length - 1 ? 0 : 10,
+                  },
+                ]}
+                resizeMode="cover"
+              />
+            ))}
+          </ScrollView>
+        ))}
+
+      {/* Question Text */}
+      <View style={{ marginHorizontal: 30 }}>
+        <Text style={styles.question}>{t("question1")}</Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {splitMathString(question.description).map((part, idx) =>
+            part.startsWith("$") ? (
+              <MathRenderer
+                key={idx}
+                formula={part}
+                style={{ marginRight: 4 }}
+              />
+            ) : (
+              <Text key={idx} style={styles.question}>
+                {part}
+              </Text>
+            )
+          )}
+        </View>
       </View>
 
       <View style={{ marginHorizontal: 20 }}>
@@ -149,6 +197,20 @@ const Matching = ({ question, onPress }) => {
 export default Matching;
 
 const styles = StyleSheet.create({
+  carouselContainer: {
+    marginBottom: 16,
+  },
+  carouselImage: {
+    width: 280,
+    height: 200,
+    borderRadius: 10,
+  },
+  question: {
+    fontSize: FONTSIZE.size20,
+    fontFamily: FONTS.UrbanistSemiBold,
+    marginBottom: 16,
+  },
+
   gap: {
     marginVertical: 20,
   },

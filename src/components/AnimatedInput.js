@@ -36,7 +36,7 @@ const AnimatedInput = ({
     left: 25,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [32, -4],
+      outputRange: [31, -2],
     }),
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 25,
-    height: 50,
+    height: 45,
     borderWidth: 1,
     borderColor: COLORS.secondary,
     borderRadius: 25,

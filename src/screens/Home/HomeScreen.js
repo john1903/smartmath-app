@@ -1,338 +1,3 @@
-// import React, { useCallback, useEffect, useState } from "react";
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   ScrollView,
-//   Image,
-//   TouchableOpacity,
-// } from "react-native";
-// import { Ionicons } from "@expo/vector-icons";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { useTranslation } from "react-i18next"; // ✅ Import i18n hook
-
-// import CustomBackground from "../../components/CustomBackground";
-// import COLORS from "../../theme/colors";
-// import FONTSIZE from "../../theme/fontsSize";
-// import FONTS from "../../theme/fonts";
-// import StatCard from "../../components/StatCard";
-// import ProgressCard from "../../components/ProgressCard";
-// import CategoryButton from "../../components/CategoryButton";
-// import QuestionCard from "../../components/QuestionCard";
-// import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
-// import {
-//   useLazyGetAllRecommendedExerciseQuery,
-//   useLazyUserDetailQuery,
-// } from "../../services/homeSlice";
-// import { useDispatch, useSelector } from "react-redux";
-// import { setLoading } from "../../store/loading";
-// import { useFocusEffect } from "@react-navigation/native";
-// import { useLazyGetUserExerciseStatusQuery } from "../../services/tasksSlice";
-// import { getDateRange } from "../../utils/helpers";
-
-// export default function HomeScreen({ navigation }) {
-//   const [userDetail] = useLazyUserDetailQuery();
-//   const [getAllRecommendedExercise, { isLoading }] =
-//     useLazyGetAllRecommendedExerciseQuery();
-
-//   const [getUserExerciseStatus] = useLazyGetUserExerciseStatusQuery();
-
-//   const dispatch = useDispatch();
-//   const { t } = useTranslation(); // ✅ Initialize translations
-
-//   const { user } = useSelector((state) => state?.auth);
-//   const { allRecommendedExercise } = useSelector((state) => state?.home);
-
-//   const categories = [
-//     "all_exercises",
-//     "mcqs",
-//     "true_false",
-//     "matching",
-//     "open_ended",
-//     "single_choice",
-//   ];
-//   // const categories = ["all_exercises", "mcqs", "true_false", "matching"];
-//   const [activeCategory, setActiveCategory] = useState(categories[0]);
-
-//   const [userExerciseStatus, setUserExerciseStatus] = useState();
-//   const [from, setFrom] = useState("");
-//   const [to, setTo] = useState("");
-
-//   const questions = [
-//     {
-//       id: 1,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "MCQs",
-//     },
-//     {
-//       id: 2,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "Matching Pair",
-//     },
-//     {
-//       id: 3,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "True/False",
-//     },
-//     {
-//       id: 4,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "MCQs",
-//     },
-//     {
-//       id: 5,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "Matching Pair",
-//     },
-//     {
-//       id: 6,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "True/False",
-//     },
-//     {
-//       id: 7,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "MCQs",
-//     },
-//     {
-//       id: 8,
-//       text: t("question_sample"),
-//       status: "solve",
-//       taskType: "Matching Pair",
-//     },
-//   ];
-//   const handleCategoryPress = (category) => {
-//     setActiveCategory(category);
-//   };
-
-//   const filteredQuestions =
-//     activeCategory === "all_exercises"
-//       ? allRecommendedExercise
-//       : allRecommendedExercise.filter((q) => {
-//           if (activeCategory === "mcqs")
-//             return q.exerciseType === "MULTIPLE_CHOICE";
-//           if (activeCategory === "open_ended")
-//             return q.exerciseType === "OPEN_ENDED";
-//           if (activeCategory === "single_choice")
-//             return q.exerciseType === "SINGLE_CHOICE";
-//           if (activeCategory === "true_false")
-//             return q.exerciseType === "TRUE_FALSE";
-//           if (activeCategory === "matching")
-//             return q.exerciseType === "MATCHING";
-//           return true;
-//         });
-//   useFocusEffect(
-//     useCallback(() => {
-//       dispatch(setLoading(true));
-//       userDetail();
-//       getAllRecommendedExercise();
-
-//       // generate date range (30 days back → now)
-//       const { from, to } = getDateRange(30);
-//       setFrom(from);
-//       setTo(to);
-
-//       getUserExerciseStatus({ from, to })
-//         .then((res) => {
-//           if (res) {
-//             setUserExerciseStatus(res?.data);
-//             console.log("User Exercise Status:", JSON.stringify(res.data));
-//           }
-//         })
-//         .finally(() => dispatch(setLoading(false)));
-//     }, [dispatch, userDetail, getAllRecommendedExercise, getUserExerciseStatus])
-//   );
-
-//   return (
-//     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-//       {/* Header */}
-//       <View style={styles.header}>
-//         <View>
-//           <Text style={styles.greeting}>
-//             {t("hi")}! {user?.firstName}
-//           </Text>
-//           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
-//         </View>
-//         <View style={styles.rightHeader}>
-//           <TouchableOpacity
-//             onPress={() => console.log("notification button")}
-//             style={styles.notifyCircle}
-//           >
-//             <Ionicons name="notifications-outline" size={22} color="black" />
-//           </TouchableOpacity>
-//           <Image
-//             source={
-//               user?.avatar
-//                 ? { uri: user?.avatar?.uri }
-//                 : require("../../../assets/images/avatar.png") // ✅ local placeholder
-//             }
-//             style={styles.avatar}
-//           />
-//         </View>
-//       </View>
-
-//       {/* Cards */}
-//       <View style={styles.cardsRow}>
-//         <StatCard value={userExerciseStatus?.totalAnswers} />
-
-//         <ProgressCard
-//           title={t("accuracy")}
-//           percentage={(
-//             (userExerciseStatus.correctAnswers /
-//               userExerciseStatus.totalAnswers) *
-//             100
-//           ).toFixed(1)}
-//           total={`${userExerciseStatus.correctAnswers}/${userExerciseStatus.totalAnswers}`}
-//         />
-//       </View>
-
-//       {/* Categories */}
-//       <View>
-//         <ScrollView
-//           horizontal
-//           showsHorizontalScrollIndicator={false}
-//           contentContainerStyle={styles.categories}
-//         >
-//           {categories.map((cat) => (
-//             <CategoryButton
-//               key={cat}
-//               label={t(`${cat}`)}
-//               active={cat === activeCategory}
-//               onPress={() => handleCategoryPress(cat)}
-//             />
-//           ))}
-//         </ScrollView>
-//       </View>
-
-//       {/* Recommended Tasks */}
-//       <View style={styles.recommendedContainer}>
-//         <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-//           <View style={styles.recommendedInnerContainer}>
-//             <View style={styles.recommendedHeader}>
-//               <View>
-//                 <Text
-//                   style={{
-//                     fontSize: FONTSIZE.size20,
-//                     fontFamily: FONTS.UrbanistMedium,
-//                     color: COLORS.black,
-//                   }}
-//                 >
-//                   {t("recommended_tasks")}
-//                 </Text>
-//                 <Text
-//                   style={{
-//                     fontSize: FONTSIZE.size12,
-//                     fontFamily: FONTS.UrbanistMedium,
-//                     color: COLORS.secondary,
-//                   }}
-//                 >
-//                   {t("pending_tasks", { count: 20 })}
-//                 </Text>
-//               </View>
-//               <View>
-//                 <FilterIcon />
-//               </View>
-//             </View>
-
-//             {allRecommendedExercise &&
-//               filteredQuestions.map((q, index) => (
-//                 <QuestionCard
-//                   key={q.id}
-//                   number={index + 1}
-//                   question={q.title}
-//                   status={q.status}
-//                   onPress={() =>
-//                     // navigation.navigate("TaskDetail", { exerciseId: q?.id })
-//                     navigation.navigate("TasksTab", {
-//                       screen: "TaskDetail",
-//                       params: { exerciseId: q?.id }, // optional params
-//                     })
-//                   }
-//                 />
-//               ))}
-//           </View>
-//         </ScrollView>
-//       </View>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   safeContent: { flex: 1, backgroundColor: COLORS.background },
-//   header: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     marginHorizontal: 20,
-//     marginVertical: 20,
-//   },
-//   greeting: {
-//     color: COLORS.black,
-//     fontSize: FONTSIZE.size32,
-//     fontFamily: FONTS.UrbanistMedium,
-//   },
-//   subGreeting: {
-//     color: COLORS.black,
-//     fontSize: FONTSIZE.size14,
-//     fontFamily: FONTS.UrbanistRegular,
-//   },
-//   rightHeader: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   notifyCircle: {
-//     width: 45,
-//     height: 45,
-//     borderRadius: 50,
-//     borderWidth: 1,
-//     borderColor: COLORS.secondary,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   avatar: {
-//     width: 45,
-//     height: 45,
-//     borderRadius: 100,
-//     marginLeft: 12,
-//   },
-//   cardsRow: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     marginHorizontal: 20,
-//     gap: 10,
-//   },
-//   categories: {
-//     flexDirection: "row",
-//     paddingLeft: 20,
-//     marginVertical: 20,
-//     gap: 5,
-//     paddingRight: 30,
-//   },
-//   recommendedContainer: {
-//     flex: 1,
-//     backgroundColor: COLORS.white,
-//     marginHorizontal: 20,
-//     borderTopLeftRadius: 20,
-//     borderTopRightRadius: 20,
-//   },
-//   recommendedInnerContainer: {
-//     padding: 20,
-//   },
-//   recommendedHeader: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     marginBottom: 20,
-//   },
-// });
-
 import React, { useCallback, useState } from "react";
 import {
   View,
@@ -342,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -383,6 +49,7 @@ export default function HomeScreen({ navigation }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [calendarVisible, setCalendarVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const categories = [
     "all_exercises",
@@ -456,17 +123,18 @@ export default function HomeScreen({ navigation }) {
       const now = new Date();
 
       // ✅ FROM = 30 days ago at 00:00:00 UTC
-      const from = new Date(
-        Date.UTC(
-          now.getUTCFullYear(),
-          now.getUTCMonth(),
-          now.getUTCDate() - 30,
-          0,
-          0,
-          0,
-          0
-        )
-      );
+      // const from = new Date(
+      //   Date.UTC(
+      //     now.getUTCFullYear(),
+      //     now.getUTCMonth(),
+      //     now.getUTCDate() - 90,
+      //     0,
+      //     0,
+      //     0,
+      //     0
+      //   )
+      // );
+      const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
 
       // ✅ TO = current UTC time minus 5 minutes
       const to = new Date(now.getTime() - 5 * 60 * 1000);
@@ -495,8 +163,27 @@ export default function HomeScreen({ navigation }) {
           }
         })
         .catch((err) => console.log("User detail error:", err));
-    }, [dispatch, triggerUserDetail])
+
+      getAllRecommendedExercise();
+    }, [dispatch, triggerUserDetail, getAllRecommendedExercise])
   );
+
+  const resetDefaultDates = () => {
+    const now = new Date();
+
+    // ✅ FROM = 1 Jan 2025 at 00:00:00 UTC
+    const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
+
+    // ✅ TO = current UTC time minus 5 minutes
+    const to = new Date(now.getTime() - 5 * 60 * 1000);
+
+    setFromDate(from);
+    setToDate(to);
+
+    // Optional: re-fetch with default range
+    const formatForApi = (date) => date.toISOString().slice(0, 19);
+    fetchExerciseStatus(formatForApi(from), formatForApi(to));
+  };
 
   const handleApplyFilter = () => {
     if (fromDate && toDate) {
@@ -517,13 +204,41 @@ export default function HomeScreen({ navigation }) {
     total > 0 ? ((correct / total) * 100).toFixed(1) : "0";
   const accuracyProgress = total > 0 ? correct / total : 0;
 
+  const filteredQuestions =
+    activeCategory === "all_exercises"
+      ? allRecommendedExercise
+      : allRecommendedExercise.filter((q) => {
+          if (activeCategory === "mcqs")
+            return q.exerciseType === "MULTIPLE_CHOICE";
+          if (activeCategory === "open_ended")
+            return q.exerciseType === "OPEN_ENDED";
+          if (activeCategory === "single_choice")
+            return q.exerciseType === "SINGLE_CHOICE";
+          if (activeCategory === "true_false")
+            return q.exerciseType === "TRUE_FALSE";
+          if (activeCategory === "matching")
+            return q.exerciseType === "MATCHING";
+          return true;
+        });
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await getAllRecommendedExercise().unwrap();
+    } catch (err) {
+      console.log("❌ Refresh error", err);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [getAllRecommendedExercise]);
+
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
         <View
           style={{
-            width: "70%",
+            width: "85%",
             paddingRight: 10,
           }}
         >
@@ -536,24 +251,32 @@ export default function HomeScreen({ navigation }) {
           style={[
             styles.rightHeader,
             {
-              width: "30%",
+              width: "15%",
             },
           ]}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => console.log("notification button")}
             style={styles.notifyCircle}
           >
             <Ionicons name="notifications-outline" size={22} color="black" />
-          </TouchableOpacity>
-          <Image
-            source={
-              user?.avatar
-                ? { uri: user?.avatar?.uri }
-                : require("../../../assets/images/avatar.png")
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("SettingsTab", {
+                screen: "EditProfile",
+              })
             }
-            style={styles.avatar}
-          />
+          >
+            <Image
+              source={
+                user?.avatar
+                  ? { uri: user?.avatar?.uri }
+                  : require("../../../assets/images/avatar.png")
+              }
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -561,17 +284,19 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.cardsRow}>
         <StatCard
           value={userExerciseStatus?.totalAnswers}
-          onCalendarPress={() => setCalendarVisible(true)}
+          onCalendarPress={() => {
+            setFromDate(null);
+            setToDate(null);
+            setCalendarVisible(true);
+          }}
         />
 
-        {userExerciseStatus && (
-          <ProgressCard
-            title={t("accuracy")}
-            percentage={parseFloat(accuracyPercent)} // shows "0%" or "75%"
-            progress={accuracyProgress} // 0 → 1 for the bar
-            total={`${correct}/${total}`}
-          />
-        )}
+        <ProgressCard
+          title={t("accuracy")}
+          percentage={parseFloat(accuracyPercent)} // shows "0%" or "75%"
+          progress={accuracyProgress} // 0 → 1 for the bar
+          total={`${correct}/${total}`}
+        />
       </View>
 
       {/* Categories */}
@@ -594,7 +319,18 @@ export default function HomeScreen({ navigation }) {
 
       {/* Recommended Tasks */}
       <View style={styles.recommendedContainer}>
-        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.primary]}
+              tintColor={COLORS.primary}
+            />
+          }
+        >
           <View style={styles.recommendedInnerContainer}>
             <View style={styles.recommendedHeader}>
               <View>
@@ -619,18 +355,20 @@ export default function HomeScreen({ navigation }) {
                   })}
                 </Text>
               </View>
-              <View>
+              {/* <View>
                 <FilterIcon />
-              </View>
+              </View> */}
             </View>
 
             {allRecommendedExercise && allRecommendedExercise.length > 0 ? (
-              allRecommendedExercise.map((q, index) => (
+              allRecommendedExercise &&
+              filteredQuestions.map((q, index) => (
                 <QuestionCard
                   key={q.id}
                   number={index + 1}
                   question={q.title}
-                  status={q.status}
+                  // status={q.status}
+                  status={"solve"}
                   onPress={() =>
                     navigation.navigate("TasksTab", {
                       screen: "TaskDetail",
@@ -717,10 +455,28 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{ marginTop: 10, alignItems: "center" }}
-              onPress={() => setCalendarVisible(false)}
+              style={{
+                marginTop: 10,
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: COLORS.white,
+                alignItems: "center",
+                borderWidth: 1,
+                borderColor: "#cccccc",
+              }}
+              onPress={() => {
+                resetDefaultDates();
+                setCalendarVisible(false);
+              }}
             >
-              <Text style={{ color: COLORS.secondary }}>{t("cancel")}</Text>
+              <Text
+                style={{
+                  color: COLORS.secondary,
+                  fontFamily: FONTS.UrbanistMedium,
+                }}
+              >
+                {t("cancel")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -750,6 +506,7 @@ const styles = StyleSheet.create({
   },
   rightHeader: {
     flexDirection: "row",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   notifyCircle: {

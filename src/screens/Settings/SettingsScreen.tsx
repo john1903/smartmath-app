@@ -85,45 +85,47 @@ export default function SettingsScreen({ navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        {/* Account Section */}
-        <View style={styles.sectionContainer}>
-          <AccountIcon width={22} height={22} />
-          <Text style={styles.section}>{t("account")}</Text>
-        </View>
-        <SettingItem
-          label={t("editProfile")}
-          onPress={() => {
-            navigation.navigate("EditProfile");
-          }}
-        />
-        <SettingItem
-          label={t("changePassword")}
-          onPress={() => {
-            navigation.navigate("Changepassword");
-          }}
-        />
-        <SettingItem
+        <View>
+          {/* Account Section */}
+          <View>
+            <View style={styles.sectionContainer}>
+              <AccountIcon width={22} height={22} />
+              <Text style={styles.section}>{t("account")}</Text>
+            </View>
+            <SettingItem
+              label={t("editProfile")}
+              onPress={() => {
+                navigation.navigate("EditProfile");
+              }}
+            />
+            <SettingItem
+              label={t("changePassword")}
+              onPress={() => {
+                navigation.navigate("Changepassword");
+              }}
+            />
+            {/* <SettingItem
           label={t("subscription")}
           onPress={() => {
             navigation.navigate("Subscription");
           }}
-        />
-        <SettingItem
-          label={t("tokens")}
-          onPress={() => {
-            navigation.navigate("Tokens");
-          }}
-        />
-        <SettingItem
+        /> */}
+            <SettingItem
+              label={t("tokens")}
+              onPress={() => {
+                navigation.navigate("Tokens");
+              }}
+            />
+            {/* <SettingItem
           label={t("affiliateLink")}
           onPress={() => {
             navigation.navigate("AffiliateLink");
           }}
-        />
+        /> */}
 
-        {/* Notification Section */}
+            {/* Notification Section */}
 
-        <View style={styles.sectionContainer}>
+            {/* <View style={styles.sectionContainer}>
           <NotificationIcon width={22} height={22} />
           <Text style={styles.section}>{t("notification")}</Text>
         </View>
@@ -136,29 +138,29 @@ export default function SettingsScreen({ navigation }: Props) {
           label={t("appNotification")}
           value={appNotification}
           onValueChange={setAppNotification}
-        />
+        /> */}
 
-        {/* More Section */}
+            {/* More Section */}
 
-        <View style={styles.sectionContainer}>
-          <MoreIcon width={22} height={22} />
-          <Text style={styles.section}>{t("more")}</Text>
-        </View>
-        <SettingItem
-          label={t("language")}
-          onPress={() => {
-            navigation.navigate("SelectLanguage");
-          }}
-        />
-        <SettingItem
+            <View style={styles.sectionContainer}>
+              <MoreIcon width={22} height={22} />
+              <Text style={styles.section}>{t("more")}</Text>
+            </View>
+            <SettingItem
+              label={t("language")}
+              onPress={() => {
+                navigation.navigate("SelectLanguage");
+              }}
+            />
+            {/* <SettingItem
           label={t("country")}
           onPress={() => {
             navigation.navigate("Country");
           }}
-        />
+        /> */}
 
-        {/* Theme Section */}
-        <View style={styles.sectionContainer}>
+            {/* Theme Section */}
+            {/* <View style={styles.sectionContainer}>
           <ThemeIcon width={22} height={22} />
           <Text style={styles.section}>{t("theme")}</Text>
         </View>
@@ -168,13 +170,18 @@ export default function SettingsScreen({ navigation }: Props) {
           onValueChange={() => changeThemeFunc()}
         />
 
-        <Text style={{ color: COLORS.black }}>Current theme: {theme}</Text>
+        <Text style={{ color: COLORS.black }}>Current theme: {theme}</Text> */}
+          </View>
 
-        {/* Logout Button */}
-        <TouchableOpacity style={styles.logout} onPress={() => handleLogout()}>
-          <LogoutIcon width={22} height={22} />
-          <Text style={styles.logoutText}>{t("logout")}</Text>
-        </TouchableOpacity>
+          {/* Logout Button */}
+          <TouchableOpacity
+            style={styles.logout}
+            onPress={() => handleLogout()}
+          >
+            <LogoutIcon width={22} height={22} />
+            <Text style={styles.logoutText}>{t("logout")}</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

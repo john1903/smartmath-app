@@ -53,10 +53,13 @@
 
   "status": {
     "solve": "Solve",
-    "completed": "Completed",
-    "failed": "Failed",
-    "limitexceeded": "Limit Exceeded",
-    "pending": "Pending"
+    "CORRECT":"Correct",
+    "PENDING": "Pending",
+    "INCORRECT":"Not Correct",
+    "FAILED": "Failed",
+    "NOT_ENOUGH_TOKENS":"Not enough tokens",
+    "COMPLETED": "Completed",
+    "INCOMPLETE":"Not Complete"
   },
 
   "tasks": {
@@ -66,12 +69,16 @@
 
   "categories": {
     "all": "All tasks",
-    "completed": "Completed",
-    "notCompleted": "Not Completed",
+    "correct":"Correct",
     "pending": "Pending",
+    "inCorrect":"Not Correct",
+    "failed": "Failed",
+    "notEnoughTokens":"Not enough tokens",
+    "completed": "Completed",
+    "inComplete":"Not Complete",
+    "notCompleted": "Not Completed",
     "limitexceeded": "Limit Exceeded",
-    "solve": "Solve",
-    "failed": "Failed"
+    "solve": "Solve"
   },
 
   "questions": {
@@ -186,7 +193,28 @@
   "apply": "Apply",
   "cancel": "Cancel",
 
-  "noRecommendedTaskFound": "No recommended tasks found"
+  "noRecommendedTaskFound": "No recommended tasks found",
+
+  "validation":{
+    "first_name_required": "First name is required",
+    "last_name_required": "Last name is required",
+    "email_required": "Email is required",
+    "email_invalid": "Invalid email format",
+    "password_required": "Password is required",
+    "password_min_length": "Password must be at least 8 characters",
+    "invalid_email_or_phone": "Email or Phone Number is invalid"
+  },
+
+  "requestMessages":{
+    "user_created_successfully": "User created successfully!",
+    "invalid_request_data": "Invalid request data",
+    "email_already_use": "Email already in use",
+    "invalid_credentials": "Invalid credentials",
+    "user_authenticated_successfully": "User authenticated successfully!",
+    "something_went_wrong": "Something went wrong"
+    
+  }
+
 
 
 

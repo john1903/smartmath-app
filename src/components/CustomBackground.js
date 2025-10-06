@@ -1,6 +1,11 @@
 import React from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../theme/colors";
 
@@ -9,43 +14,16 @@ const { width, height } = Dimensions.get("window");
 const CustomBackground = ({
   children,
   showImage = false,
-  imageSource = require("../../assets/images/student.png"),
-  showGradient = false,
-  gradientColors = ["#2475FC80", "#ffffff"],
-
+  imageSource = require("../../assets/images/student.png"), // overlay image
+  backgroundImage = require("../../assets/images/bg.png"), // <-- your background image
   style = {},
 }) => {
   return (
-    <View
-      style={[
-        styles.container,
-        style,
-        {
-          backgroundColor: showGradient ? COLORS.white : COLORS.background,
-        },
-      ]}
+    <ImageBackground
+      source={backgroundImage}
+      style={[styles.container, style]}
+      resizeMode="cover" // or "contain" / "stretch"
     >
-      {/* Top Gradient */}
-      {showGradient && (
-        <LinearGradient
-          colors={gradientColors}
-          style={[styles.gradient, { top: 0, height: height * 0.4 }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-        />
-      )}
-
-      {/* Bottom Gradient */}
-      {showGradient && (
-        <LinearGradient
-          colors={gradientColors}
-          style={[styles.gradient, { bottom: 0, height: height * 0.4 }]}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 0, y: 0 }}
-        />
-      )}
-
-      {/* Center Image */}
       {showImage && imageSource && (
         <View style={styles.imageWrapper}>
           <Image
@@ -55,23 +33,16 @@ const CustomBackground = ({
           />
         </View>
       )}
-      {/* {children} */}
 
-      {/* Main Safe Content Area */}
       <SafeAreaView style={styles.safeContent}>{children}</SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "white",
-  },
-  gradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+    backgroundColor: COLORS.background,
   },
   imageWrapper: {
     position: "absolute",
