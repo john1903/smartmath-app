@@ -8,6 +8,7 @@ import {
   Modal,
   ActivityIndicator,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
@@ -37,7 +38,8 @@ import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import { useLazyGetPromptsQuery } from "../../../services/prompts";
 
-const OpenEnded = ({ question, onPress, navigation }) => {
+const windowWidth = Dimensions.get("window").width;
+const OpenEnded = ({ question, onPress, navigation, answerData }) => {
   // console.log(" question ssssssssssssssssss", JSON.stringify(question));
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -51,6 +53,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
   const [submitted, setSubmitted] = useState(false);
 
   const [waitingPopup, setWaitingPopup] = useState(false);
+  const [answer, setAnswer] = useState(answerData);
 
   const [files, setFiles] = useState([]);
   const [appToken, setAppToken] = useState();
@@ -66,7 +69,19 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       if (!result.canceled) {
         const file = result.assets[0];
 
-        // 1. Prepare FormData for upload
+        // ✅ Check file size (in bytes → convert to MB)
+        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+
+        console.log("file ::: ", file);
+        console.log("fileSizeInMB ::: ", fileSizeInMB);
+        if (fileSizeInMB > 10) {
+          showErrorToast(
+            "File size is more than 10MB. Please select a smaller file."
+          );
+          return; // stop further execution
+        }
+
+        // ✅ Prepare FormData for upload
         const formData = new FormData();
         formData.append("category", "ANSWER");
         formData.append("file", {
@@ -75,20 +90,19 @@ const OpenEnded = ({ question, onPress, navigation }) => {
           type: file.mimeType,
         });
 
-        // 2. Upload file
-
+        // ✅ Upload file
         dispatch(setLoading(true));
         console.log("Uploading file...");
         const uploadedFile = await updateFile({ data: formData }).unwrap();
         console.log("Uploaded file :::::::::::: ", uploadedFile);
 
-        // 3. Save file info + id in state
+        // ✅ Save file info if upload success
         if (uploadedFile?.id) {
           const newFile = {
             id: uploadedFile.id,
             name: file.name,
             uri: file.uri,
-            size: (file.size / 1024 / 1024).toFixed(1) + "mb",
+            // size: `${fileSizeInMB.toFixed(1)} MB`,
             type: file.mimeType,
           };
           setFiles((prev) => [...prev, newFile]);
@@ -100,9 +114,8 @@ const OpenEnded = ({ question, onPress, navigation }) => {
       }
     } catch (err) {
       dispatch(setLoading(false));
-
-      console.log("File picking/upload error ::::::::::::::: ", err);
-      showErrorToast("Something went wrong!");
+      // console.log("File picking/upload error ::::::::::::::: ", err);
+      // showErrorToast("Something went wrong!");
     }
   };
 
@@ -213,7 +226,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
               marginBottom: 16,
               alignSelf: "center",
             }}
-            resizeMode="cover"
+            resizeMode="stretch"
           />
         ) : (
           // Multiple images: horizontal scroll
@@ -234,7 +247,7 @@ const OpenEnded = ({ question, onPress, navigation }) => {
                       index === question.illustrations.length - 1 ? 0 : 10,
                   },
                 ]}
-                resizeMode="cover"
+                resizeMode="stretch"
               />
             ))}
           </ScrollView>
@@ -264,148 +277,240 @@ const OpenEnded = ({ question, onPress, navigation }) => {
         </View>
       </View>
 
-      <View>
-        <View style={styles.container}>
-          <CloudIcon />
-          <Text style={styles.uploadText}>{t("selectFileToUpload")}</Text>
-          <Text style={styles.supported}>{t("sypportedFormate")}</Text>
-          <Text style={styles.supported}>{t("maxSize")}</Text>
+      {!answer ? (
+        <View>
+          <View style={styles.container}>
+            <CloudIcon />
+            <Text style={styles.uploadText}>{t("selectFileToUpload")}</Text>
+            <Text style={styles.supported}>{t("sypportedFormate")}</Text>
+            <Text style={styles.supported}>{t("maxSize")}</Text>
 
-          <CustomButton
-            title={t("selectFile")}
-            buttonStyle={[styles.btnStyle, styles.submitBtn]}
-            textStyle={[
-              styles.submitText,
-              { includeFontPadding: false, marginRight: 4 },
-            ]}
-            contentStyle={{
-              flexDirection: "row-reverse",
-            }}
-            iconStyle={{
-              marginRight: 0,
-            }}
-            onPress={() => pickFile()}
-            svg={<UploadIcon />}
-          />
-        </View>
+            <CustomButton
+              title={t("selectFile")}
+              buttonStyle={[styles.btnStyle, styles.submitBtn]}
+              textStyle={[
+                styles.submitText,
+                { includeFontPadding: false, marginRight: 4 },
+              ]}
+              contentStyle={{
+                flexDirection: "row-reverse",
+              }}
+              iconStyle={{
+                marginRight: 0,
+              }}
+              onPress={() => pickFile()}
+              svg={<UploadIcon />}
+            />
+          </View>
 
-        <View style={[styles.fileTile]}>
-          {files.map((item, index) => (
-            <View key={index} style={styles.fileItem}>
-              {/* <Ionicons name="image-outline" size={24} color="#007bff" /> */}
-              <View
-                style={{
-                  backgroundColor: COLORS.primary,
-                  borderRadius: 100,
-                  padding: 5,
-                }}
-              >
-                <GalleryIcon width={35} height={35} />
+          <View style={[styles.fileTile]}>
+            {files.map((item, index) => (
+              <View key={index} style={styles.fileItem}>
+                <View
+                  style={{
+                    backgroundColor: COLORS.primary,
+                    borderRadius: 100,
+                    padding: 5,
+                  }}
+                >
+                  <GalleryIcon width={35} height={35} />
+                </View>
+                <View style={{ flex: 1, marginLeft: 8 }}>
+                  <Text style={styles.fileName}>{t("solutionOfQuestion")}</Text>
+                  <Text style={styles.fileInfo}>
+                    {item.type?.split("/")[1]?.toUpperCase()} • {item.size}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => removeFile(index)}
+                  style={[styles.crossIcon]}
+                >
+                  <Ionicons name="close" size={20} color={COLORS.black} />
+                </TouchableOpacity>
               </View>
-              <View style={{ flex: 1, marginLeft: 8 }}>
-                <Text style={styles.fileName}>
-                  {t("solutionOfQuestion")}
-                  {/* {item.name} */}
-                </Text>
-                <Text style={styles.fileInfo}>
-                  {item.type?.split("/")[1]?.toUpperCase()} • {item.size}
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => removeFile(index)}
-                style={[styles.crossIcon]}
-              >
-                <Ionicons name="close" size={20} color={COLORS.black} />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
 
-        <View
-          style={{
-            marginHorizontal: 30,
-          }}
-        >
-          {appToken > 0 ? (
-            <View style={styles.whiteSheetFooter}>
-              <CustomButton
-                title={t("50TokenToSubmit")}
-                buttonStyle={[
-                  styles.generateReportBtn,
-                  files.length === 0 && {
-                    backgroundColor: COLORS.D9Gray,
-                    borderWidth: 0,
-                  },
-                ]}
-                textStyle={[
-                  styles.generateReportBtnTitle,
-                  files.length === 0 && { color: COLORS.black },
-                ]}
-                onPress={handleSubmit}
-                svg={
-                  files.length === 0 ? (
-                    <TokenBlackIcon width={22} height={22} />
-                  ) : (
-                    <TokenWhiteIcon width={22} height={22} />
-                  )
-                }
-              />
-            </View>
-          ) : (
-            <View style={styles.whiteSheetFooter}>
-              <CustomButton
-                title={t("50TokenToSubmit")}
-                buttonStyle={[
-                  styles.generateReportBtn,
-                  {
-                    backgroundColor: COLORS.D9Gray,
-                    borderWidth: 0,
-                  },
-                ]}
-                textStyle={[
-                  styles.generateReportBtnTitle,
-                  {
-                    color: COLORS.black,
-                  },
-                ]}
-                onPress={() => handleSubmit()}
-                svg={<TokenBlackIcon width={22} height={22} />}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  // justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={[
-                    styles.whiteSheetFooterText,
-                    {
-                      marginRight: 10,
+          <View
+            style={{
+              marginHorizontal: 30,
+            }}
+          >
+            {appToken > 0 ? (
+              <View style={styles.whiteSheetFooter}>
+                <CustomButton
+                  title={t("50TokenToSubmit")}
+                  buttonStyle={[
+                    styles.generateReportBtn,
+                    files.length === 0 && {
+                      backgroundColor: COLORS.D9Gray,
+                      borderWidth: 0,
                     },
                   ]}
+                  textStyle={[
+                    styles.generateReportBtnTitle,
+                    files.length === 0 && { color: COLORS.black },
+                  ]}
+                  onPress={handleSubmit}
+                  svg={
+                    files.length === 0 ? (
+                      <TokenBlackIcon width={22} height={22} />
+                    ) : (
+                      <TokenWhiteIcon width={22} height={22} />
+                    )
+                  }
+                />
+              </View>
+            ) : (
+              <View style={styles.whiteSheetFooter}>
+                <CustomButton
+                  title={t("50TokenToSubmit")}
+                  buttonStyle={[
+                    styles.generateReportBtn,
+                    {
+                      backgroundColor: COLORS.D9Gray,
+                      borderWidth: 0,
+                    },
+                  ]}
+                  textStyle={[
+                    styles.generateReportBtnTitle,
+                    {
+                      color: COLORS.black,
+                    },
+                  ]}
+                  onPress={() => handleSubmit()}
+                  svg={<TokenBlackIcon width={22} height={22} />}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    // justifyContent: "center",
+                    alignItems: "center",
+                  }}
                 >
-                  {appToken} {t("tokenAvailable")}
-                </Text>
-                <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
                   <Text
                     style={[
                       styles.whiteSheetFooterText,
                       {
-                        color: COLORS.primary,
-                        fontFamily: FONTS.UrbanistSemiBold,
+                        marginRight: 10,
                       },
                     ]}
                   >
-                    {t("buyTokens")}
+                    {appToken} {t("tokenAvailable")}
                   </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
+                    <Text
+                      style={[
+                        styles.whiteSheetFooterText,
+                        {
+                          color: COLORS.primary,
+                          fontFamily: FONTS.UrbanistSemiBold,
+                        },
+                      ]}
+                    >
+                      {t("buyTokens")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+      ) : (
+        <View>
+          {answer?.feedbackStatus === "PENDING" ? (
+            <View
+              style={{
+                marginVertical: 20,
+              }}
+            >
+              <Text style={styles.commentHeading}>{t("systemComment")}</Text>
+
+              <Text
+                style={[
+                  styles.commentStatus,
+
+                  {
+                    marginTop: 30,
+                    color: "#FFD54F",
+                  },
+                ]}
+              >
+                {t("exerciseInReview")}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.answerContainer}>
+              <Text style={styles.commentHeading}>{t("systemComment")}</Text>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  marginTop: 20,
+                }}
+              >
+                {splitMathString(answer?.feedback).map((part, idx) =>
+                  part.startsWith("$") ? (
+                    <MathRenderer
+                      key={idx}
+                      formula={part}
+                      style={{ marginRight: 4 }}
+                    />
+                  ) : (
+                    <Text key={idx} style={styles.answerFeedback}>
+                      {part}
+                    </Text>
+                  )
+                )}
+              </View>
+
+              <View
+                style={{
+                  marginVertical: 20,
+                }}
+              >
+                <Text
+                  style={[
+                    styles.commentStatus,
+                    {
+                      color:
+                        answer?.feedbackStatus === "INCORRECT"
+                          ? COLORS.danger
+                          : COLORS.green,
+                    },
+                  ]}
+                >
+                  {answer?.feedbackStatus === "INCORRECT"
+                    ? t("exerciseWrong")
+                    : t("exerciseCorrectly")}
+                </Text>
+              </View>
+
+              <View style={styles.buttons}>
+                {answer?.feedbackStatus === "INCORRECT" && (
+                  <CustomButton
+                    title={t("retry")}
+                    buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                    textStyle={[
+                      styles.retryText,
+                      { includeFontPadding: false },
+                    ]}
+                    onPress={() => setAnswer(null)}
+                  />
+                )}
+
+                <CustomButton
+                  title={t("next")}
+                  buttonStyle={[styles.btnStyle, styles.submitBtn]}
+                  textStyle={[styles.submitText, { includeFontPadding: false }]}
+                  onPress={() => onPress()}
+                />
               </View>
             </View>
           )}
         </View>
-      </View>
+      )}
 
       <Modal
         transparent
@@ -468,6 +573,34 @@ const OpenEnded = ({ question, onPress, navigation }) => {
 export default OpenEnded;
 
 const styles = StyleSheet.create({
+  answerContainer: {
+    marginTop: 20,
+    marginHorizontal: 30,
+  },
+  commentHeading: {
+    fontSize: FONTSIZE.size24,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.primary,
+  },
+  answerFeedback: {
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistMedium,
+    color: COLORS.black,
+  },
+  commentStatus: {
+    fontSize: FONTSIZE.size16,
+    fontFamily: FONTS.UrbanistMedium,
+  },
+
+  retryBtn: { backgroundColor: COLORS.black },
+  retryText: {
+    fontSize: FONTSIZE.size14,
+    fontFamily: FONTS.UrbanistSemiBold,
+    color: COLORS.white,
+  },
+
+  buttons: { flexDirection: "row", gap: 20, justifyContent: "center" },
+
   carouselContainer: {
     marginBottom: 16,
   },
@@ -631,28 +764,4 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.white,
   },
-
-  // button: {
-  //   flex: 1,
-  //   paddingVertical: 12,
-  //   borderRadius: 25,
-  //   marginHorizontal: 5,
-  //   alignItems: "center",
-  // },
-  // outlineButton: {
-  //   borderWidth: 1,
-  //   borderColor: "#000",
-  //   backgroundColor: "#fff",
-  // },
-  // fillButton: {
-  //   backgroundColor: "#000",
-  // },
-  // outlineText: {
-  //   color: "#000",
-  //   fontWeight: "500",
-  // },
-  // fillText: {
-  //   color: "#fff",
-  //   fontWeight: "500",
-  // },
 });

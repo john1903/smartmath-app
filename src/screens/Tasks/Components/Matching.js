@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
@@ -14,19 +21,34 @@ import COLORS from "../../../theme/colors";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { useTranslation } from "react-i18next";
 
-const Matching = ({ question, onPress }) => {
-  const { t } = useTranslation();
+const windowWidth = Dimensions.get("window").width;
 
+const Matching = ({ question, onPress, answer }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [selectedFirst, setSelectedFirst] = useState(null); // A or B
-  const [selectedSecond, setSelectedSecond] = useState(null); // 1,2,3
+  const [selectedFirst, setSelectedFirst] = useState(null);
+  const [selectedSecond, setSelectedSecond] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
 
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
 
-  // Handle submit
+  // === PRE-FILL from API if present ===
+  useEffect(() => {
+    if (answer && answer.answer && Object.keys(answer.answer).length > 0) {
+      // API returns: answer: { "C": 1 }  -> convert second to string key "1"
+      const [firstKey, secondVal] = Object.entries(answer.answer)[0];
+      setSelectedFirst(firstKey);
+      setSelectedSecond(String(secondVal)); // ensure it matches option keys
+      setSubmitted(true);
+      setIsCorrect(answer.feedbackStatus === "CORRECT");
+    } else {
+      // start timer only for fresh attempt
+      startTimer();
+    }
+  }, [answer]);
+
   const handleSubmit = () => {
     const duration = stopTimer();
     const payload = {
@@ -34,27 +56,49 @@ const Matching = ({ question, onPress }) => {
       data: {
         exerciseType: question?.exerciseType,
         completionTime: duration,
-        answer: { [selectedFirst]: selectedSecond }, // e.g. { "A": "1" }
+        answer: { [selectedFirst]: selectedSecond },
       },
     };
 
     dispatch(setLoading(true));
-    submitExerciseAnswer(payload).then((res) => {
-      // console.log("resssssssssss", JSON.stringify(res));
-      if (res?.data?.feedbackStatus === "INCORRECT") {
-        setIsCorrect(false);
-        showErrorToast(t("yourAnswerIsWrong"));
-      } else {
-        setIsCorrect(true);
-        showSuccessToast(t("yourAnswerIsCorrect"));
-      }
-      setSubmitted(true);
-    });
+    submitExerciseAnswer(payload)
+      .then((res) => {
+        // mark feedback and show toast
+        if (res?.data?.feedbackStatus === "INCORRECT") {
+          setIsCorrect(false);
+          showErrorToast(t("yourAnswerIsWrong"));
+        } else {
+          setIsCorrect(true);
+          showSuccessToast(t("yourAnswerIsCorrect"));
+        }
+        setSubmitted(true);
+        dispatch(setLoading(false));
+      })
+      .catch(() => {
+        dispatch(setLoading(false));
+      });
   };
 
-  useEffect(() => {
+  const handleRetry = () => {
+    setSubmitted(false);
+    setSelectedFirst(null);
+    setSelectedSecond(null);
+    setIsCorrect(null);
     startTimer();
-  }, []);
+  };
+
+  // returns `true`/`false`/null for OptionButton's `correct` prop:
+  // OptionButton highlights selected && correct===true green
+  // selected && correct===false -> red
+  const getCorrectProp = (type, key) => {
+    if (!submitted) return null;
+    const isSelected =
+      (type === "first" && selectedFirst === key) ||
+      (type === "second" && selectedSecond === key);
+    if (!isSelected) return null;
+    // if submitted and user selected that option, set correct prop according to isCorrect
+    return isCorrect === true ? true : false;
+  };
 
   return (
     <View>
@@ -62,20 +106,18 @@ const Matching = ({ question, onPress }) => {
       {Array.isArray(question?.illustrations) &&
         question.illustrations.length > 0 &&
         (question.illustrations.length === 1 ? (
-          // Single image: use screen width minus container margins
           <Image
             source={{ uri: question.illustrations[0].uri }}
             style={{
-              width: windowWidth - 60, // 30 margin each side
+              width: windowWidth - 60,
               height: 200,
               borderRadius: 10,
               marginBottom: 16,
               alignSelf: "center",
             }}
-            resizeMode="cover"
+            resizeMode="stretch"
           />
         ) : (
-          // Multiple images: horizontal scroll
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -93,13 +135,13 @@ const Matching = ({ question, onPress }) => {
                       index === question.illustrations.length - 1 ? 0 : 10,
                   },
                 ]}
-                resizeMode="cover"
+                resizeMode="stretch"
               />
             ))}
           </ScrollView>
         ))}
 
-      {/* Question Text */}
+      {/* Question */}
       <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
@@ -119,48 +161,45 @@ const Matching = ({ question, onPress }) => {
         </View>
       </View>
 
+      {/* Options */}
       <View style={{ marginHorizontal: 20 }}>
-        {/* Row First (A, B) */}
-        {/* <Text style={styles.heading}>Choose a binomial:</Text> */}
-        {Object.entries(question.optionsRowFirst).map(([key, value]) => (
+        {/* First column (A,B,C...) */}
+        {Object.entries(question.optionsRowFirst).map(([key, label]) => (
           <OptionButton
             key={key}
             optionKey={key}
-            label={value}
+            label={label}
             selected={selectedFirst === key}
             onPress={() => !submitted && setSelectedFirst(key)}
-            correct={submitted ? isCorrect : null}
+            correct={getCorrectProp("first", key)} // null | true | false
+            disabled={submitted}
           />
         ))}
 
-        {/* Row Second (1,2,3) */}
-        {/* <Text style={styles.heading}>Choose justification:</Text> */}
-        <View style={[styles.gap]}></View>
-        {Object.entries(question.optionsRowSecond).map(([key, value]) => (
+        <View style={styles.gap} />
+
+        {/* Second column (1,2,3...) */}
+        {Object.entries(question.optionsRowSecond).map(([key, label]) => (
           <OptionButton
             key={key}
             optionKey={key}
-            label={value}
+            label={label}
             selected={selectedSecond === key}
             onPress={() => !submitted && setSelectedSecond(key)}
-            correct={submitted ? isCorrect : null}
+            correct={getCorrectProp("second", key)} // null | true | false
+            disabled={submitted}
           />
         ))}
       </View>
 
+      {/* Buttons */}
       <View style={styles.buttons}>
         {submitted && isCorrect === false && (
           <CustomButton
-            title={"Retry"}
+            title={t("retry")}
             buttonStyle={[styles.btnStyle, styles.retryBtn]}
             textStyle={styles.retryText}
-            onPress={() => {
-              setSubmitted(false);
-              setIsCorrect(null);
-              setSelectedFirst(null);
-              setSelectedSecond(null);
-              startTimer();
-            }}
+            onPress={handleRetry}
           />
         )}
 
@@ -183,7 +222,7 @@ const Matching = ({ question, onPress }) => {
           disabled={!submitted && (!selectedFirst || !selectedSecond)}
           onPress={() => {
             if (submitted) {
-              onPress?.(); // go to next question
+              onPress?.();
             } else {
               handleSubmit();
             }
@@ -197,25 +236,15 @@ const Matching = ({ question, onPress }) => {
 export default Matching;
 
 const styles = StyleSheet.create({
-  carouselContainer: {
-    marginBottom: 16,
-  },
-  carouselImage: {
-    width: 280,
-    height: 200,
-    borderRadius: 10,
-  },
+  carouselContainer: { marginBottom: 16 },
+  carouselImage: { width: 280, height: 200, borderRadius: 10 },
   question: {
     fontSize: FONTSIZE.size20,
     fontFamily: FONTS.UrbanistSemiBold,
     marginBottom: 16,
   },
-
-  gap: {
-    marginVertical: 20,
-  },
+  gap: { marginVertical: 20 },
   buttons: { flexDirection: "row", gap: 20, justifyContent: "center" },
-
   btnStyle: {
     width: "45%",
     paddingVertical: 14,
@@ -233,14 +262,12 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   submitTextDisabled: { color: COLORS.black },
-
   retryBtn: { backgroundColor: COLORS.black },
   retryText: {
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.white,
   },
-
-  nextBtn: { backgroundColor: COLORS.primary }, // always blue after submit
+  nextBtn: { backgroundColor: COLORS.primary },
   nextText: { color: COLORS.white },
 });

@@ -13,7 +13,7 @@ export default (build: any) =>
     }),
     invalidatesTags: [{ type: "reports", id: 1 }],
     async onQueryStarted(arg: any, { dispatch, queryFulfilled }: any) {
-      dispatch(setLoading(true));
+      // dispatch(setLoading(true));
 
       try {
         const res = await queryFulfilled;

@@ -40,26 +40,52 @@ const TaskDetail = ({ navigation, route }) => {
   };
 
   const renderQuestion = (q) => {
+    // console.log("qqqqqqqqqqqqqq", JSON.stringify(q?.exercise));
     if (!q) return null;
 
-    switch (q.exerciseType) {
+    switch (q?.exercise?.exerciseType) {
       case "MULTIPLE_CHOICE":
-        return <MultipleChoice question={q} onPress={gobackScreen} />;
+        return (
+          <MultipleChoice
+            question={q?.exercise}
+            onPress={gobackScreen}
+            answer={q?.answer}
+          />
+        );
 
       case "TRUE_FALSE":
-        return <TrueFalse question={q} onPress={gobackScreen} />;
+        return (
+          <TrueFalse
+            question={q?.exercise}
+            onPress={gobackScreen}
+            answer={q?.answer}
+          />
+        );
       case "SINGLE_CHOICE":
-        return <SingleChoice question={q} onPress={gobackScreen} />;
+        return (
+          <SingleChoice
+            question={q?.exercise}
+            onPress={gobackScreen}
+            answer={q?.answer}
+          />
+        );
       case "OPEN_ENDED":
         return (
           <OpenEnded
-            question={q}
+            question={q?.exercise}
             onPress={gobackScreen}
             navigation={navigation}
+            answerData={q?.answer}
           />
         );
       case "MATCHING":
-        return <Matching question={q} onPress={gobackScreen} />;
+        return (
+          <Matching
+            question={q?.exercise}
+            onPress={gobackScreen}
+            answer={q?.answer}
+          />
+        );
 
       default:
         return null;
@@ -71,12 +97,12 @@ const TaskDetail = ({ navigation, route }) => {
       id: route?.params?.exerciseId,
     }).then((res) => {
       if (res) {
-        setQuestion(res?.data?.exercise);
+        setQuestion(res?.data);
       }
-      // console.log(
-      //   "single question response ::::::::::: ",
-      //   JSON.stringify(res?.data?.exercise)
-      // );
+      console.log(
+        "single question response ::::::::::: ",
+        JSON.stringify(res?.data)
+      );
     });
   }, []);
 

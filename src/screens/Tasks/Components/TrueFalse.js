@@ -20,18 +20,36 @@ import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { setLoading } from "../../../store/loading";
 import { useTranslation } from "react-i18next";
 
-const TrueFalse = ({ question, onPress }) => {
+const TrueFalse = ({ question, onPress, answer }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [answers, setAnswers] = useState({}); // { "1": true, "2": false }
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
-
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
 
   const allAnswered =
     Object.keys(answers).length ===
     Object.keys(question?.statements || {}).length;
+
+  // ---- handle prefilled answer from API ----
+  useEffect(() => {
+    if (answer) {
+      // If answer.answer is an object of { key: boolean }
+      if (answer.answer) {
+        setAnswers(answer.answer);
+      }
+      if (answer.feedbackStatus === "CORRECT") {
+        setIsCorrect(true);
+        setSubmitted(true);
+      } else if (answer.feedbackStatus === "INCORRECT") {
+        setIsCorrect(false);
+        setSubmitted(true);
+      }
+    } else {
+      startTimer();
+    }
+  }, [answer]);
 
   // Handle selection
   const handleSelect = (id, value) => {
@@ -42,7 +60,12 @@ const TrueFalse = ({ question, onPress }) => {
 
   // Submit
   const handleSubmit = () => {
-    const duration = stopTimer(); // "PT3M"
+    if (submitted) {
+      onPress?.(); // go to next question
+      return;
+    }
+
+    const duration = stopTimer();
     const payload = {
       id: question?.id,
       data: {
@@ -58,47 +81,40 @@ const TrueFalse = ({ question, onPress }) => {
         setIsCorrect(false);
         showErrorToast(t("yourAnswerIsWrong"));
       } else {
-        showSuccessToast(t("yourAnswerIsCorrect"));
         setIsCorrect(true);
+        showSuccessToast(t("yourAnswerIsCorrect"));
       }
-
-      console.log("True/False submit response ::::::::: ", res);
       setSubmitted(true);
     });
   };
 
   const handleRetry = () => {
     setSubmitted(false);
-    setAnswers({}); // reset
-    setIsCorrect(null); // reset feedback
-    startTimer(); // restart timer
-  };
-
-  useEffect(() => {
+    setAnswers({});
+    setIsCorrect(null);
     startTimer();
-  }, []);
+  };
 
   const getLetter = (index) => String.fromCharCode(65 + index);
 
   return (
     <View>
+      {/* Images */}
       {Array.isArray(question?.illustrations) &&
         question.illustrations.length > 0 &&
         (question.illustrations.length === 1 ? (
-          // Single image: use screen width minus container margins
           <Image
             source={{ uri: question.illustrations[0].uri }}
             style={{
-              width: windowWidth - 60, // 30 margin each side
+              width: windowWidth - 60,
               height: 200,
               borderRadius: 10,
               marginBottom: 16,
               alignSelf: "center",
             }}
-            resizeMode="cover"
+            resizeMode="stretch"
           />
         ) : (
-          // Multiple images: horizontal scroll
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -116,17 +132,14 @@ const TrueFalse = ({ question, onPress }) => {
                       index === question.illustrations.length - 1 ? 0 : 10,
                   },
                 ]}
-                resizeMode="cover"
+                resizeMode="stretch"
               />
             ))}
           </ScrollView>
         ))}
 
-      <View
-        style={{
-          marginHorizontal: 30,
-        }}
-      >
+      {/* Question */}
+      <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>Question 1: {question?.text}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {splitMathString(question.description).map((part, idx) =>
@@ -145,18 +158,13 @@ const TrueFalse = ({ question, onPress }) => {
         </View>
       </View>
 
-      <View
-        style={{
-          marginHorizontal: 30,
-        }}
-      >
+      {/* Statements */}
+      <View style={{ marginHorizontal: 30 }}>
         {Object.entries(question?.statements || {}).map(
           ([key, statement], index) => {
-            const letter = getLetter(index); // A, B, C ...
+            const letter = getLetter(index);
             return (
               <View key={key} style={{ marginVertical: 10 }}>
-                {/* <Text>{`${letter}) ${statement}`}</Text> */}
-
                 <View style={styles.questionDisplay}>
                   <Text style={[styles.optionLetter]}>{`${letter})`}</Text>
                   <View>
@@ -176,7 +184,9 @@ const TrueFalse = ({ question, onPress }) => {
                   </View>
                 </View>
 
+                {/* True / False Buttons */}
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>
+                  {/* TRUE BUTTON */}
                   <CustomButton
                     title={t("true")}
                     buttonStyle={[
@@ -184,92 +194,21 @@ const TrueFalse = ({ question, onPress }) => {
                       styles.tfBtn,
                       {
                         backgroundColor: submitted
-                          ? // after submit → color feedback
-                            answers[key] === true
-                            ? isCorrect
-                              ? COLORS.green // correct
-                              : COLORS.danger // incorrect
-                            : COLORS.white
-                          : // before submit → normal selection
-                          answers[key] === true
-                          ? COLORS.green
-                          : COLORS.white,
-                        borderColor:
-                          answers[key] === true
-                            ? answers[key] === true && submitted
-                              ? isCorrect
-                                ? COLORS.green
-                                : COLORS.danger
-                              : COLORS.green
-                            : COLORS.borderColor2,
-                      },
-                    ]}
-                    textStyle={[
-                      styles.tfText,
-                      {
-                        color:
-                          answers[key] === true && submitted
-                            ? COLORS.white
-                            : answers[key] === true
-                            ? COLORS.white
-                            : COLORS.black,
-                        includeFontPadding: false,
-                      },
-                    ]}
-                    onPress={() => handleSelect(key, true)}
-                  />
-
-                  <CustomButton
-                    title={t("false")}
-                    buttonStyle={[
-                      styles.btnStyle,
-                      styles.tfBtn,
-                      {
-                        backgroundColor: submitted
-                          ? answers[key] === false
+                          ? answers[key] === true
                             ? isCorrect
                               ? COLORS.green
                               : COLORS.danger
                             : COLORS.white
-                          : answers[key] === false
-                          ? COLORS.green
+                          : answers[key] === true
+                          ? COLORS.primary
                           : COLORS.white,
                         borderColor:
-                          answers[key] === false
-                            ? answers[key] === false && submitted
+                          answers[key] === true
+                            ? submitted
                               ? isCorrect
                                 ? COLORS.green
                                 : COLORS.danger
-                              : COLORS.green
-                            : COLORS.borderColor2,
-                      },
-                    ]}
-                    textStyle={[
-                      styles.tfText,
-                      {
-                        color:
-                          answers[key] === false && submitted
-                            ? COLORS.white
-                            : answers[key] === false
-                            ? COLORS.white
-                            : COLORS.black,
-                        includeFontPadding: false,
-                      },
-                    ]}
-                    onPress={() => handleSelect(key, false)}
-                  />
-
-                  {/* <CustomButton
-                    title={"True"}
-                    buttonStyle={[
-                      styles.btnStyle,
-                      styles.tfBtn,
-                      {
-                        backgroundColor:
-                          answers[key] === true ? COLORS.green : COLORS.white,
-                        borderColor:
-                          answers[key] === true
-                            ? COLORS.green
+                              : COLORS.primary
                             : COLORS.borderColor2,
                       },
                     ]}
@@ -284,17 +223,29 @@ const TrueFalse = ({ question, onPress }) => {
                     onPress={() => handleSelect(key, true)}
                   />
 
+                  {/* FALSE BUTTON */}
                   <CustomButton
-                    title={"False"}
+                    title={t("false")}
                     buttonStyle={[
                       styles.btnStyle,
                       styles.tfBtn,
                       {
-                        backgroundColor:
-                          answers[key] === false ? COLORS.green : COLORS.white,
+                        backgroundColor: submitted
+                          ? answers[key] === false
+                            ? isCorrect
+                              ? COLORS.green
+                              : COLORS.danger
+                            : COLORS.white
+                          : answers[key] === false
+                          ? COLORS.primary
+                          : COLORS.white,
                         borderColor:
                           answers[key] === false
-                            ? COLORS.green
+                            ? submitted
+                              ? isCorrect
+                                ? COLORS.green
+                                : COLORS.danger
+                              : COLORS.primary
                             : COLORS.borderColor2,
                       },
                     ]}
@@ -307,13 +258,15 @@ const TrueFalse = ({ question, onPress }) => {
                       },
                     ]}
                     onPress={() => handleSelect(key, false)}
-                  /> */}
+                  />
                 </View>
               </View>
             );
           }
         )}
       </View>
+
+      {/* Buttons */}
       <View style={styles.buttons}>
         {submitted && isCorrect === false && (
           <CustomButton
@@ -329,21 +282,15 @@ const TrueFalse = ({ question, onPress }) => {
           buttonStyle={[
             styles.btnStyle,
             styles.submitBtn,
-            !allAnswered && styles.submitBtnDisabled,
+            !allAnswered && !submitted && styles.submitBtnDisabled,
           ]}
           textStyle={[
             styles.submitText,
-            !allAnswered && styles.submitTextDisabled,
+            !allAnswered && !submitted && styles.submitTextDisabled,
             { includeFontPadding: false },
           ]}
-          disabled={!allAnswered} // only active when all answered
-          onPress={() => {
-            if (submitted) {
-              onPress?.(); // go to next question
-            } else {
-              handleSubmit();
-            }
-          }}
+          disabled={!allAnswered && !submitted}
+          onPress={handleSubmit}
         />
       </View>
     </View>
@@ -353,19 +300,9 @@ const TrueFalse = ({ question, onPress }) => {
 export default TrueFalse;
 
 const styles = StyleSheet.create({
-  carouselContainer: {
-    marginBottom: 16,
-  },
-  carouselImage: {
-    width: 280,
-    height: 200,
-    borderRadius: 10,
-  },
-
-  questionDisplay: {
-    flexDirection: "row",
-    // alignItems: "center",
-  },
+  carouselContainer: { marginBottom: 16 },
+  carouselImage: { width: 280, height: 200, borderRadius: 10 },
+  questionDisplay: { flexDirection: "row" },
   question: {
     fontSize: FONTSIZE.size20,
     fontFamily: FONTS.UrbanistSemiBold,
@@ -375,7 +312,6 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistMedium,
   },
-
   optionLetter: {
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistSemiBold,
@@ -398,7 +334,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   submitTextDisabled: { color: COLORS.black },
-  tfContainer: { flexDirection: "row", gap: 20, marginBottom: 30 },
   tfBtn: { borderWidth: 1, borderColor: COLORS.borderColor2 },
   tfText: {
     color: COLORS.black,

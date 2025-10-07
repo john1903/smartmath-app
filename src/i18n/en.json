@@ -211,10 +211,20 @@
     "email_already_use": "Email already in use",
     "invalid_credentials": "Invalid credentials",
     "user_authenticated_successfully": "User authenticated successfully!",
-    "something_went_wrong": "Something went wrong"
+    "something_went_wrong": "Something went wrong",
+    "invalid_request_parameters": "Invalid request parameters",
+    "unauthorized": "Unauthorized"
     
-  }
+  },
 
+  "download": "Download",
+  "generationStarted": "Report generation is in Progress",
+  "NOT_ENOUGH_TOKENS":"Not enough tokens",
+  "systemComment": "System Comment",
+
+  "exerciseCorrectly": "Exercise done correctly",
+  "exerciseWrong": "Exercise done Wrong",
+  "exerciseInReview": "Exercise is in Review"
 
 
 

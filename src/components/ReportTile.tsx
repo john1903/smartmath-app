@@ -14,19 +14,32 @@ import {
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import COLORS from "../theme/colors";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   title: string;
   date: string;
   onOptionSelect: (val: string) => void;
+  status: string;
 }
 
-const ReportTile: React.FC<Props> = ({ title, date, onOptionSelect }) => {
+const ReportTile: React.FC<Props> = ({
+  title,
+  date,
+  onOptionSelect,
+  status,
+}) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.card}>
       <View
         style={{
-          backgroundColor: "rgba(36,117,252,0.1)",
+          backgroundColor:
+            status === "SUCCESS"
+              ? "rgba(36,117,252,0.1)"
+              : status === "PENDING"
+              ? "rgba(252, 248, 36, 0.33)"
+              : "rgba(252, 36, 36, 0.34)",
           padding: 12,
           borderRadius: 60,
         }}
@@ -47,12 +60,19 @@ const ReportTile: React.FC<Props> = ({ title, date, onOptionSelect }) => {
             onSelect={() => onOptionSelect("View")}
             customStyles={optionStyles}
           >
-            <Text style={[styles.optionText]}>View</Text>
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <Ionicons name="download-outline" size={22} />
+              <Text style={[styles.optionText]}>{t("download")}</Text>
+            </View>
           </MenuOption>
-          <View style={styles.divider} />
-          <MenuOption onSelect={() => onOptionSelect("Delete")}>
+          {/* <View style={styles.divider} /> */}
+          {/* <MenuOption onSelect={() => onOptionSelect("Delete")}>
             <Text style={[styles.optionText, { color: "red" }]}>Delete</Text>
-          </MenuOption>
+          </MenuOption> */}
         </MenuOptions>
       </Menu>
     </View>
@@ -84,6 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 2,
     color: COLORS.black,
+    marginLeft: 10,
   },
   divider: {
     height: 1,

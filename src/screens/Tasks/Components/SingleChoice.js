@@ -13,26 +13,30 @@ import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { setLoading } from "../../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import { Dimensions } from "react-native";
 
-const SingleChoice = ({ question, onPress }) => {
+const windowWidth = Dimensions.get("window").width;
+
+const SingleChoice = ({ question, onPress, answer }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [selectedOption, setSelectedOption] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
+  const [locked, setLocked] = useState(false); // prevent changes after submit
 
   const [submitExerciseAnswer, { isLoading }] =
     useSubmitExerciseAnswerMutation();
 
+  // Handle when user selects option
   const handleSelect = (id) => {
-    if (selectedOption === id) {
-      setSelectedOption(null); // deselect if already selected
-    } else {
-      setSelectedOption(id); // select new option
+    if (!locked) {
+      setSelectedOption((prev) => (prev === id ? null : id));
     }
   };
 
+  // Submit handler
   const handleSubmit = () => {
     if (submitted) {
       setSubmitted(false);
@@ -40,8 +44,7 @@ const SingleChoice = ({ question, onPress }) => {
     } else {
       if (selectedOption) {
         dispatch(setLoading(true));
-        const duration = stopTimer(); // e.g. "PT2M15S"
-        // console.log("Duration:", duration);
+        const duration = stopTimer();
 
         let payload = {
           id: question?.id,
@@ -53,47 +56,66 @@ const SingleChoice = ({ question, onPress }) => {
         };
 
         submitExerciseAnswer(payload).then((res) => {
-          console.log(
-            "submitted answer response :::::::::::: ",
-            JSON.stringify(res)
-          );
-          if (res?.data?.feedbackStatus === "INCORRECT") {
+          const feedback = res?.data?.feedbackStatus;
+          if (feedback === "INCORRECT") {
             setIsCorrect(false);
             showErrorToast(t("yourAnswerIsWrong"));
-          } else {
-            showSuccessToast(t("yourAnswerIsCorrect"));
+          } else if (feedback === "CORRECT") {
             setIsCorrect(true);
+            showSuccessToast(t("yourAnswerIsCorrect"));
           }
+          setSubmitted(true);
+          setLocked(true);
         });
-
-        setSubmitted(true);
       }
     }
   };
 
+  // Pre-fill state if answer object is provided
   useEffect(() => {
-    startTimer(); // start when screen loads
-  }, []);
+    if (answer) {
+      if (answer.feedbackStatus === "CORRECT") {
+        setSelectedOption(answer.answer);
+        setIsCorrect(true);
+        setSubmitted(true);
+        setLocked(true);
+      } else if (answer.feedbackStatus === "INCORRECT") {
+        setSelectedOption(answer.answer);
+        setIsCorrect(false);
+        setSubmitted(true);
+        setLocked(true);
+      }
+    } else {
+      startTimer();
+    }
+  }, [answer]);
+
+  const handleRetry = () => {
+    setSubmitted(false);
+    setSelectedOption(null);
+    setIsCorrect(null);
+    setLocked(false);
+    startTimer();
+  };
 
   return (
     <View>
+      {/* Illustrations */}
       {Array.isArray(question?.illustrations) &&
         question.illustrations.length > 0 &&
         (question.illustrations.length === 1 ? (
-          // Single image: use screen width minus container margins
           <Image
             source={{ uri: question.illustrations[0].uri }}
             style={{
-              width: windowWidth - 60, // 30 margin each side
+              width: windowWidth - 60,
               height: 200,
               borderRadius: 10,
               marginBottom: 16,
               alignSelf: "center",
             }}
-            resizeMode="cover"
+            resizeMode="stretch"
           />
         ) : (
-          // Multiple images: horizontal scroll
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -111,18 +133,14 @@ const SingleChoice = ({ question, onPress }) => {
                       index === question.illustrations.length - 1 ? 0 : 10,
                   },
                 ]}
-                resizeMode="cover"
+                resizeMode="stretch"
               />
             ))}
           </ScrollView>
         ))}
 
-      <View
-        style={{
-          marginHorizontal: 30,
-        }}
-      >
-        {/* Question */}
+      {/* Question */}
+      <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>Question 1:</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {splitMathString(question.description).map((part, idx) =>
@@ -141,24 +159,34 @@ const SingleChoice = ({ question, onPress }) => {
         </View>
       </View>
 
-      <View
-        style={{
-          marginHorizontal: 20,
-        }}
-      >
-        {/* Options */}
-        {Object.entries(question.options).map(([key, value], indx) => (
-          <OptionButton
-            key={key}
-            optionKey={key}
-            label={value}
-            selected={selectedOption === key}
-            onPress={() => handleSelect(key)}
-            index={indx}
-            correct={isCorrect}
-            disabled={submitted}
-          />
-        ))}
+      {/* Options */}
+      <View style={{ marginHorizontal: 20 }}>
+        {Object.entries(question.options).map(([key, value], indx) => {
+          // Determine style for each option
+          let optionCorrectness = null;
+          if (submitted) {
+            if (isCorrect && selectedOption === key) {
+              optionCorrectness = true;
+            } else if (!isCorrect && selectedOption === key) {
+              optionCorrectness = false;
+            } else if (!isCorrect && answer?.solution === key) {
+              // highlight correct one after wrong answer
+              optionCorrectness = true;
+            }
+          }
+
+          return (
+            <OptionButton
+              key={key}
+              optionKey={key}
+              label={value}
+              selected={selectedOption === key}
+              onPress={() => handleSelect(key)}
+              correct={optionCorrectness}
+              disabled={locked}
+            />
+          );
+        })}
 
         <View style={styles.buttons}>
           {submitted && isCorrect === false && (
@@ -166,12 +194,7 @@ const SingleChoice = ({ question, onPress }) => {
               title={t("retry")}
               buttonStyle={[styles.btnStyle, styles.retryBtn]}
               textStyle={[styles.retryText, { includeFontPadding: false }]}
-              onPress={() => {
-                setSubmitted(false);
-                setSelectedOption(null); // reset
-                setIsCorrect(null); // reset feedback
-                startTimer(); // restart timer
-              }}
+              onPress={handleRetry}
             />
           )}
 
@@ -180,15 +203,15 @@ const SingleChoice = ({ question, onPress }) => {
             buttonStyle={[
               styles.btnStyle,
               styles.submitBtn,
-              !selectedOption && styles.submitBtnDisabled,
+              !selectedOption && !submitted && styles.submitBtnDisabled,
             ]}
             textStyle={[
               styles.submitText,
-              !selectedOption && styles.submitTextDisabled,
+              !selectedOption && !submitted && styles.submitTextDisabled,
               { includeFontPadding: false },
             ]}
-            disabled={!selectedOption}
-            onPress={() => handleSubmit()}
+            disabled={!selectedOption && !submitted}
+            onPress={handleSubmit}
           />
         </View>
       </View>
@@ -229,7 +252,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   submitTextDisabled: { color: COLORS.black },
-
   buttons: { flexDirection: "row", gap: 20, justifyContent: "center" },
   retryBtn: { backgroundColor: COLORS.black },
   retryText: {

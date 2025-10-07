@@ -1,18 +1,18 @@
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   Linking,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../theme/colors";
 import { useTranslation } from "react-i18next";
-import AnimatedDropdown from "../../components/AnimatedDropdown";
 import AnimatedDatePicker from "../../components/AnimatedDatePicker";
 import ReportTile from "../../components/ReportTile";
 import { MenuProvider } from "react-native-popup-menu";
@@ -30,8 +30,9 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
-import { showErrorToast } from "../../utils/toast";
+import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { useLazyGetPromptsQuery } from "../../services/prompts";
+import { setAllReports } from "../../store/reports";
 
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -43,12 +44,15 @@ const ReportScreen = ({ navigation }) => {
 
   const { allReports } = useSelector((state) => state?.reports);
 
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [appToken, setAppToken] = useState(0);
-
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  // ✅ Format helpers
   const formatDateForApi = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
     return (
@@ -66,7 +70,6 @@ const ReportScreen = ({ navigation }) => {
     );
   };
 
-  // ✅ format for UI (dd-mm-yyyy)
   const formatDateForUI = (dateString) => {
     if (!dateString) return "";
     const d = new Date(dateString);
@@ -75,7 +78,8 @@ const ReportScreen = ({ navigation }) => {
     const yyyy = d.getFullYear();
     return `${dd}-${mm}-${yyyy}`;
   };
-  // ✅ Generate report handler
+
+  // ✅ Generate report logic
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
       showErrorToast(t("pleaseSelectBothFromAndToDates"));
@@ -87,17 +91,16 @@ const ReportScreen = ({ navigation }) => {
       return;
     }
 
-    const payload = {
-      from: fromDate,
-      to: toDate,
-    };
+    const payload = { from: fromDate, to: toDate };
 
     try {
       dispatch(setLoading(true));
       await generateReport(payload);
-
       setFromDate(null);
       setToDate(null);
+      await fetchReports(0, true);
+      await fetchTokens();
+      showSuccessToast(t("generationStarted"));
     } catch (err) {
       console.error("Error generating report:", err);
     } finally {
@@ -105,7 +108,6 @@ const ReportScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ Handle View/Delete
   const handleOptionSelect = (val, report) => {
     if (val === "View") {
       if (report?.reportFile?.uri) {
@@ -115,73 +117,95 @@ const ReportScreen = ({ navigation }) => {
       }
     } else if (val === "Delete") {
       console.log("Delete report:", report.id);
-      // TODO: add delete API if available
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchReportsAndTokens = async () => {
-        try {
-          // Fetch reports
-          await getAllReports().unwrap();
-
-          // Fetch prompts usage for tokens
-          const res = await getPrompts().unwrap();
-          if (res?.usage !== undefined && res?.limit !== undefined) {
-            const available = res.limit - res.usage;
-            setAppToken(available >= 0 ? available : 0); // set state
-          }
-        } catch (err) {
-          console.log("❌ Error fetching reports or tokens", err);
-        }
-      };
-      fetchReportsAndTokens();
-    }, [getAllReports, getPrompts])
-  );
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
+  // ✅ Unified fetch function with Redux sync
+  const fetchReports = async (pageNumber = 0, isRefreshing = false) => {
     try {
-      await getAllReports().unwrap();
+      const res = await getAllReports({
+        page: pageNumber,
+        size: 20,
+      }).unwrap();
 
+      const content = res?.content || [];
+
+      if (isRefreshing || pageNumber === 0) {
+        dispatch(setAllReports(content));
+      } else {
+        dispatch(setAllReports([...allReports, ...content]));
+      }
+
+      setHasMore(content.length === 20);
+    } catch (err) {
+      console.log("❌ Error fetching reports", err);
+    }
+  };
+
+  const fetchTokens = async () => {
+    try {
       const res = await getPrompts().unwrap();
       if (res?.usage !== undefined && res?.limit !== undefined) {
         const available = res.limit - res.usage;
         setAppToken(available >= 0 ? available : 0);
       }
     } catch (err) {
-      console.log("❌ Refresh error", err);
-    } finally {
-      setRefreshing(false);
+      console.log("❌ Error fetching tokens", err);
     }
-  }, [getAllReports, getPrompts]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        await fetchReports(0, true);
+        await fetchTokens();
+      })();
+    }, [])
+  );
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchReports(0, true);
+    await fetchTokens();
+    setRefreshing(false);
+    setPage(0);
+  }, []);
+
+  const loadMore = async () => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    const nextPage = page + 1;
+    await fetchReports(nextPage, false);
+    setPage(nextPage);
+    setIsLoadingMore(false);
+  };
+
+  const renderFooter = () =>
+    isLoadingMore ? (
+      <View style={{ paddingVertical: 20 }}>
+        <ActivityIndicator color={COLORS.primary} />
+      </View>
+    ) : null;
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-      {/* Header */}
       <View style={styles.header}>
         <CustomHeader title={t("report")} onPress={() => navigation.goBack()} />
       </View>
-      {/* Generate report section */}
-      <View style={styles.whiteSheet}>
-        {/* <AnimatedDropdown
-          label="Generate report by"
-          options={["Daily", "Weekly", "Monthly"]}
-          onSelect={(val) => console.log("Selected:", val)}
-        /> */}
 
+      <View style={styles.whiteSheet}>
         <AnimatedDatePicker
           label={t("selectDateFrom")}
           selectedDate={fromDate ? new Date(fromDate) : null}
-          maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
+          maximumDate={new Date()}
           onSelect={(date) => setFromDate(formatDateForApi(date))}
         />
 
         <AnimatedDatePicker
           label={t("selectDateTo")}
           selectedDate={toDate ? new Date(toDate) : null}
-          minimumDate={fromDate ? new Date(fromDate) : undefined} // if From selected → restrict To
+          minimumDate={fromDate ? new Date(fromDate) : undefined}
+          maximumDate={new Date()}
           onSelect={(date) => setToDate(formatDateForApi(date))}
         />
 
@@ -195,7 +219,7 @@ const ReportScreen = ({ navigation }) => {
               svg={<TokenWhiteIcon width={22} height={22} />}
             />
             <Text style={styles.whiteSheetFooterText}>
-              {appToken} Token available
+              {appToken} {t("tokenAvailable")}
             </Text>
           </View>
         ) : (
@@ -215,7 +239,8 @@ const ReportScreen = ({ navigation }) => {
             />
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={[styles.whiteSheetFooterText, { marginRight: 10 }]}>
-                {appToken} {t("tokenAvailable")}
+                {/* {appToken} {t("tokenAvailable")} */}
+                {t("NOT_ENOUGH_TOKENS")}
               </Text>
               <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
                 <Text
@@ -231,29 +256,30 @@ const ReportScreen = ({ navigation }) => {
           </View>
         )}
       </View>
-      {/* Reports list */}
+
       <MenuProvider>
-        <ScrollView
-          contentContainerStyle={styles.container}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[COLORS.primary]}
-              tintColor={COLORS.primary}
+        <FlatList
+          data={allReports}
+          keyExtractor={(item, index) => `${item?.id ?? "no-id"}-${index}`}
+          renderItem={({ item }) => (
+            <ReportTile
+              status={item?.status}
+              title={
+                item?.status === "SUCCESS"
+                  ? "Report " + item?.id
+                  : item?.status === "PENDING"
+                  ? "Pending"
+                  : item?.status === "FAILED"
+                  ? "Failed"
+                  : item?.status === "IN_PROGRESS"
+                  ? "In Progress"
+                  : null
+              }
+              date={formatDateForUI(item?.createdAt)}
+              onOptionSelect={(val) => handleOptionSelect(val, item)}
             />
-          }
-        >
-          {allReports && allReports.length > 0 ? (
-            allReports.map((report) => (
-              <ReportTile
-                key={report.id}
-                title={report.id || "Report"}
-                date={formatDateForUI(report.createdAt)}
-                onOptionSelect={(val) => handleOptionSelect(val, report)}
-              />
-            ))
-          ) : (
+          )}
+          ListEmptyComponent={() => (
             <Text
               style={{
                 textAlign: "center",
@@ -264,7 +290,19 @@ const ReportScreen = ({ navigation }) => {
               {t("noReportsFound")}
             </Text>
           )}
-        </ScrollView>
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[COLORS.primary]}
+              tintColor={COLORS.primary}
+            />
+          }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={renderFooter}
+          contentContainerStyle={styles.container}
+        />
       </MenuProvider>
     </SafeAreaView>
   );
@@ -272,7 +310,6 @@ const ReportScreen = ({ navigation }) => {
 
 export default ReportScreen;
 
-// ✅ Styles
 const styles = StyleSheet.create({
   safeContent: { flex: 1, backgroundColor: COLORS.background },
   header: {
@@ -285,6 +322,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 15,
     paddingHorizontal: 20,
+    paddingBottom: 50,
   },
   whiteSheet: {
     padding: 20,

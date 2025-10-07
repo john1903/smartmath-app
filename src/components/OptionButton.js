@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   selectedContainer: {
-    backgroundColor: COLORS.green,
-    borderColor: COLORS.green,
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
   },
   correctContainer: {
     backgroundColor: COLORS.green,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
   selectedCircle: {
     borderColor: COLORS.white,
-    backgroundColor: COLORS.green,
+    backgroundColor: COLORS.primary,
   },
   correctCircle: {
     borderColor: COLORS.white,
