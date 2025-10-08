@@ -1,10 +1,16 @@
-import React from "react";
+import React, { FC } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/Home/HomeScreen";
 
-const Stack = createNativeStackNavigator();
+// Define navigation param types
+export type HomeStackParamList = {
+  HomeMain: undefined;
+};
 
-export default function HomeStack() {
+// Create stack navigator with typed params
+const Stack = createNativeStackNavigator<HomeStackParamList>();
+
+const HomeStack: FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -14,4 +20,6 @@ export default function HomeStack() {
       />
     </Stack.Navigator>
   );
-}
+};
+
+export default HomeStack;

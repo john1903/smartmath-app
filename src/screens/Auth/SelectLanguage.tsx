@@ -68,7 +68,7 @@ const SelectLanguage = ({ navigation }: any) => {
   };
 
   return (
-    <CustomBackground showImage={false} showGradient={token ? false : true}>
+    <CustomBackground showImage={false} showBg={token ? false : true}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>

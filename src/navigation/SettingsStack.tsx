@@ -1,5 +1,6 @@
-import React from "react";
+import React, { FC } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import SettingsScreen from "../screens/Settings/SettingsScreen";
 import SelectLanguage from "../screens/Auth/SelectLanguage";
 import EditProfileScreen from "../screens/Settings/EditProfileScreen";
@@ -9,9 +10,21 @@ import TokensScreen from "../screens/Settings/TokensScreen";
 import AffiliateLinkScreen from "../screens/Settings/AffiliateLinkScreen";
 import CountryScreen from "../screens/Settings/CountryScreen";
 
-const Stack = createNativeStackNavigator();
+// --- Navigation types ---
+export type SettingsStackParamList = {
+  SettingsMain: undefined;
+  SelectLanguage: undefined;
+  EditProfile: undefined;
+  Changepassword: undefined;
+  Subscription: undefined;
+  Tokens: undefined;
+  AffiliateLink: undefined;
+  Country: undefined;
+};
 
-export default function SettingsStack({ navigation }) {
+const Stack = createNativeStackNavigator<SettingsStackParamList>();
+
+const SettingsStack: FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -28,4 +41,6 @@ export default function SettingsStack({ navigation }) {
       <Stack.Screen name="Country" component={CountryScreen} />
     </Stack.Navigator>
   );
-}
+};
+
+export default SettingsStack;

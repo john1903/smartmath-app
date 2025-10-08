@@ -7,20 +7,24 @@ import FONTS from "../../theme/fonts";
 import FONTSIZE from "../../theme/fontsSize";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/types";
 
-const GetStartedScreen = ({ navigation }) => {
+interface GetStartedScreenProps {
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+}
+
+const GetStartedScreen: React.FC<GetStartedScreenProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
 
-  // 🔄 Force re-render when screen is focused
   useFocusEffect(
     useCallback(() => {
-      // trigger re-render by touching i18n.language
       console.log("Current Language:", i18n.language);
     }, [i18n.language])
   );
 
   return (
-    <CustomBackground showImage={true} showGradient={true}>
+    <CustomBackground showImage={true}>
       <View style={styles.container}>
         <View style={styles.bottomText}>
           <Text style={styles.text}>
@@ -30,11 +34,10 @@ const GetStartedScreen = ({ navigation }) => {
             {t("math")} <Text style={styles.highlight}>{t("success")}</Text>
           </Text>
         </View>
+
         <CustomButton
           title={t("getstarted")}
-          buttonStyle={{
-            width: "40%",
-          }}
+          buttonStyle={{ width: "40%" }}
           textStyle={{
             color: COLORS.white,
             fontSize: FONTSIZE.size21,

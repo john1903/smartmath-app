@@ -1,10 +1,16 @@
-import React from "react";
+import React, { FC } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ReportScreen from "../screens/Reports/ReportScreen";
 
-const Stack = createNativeStackNavigator();
+// Define navigation parameter types for this stack
+export type ReportsStackParamList = {
+  ReportsMain: undefined;
+};
 
-export default function ReportsStack() {
+// Create the stack navigator with types
+const Stack = createNativeStackNavigator<ReportsStackParamList>();
+
+const ReportsStack: FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -14,4 +20,6 @@ export default function ReportsStack() {
       />
     </Stack.Navigator>
   );
-}
+};
+
+export default ReportsStack;

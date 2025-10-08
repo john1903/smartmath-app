@@ -3,7 +3,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TasksScreen from "../screens/Tasks/TasksScreen";
 import TaskDetail from "../screens/Tasks/TaskDetail";
 
-const Stack = createNativeStackNavigator();
+// ✅ Define type for navigation params
+export type TasksStackParamList = {
+  TasksMain: undefined;
+  TaskDetail: { taskId?: string } | undefined; // optional params if needed
+};
+
+// ✅ Create a typed Stack Navigator
+const Stack = createNativeStackNavigator<TasksStackParamList>();
 
 export default function TasksStack() {
   return (

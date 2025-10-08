@@ -5,18 +5,30 @@ import {
   Animated,
   StyleSheet,
   TouchableOpacity,
+  TextInputProps,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons"; // 👈 make sure to install
+import Ionicons from "@expo/vector-icons/Ionicons";
 import COLORS from "../theme/colors";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 
-const AnimatedInput = ({
+interface AnimatedInputProps extends TextInputProps {
+  label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  secureTextEntry?: boolean;
+  style?: ViewStyle | ViewStyle[];
+}
+
+const AnimatedInput: React.FC<AnimatedInputProps> = ({
   label,
   value,
   onChangeText,
   secureTextEntry = false,
   style = {},
+  ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -25,13 +37,13 @@ const AnimatedInput = ({
 
   useEffect(() => {
     Animated.timing(animatedIsFocused, {
-      toValue: isFocused || value ? 1 : 0,
+      toValue: isFocused || !!value ? 1 : 0,
       duration: 200,
       useNativeDriver: false,
     }).start();
   }, [isFocused, value]);
 
-  const labelStyle = {
+  const labelStyle: Animated.WithAnimatedObject<TextStyle> = {
     position: "absolute",
     left: 25,
     top: animatedIsFocused.interpolate({
@@ -54,9 +66,10 @@ const AnimatedInput = ({
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry && !showPassword} // 👈 control visibility
+        secureTextEntry={secureTextEntry && !showPassword}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        {...rest}
       />
 
       {secureTextEntry && (
@@ -90,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
-    paddingRight: 40, // 👈 space for eye icon
+    paddingRight: 40, // space for eye icon
   },
   iconContainer: {
     position: "absolute",

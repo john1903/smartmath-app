@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { useFocusEffect } from "@react-navigation/native";
 
 import COLORS from "../../theme/colors";
 import FONTSIZE from "../../theme/fontsSize";
@@ -20,34 +21,65 @@ import StatCard from "../../components/StatCard";
 import ProgressCard from "../../components/ProgressCard";
 import CategoryButton from "../../components/CategoryButton";
 import QuestionCard from "../../components/QuestionCard";
-import FilterIcon from "../../../assets/svgs/FilterIcon.svg";
+import AnimatedDatePicker from "../../components/AnimatedDatePicker";
 
 import {
   useLazyGetAllRecommendedExerciseQuery,
   useLazyUserDetailQuery,
 } from "../../services/homeSlice";
+import { useLazyGetUserExerciseStatusQuery } from "../../services/tasksSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
-import { useFocusEffect } from "@react-navigation/native";
-import { useLazyGetUserExerciseStatusQuery } from "../../services/tasksSlice";
-import { setUser } from "../../store/auth"; // ✅ make sure this exists
-import AnimatedDatePicker from "../../components/AnimatedDatePicker";
+import { setUser } from "../../store/auth";
 
-export default function HomeScreen({ navigation }) {
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../navigation/types";
+
+interface HomeScreenProps {
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+}
+
+interface Exercise {
+  id: string;
+  title: string;
+  exerciseType: string;
+  [key: string]: any;
+}
+
+interface User {
+  firstName?: string;
+  avatar?: { uri: string };
+  [key: string]: any;
+}
+
+interface ExerciseStatus {
+  totalAnswers: number;
+  correctAnswers: number;
+  [key: string]: any;
+}
+
+interface RootState {
+  auth: { user: User };
+  home: { allRecommendedExercise: Exercise[] };
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [triggerUserDetail] = useLazyUserDetailQuery();
-  const [getAllRecommendedExercise, { isLoading }] =
-    useLazyGetAllRecommendedExerciseQuery();
+  const [getAllRecommendedExercise] = useLazyGetAllRecommendedExerciseQuery();
   const [getUserExerciseStatus] = useLazyGetUserExerciseStatusQuery();
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const { user } = useSelector((state) => state?.auth);
-  const { allRecommendedExercise } = useSelector((state) => state?.home);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { allRecommendedExercise } = useSelector(
+    (state: RootState) => state.home
+  );
 
-  const [userExerciseStatus, setUserExerciseStatus] = useState();
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  const [userExerciseStatus, setUserExerciseStatus] =
+    useState<ExerciseStatus>();
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [toDate, setToDate] = useState<Date | null>(null);
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,13 +93,11 @@ export default function HomeScreen({ navigation }) {
   ];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
-  // ✅ Utility to return datetime in correct format
-  const formatDateTime = (date, type) => {
+  const formatDateTime = (date: Date, type: "from" | "to"): string => {
     let d = new Date(date);
     const now = new Date();
 
     if (type === "from") {
-      // ✅ 00:00:00 UTC of that day
       d = new Date(
         Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0)
       );
@@ -77,10 +107,8 @@ export default function HomeScreen({ navigation }) {
         d.getUTCMonth() === now.getUTCMonth() &&
         d.getUTCDate() === now.getUTCDate()
       ) {
-        // ✅ If today → current UTC time minus 5 min
         d = new Date(Date.now() - 5 * 60000);
       } else {
-        // ✅ 23:59:59 UTC of that day
         d = new Date(
           Date.UTC(
             d.getUTCFullYear(),
@@ -94,8 +122,7 @@ export default function HomeScreen({ navigation }) {
       }
     }
 
-    const pad = (n) => String(n).padStart(2, "0");
-
+    const pad = (n: number) => String(n).padStart(2, "0");
     return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
       d.getUTCDate()
     )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
@@ -103,13 +130,12 @@ export default function HomeScreen({ navigation }) {
     )}`;
   };
 
-  const fetchExerciseStatus = (from, to) => {
+  const fetchExerciseStatus = (from: string, to: string) => {
     dispatch(setLoading(true));
     getUserExerciseStatus({ from, to })
-      .then((res) => {
-        // console.log("ressssssssssssssssssss", res?.data);
-        if (res) {
-          setUserExerciseStatus(res?.data);
+      .then((res: any) => {
+        if (res?.data) {
+          setUserExerciseStatus(res.data);
         }
       })
       .finally(() => {
@@ -121,67 +147,33 @@ export default function HomeScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const now = new Date();
-
-      // ✅ FROM = 30 days ago at 00:00:00 UTC
-      // const from = new Date(
-      //   Date.UTC(
-      //     now.getUTCFullYear(),
-      //     now.getUTCMonth(),
-      //     now.getUTCDate() - 90,
-      //     0,
-      //     0,
-      //     0,
-      //     0
-      //   )
-      // );
       const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
-
-      // ✅ TO = current UTC time minus 5 minutes
       const to = new Date(now.getTime() - 5 * 60 * 1000);
 
-      // Store raw dates (optional, if you need them elsewhere)
       setFromDate(from);
       setToDate(to);
 
-      // Format for API payload (no ms, no Z)
-      const formatForApi = (date) => date.toISOString().slice(0, 19);
+      const formatForApi = (d: Date) => d.toISOString().slice(0, 19);
+      fetchExerciseStatus(formatForApi(from), formatForApi(to));
 
-      const payload = {
-        from: formatForApi(from),
-        to: formatForApi(to),
-      };
-
-      // console.log("Default payload ::::::::::::::", payload);
-      fetchExerciseStatus(payload.from, payload.to);
-
-      // ✅ Fetch user detail again whenever Home gains focus
-      triggerUserDetail()
+      triggerUserDetail({})
         .unwrap()
-        .then((res) => {
-          if (res) {
-            dispatch(setUser(res)); // update redux store
-          }
+        .then((res: User) => {
+          if (res) dispatch(setUser(res));
         })
-        .catch((err) => console.log("User detail error:", err));
+        .catch((err: any) => console.log("User detail error:", err));
 
-      getAllRecommendedExercise();
+      getAllRecommendedExercise({});
     }, [dispatch, triggerUserDetail, getAllRecommendedExercise])
   );
 
   const resetDefaultDates = () => {
     const now = new Date();
-
-    // ✅ FROM = 1 Jan 2025 at 00:00:00 UTC
     const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
-
-    // ✅ TO = current UTC time minus 5 minutes
     const to = new Date(now.getTime() - 5 * 60 * 1000);
-
     setFromDate(from);
     setToDate(to);
-
-    // Optional: re-fetch with default range
-    const formatForApi = (date) => date.toISOString().slice(0, 19);
+    const formatForApi = (d: Date) => d.toISOString().slice(0, 19);
     fetchExerciseStatus(formatForApi(from), formatForApi(to));
   };
 
@@ -189,17 +181,12 @@ export default function HomeScreen({ navigation }) {
     if (fromDate && toDate) {
       const from = formatDateTime(fromDate, "from");
       const to = formatDateTime(toDate, "to");
-
-      const payload = { from, to };
-      // console.log("itself select from to payload::::::::::::::", payload);
-
       fetchExerciseStatus(from, to);
     }
   };
 
   const total = userExerciseStatus?.totalAnswers ?? 0;
   const correct = userExerciseStatus?.correctAnswers ?? 0;
-
   const accuracyPercent =
     total > 0 ? ((correct / total) * 100).toFixed(1) : "0";
   const accuracyProgress = total > 0 ? correct / total : 0;
@@ -208,23 +195,26 @@ export default function HomeScreen({ navigation }) {
     activeCategory === "all_exercises"
       ? allRecommendedExercise
       : allRecommendedExercise.filter((q) => {
-          if (activeCategory === "mcqs")
-            return q.exerciseType === "MULTIPLE_CHOICE";
-          if (activeCategory === "open_ended")
-            return q.exerciseType === "OPEN_ENDED";
-          if (activeCategory === "single_choice")
-            return q.exerciseType === "SINGLE_CHOICE";
-          if (activeCategory === "true_false")
-            return q.exerciseType === "TRUE_FALSE";
-          if (activeCategory === "matching")
-            return q.exerciseType === "MATCHING";
-          return true;
+          switch (activeCategory) {
+            case "mcqs":
+              return q.exerciseType === "MULTIPLE_CHOICE";
+            case "open_ended":
+              return q.exerciseType === "OPEN_ENDED";
+            case "single_choice":
+              return q.exerciseType === "SINGLE_CHOICE";
+            case "true_false":
+              return q.exerciseType === "TRUE_FALSE";
+            case "matching":
+              return q.exerciseType === "MATCHING";
+            default:
+              return true;
+          }
         });
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await getAllRecommendedExercise().unwrap();
+      await getAllRecommendedExercise({});
     } catch (err) {
       console.log("❌ Refresh error", err);
     } finally {
@@ -236,42 +226,23 @@ export default function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={styles.header}>
-        <View
-          style={{
-            width: "85%",
-            paddingRight: 10,
-          }}
-        >
+        <View style={{ width: "85%", paddingRight: 10 }}>
           <Text style={styles.greeting} numberOfLines={1} ellipsizeMode="tail">
             {t("hi")}! {user?.firstName}
           </Text>
           <Text style={styles.subGreeting}>{t("welcome_back")}</Text>
         </View>
-        <View
-          style={[
-            styles.rightHeader,
-            {
-              width: "15%",
-            },
-          ]}
-        >
-          {/* <TouchableOpacity
-            onPress={() => console.log("notification button")}
-            style={styles.notifyCircle}
-          >
-            <Ionicons name="notifications-outline" size={22} color="black" />
-          </TouchableOpacity> */}
+
+        <View style={[styles.rightHeader, { width: "15%" }]}>
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("SettingsTab", {
-                screen: "EditProfile",
-              })
+              navigation.navigate("SettingsTab", { screen: "EditProfile" })
             }
           >
             <Image
               source={
                 user?.avatar
-                  ? { uri: user?.avatar?.uri }
+                  ? { uri: user.avatar.uri }
                   : require("../../../assets/images/avatar.png")
               }
               style={styles.avatar}
@@ -293,13 +264,12 @@ export default function HomeScreen({ navigation }) {
 
         <ProgressCard
           title={t("accuracy")}
-          percentage={parseFloat(accuracyPercent)} // shows "0%" or "75%"
-          progress={accuracyProgress} // 0 → 1 for the bar
+          percentage={parseFloat(accuracyPercent)}
+          // progress={accuracyProgress}
           total={`${correct}/${total}`}
         />
       </View>
 
-      {/* Categories */}
       <View>
         <ScrollView
           horizontal
@@ -309,7 +279,7 @@ export default function HomeScreen({ navigation }) {
           {categories.map((cat) => (
             <CategoryButton
               key={cat}
-              label={t(`${cat}`)}
+              label={t(cat)}
               active={cat === activeCategory}
               onPress={() => setActiveCategory(cat)}
             />
@@ -351,28 +321,23 @@ export default function HomeScreen({ navigation }) {
                   }}
                 >
                   {t("pending_tasks", {
-                    count: allRecommendedExercise?.length,
+                    count: allRecommendedExercise?.length ?? 0,
                   })}
                 </Text>
               </View>
-              {/* <View>
-                <FilterIcon />
-              </View> */}
             </View>
 
-            {allRecommendedExercise && allRecommendedExercise.length > 0 ? (
-              allRecommendedExercise &&
+            {filteredQuestions?.length ? (
               filteredQuestions.map((q, index) => (
                 <QuestionCard
                   key={q.id}
                   number={index + 1}
                   question={q.title}
-                  // status={q.status}
                   status={"solve"}
                   onPress={() =>
                     navigation.navigate("TasksTab", {
                       screen: "TaskDetail",
-                      params: { exerciseId: q?.id },
+                      params: { exerciseId: q.id },
                     })
                   }
                 />
@@ -394,97 +359,46 @@ export default function HomeScreen({ navigation }) {
 
       {/* Calendar Modal */}
       <Modal visible={calendarVisible} transparent animationType="slide">
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            padding: 20,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: 12,
-              padding: 20,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: FONTSIZE.size24,
-                fontFamily: FONTS.UrbanistMedium,
-                marginBottom: 10,
-              }}
-            >
-              {t("select_date_range")}
-            </Text>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{t("select_date_range")}</Text>
 
             <AnimatedDatePicker
               label="From Date"
               selectedDate={fromDate}
               onSelect={(date) => setFromDate(date)}
-              maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
+              maximumDate={toDate ?? undefined}
             />
 
             <AnimatedDatePicker
               label="To Date"
               selectedDate={toDate}
-              minimumDate={fromDate || undefined}
               onSelect={(date) => setToDate(date)}
-              maximumDate={toDate ? new Date(toDate) : undefined} // if To selected → restrict From
+              minimumDate={fromDate ?? undefined}
             />
 
             <TouchableOpacity
-              style={{
-                marginTop: 20,
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor: COLORS.primary,
-                alignItems: "center",
-              }}
+              style={styles.applyButton}
               onPress={handleApplyFilter}
             >
-              <Text
-                style={{
-                  color: COLORS.white,
-                  fontFamily: FONTS.UrbanistMedium,
-                }}
-              >
-                {t("apply")}
-              </Text>
+              <Text style={styles.applyButtonText}>{t("apply")}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{
-                marginTop: 10,
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor: COLORS.white,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor: "#cccccc",
-              }}
+              style={styles.cancelButton}
               onPress={() => {
                 resetDefaultDates();
                 setCalendarVisible(false);
               }}
             >
-              <Text
-                style={{
-                  color: COLORS.secondary,
-                  fontFamily: FONTS.UrbanistMedium,
-                }}
-              >
-                {t("cancel")}
-              </Text>
+              <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
     </SafeAreaView>
   );
-}
-
+};
 const styles = StyleSheet.create({
   safeContent: { flex: 1, backgroundColor: COLORS.background },
   header: {
@@ -553,4 +467,49 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+  },
+
+  modalTitle: {
+    fontSize: FONTSIZE.size24,
+    fontFamily: FONTS.UrbanistMedium,
+    marginBottom: 10,
+  },
+  applyButton: {
+    marginTop: 20,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: COLORS.primary,
+    alignItems: "center",
+  },
+  applyButtonText: {
+    color: COLORS.white,
+    fontFamily: FONTS.UrbanistMedium,
+  },
+
+  cancelButton: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: COLORS.white,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#cccccc",
+  },
+
+  cancelButtonText: {
+    color: COLORS.secondary,
+    fontFamily: FONTS.UrbanistMedium,
+  },
 });
+export default HomeScreen;

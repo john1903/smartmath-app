@@ -52,7 +52,6 @@ const ReportScreen = ({ navigation }) => {
   const [toDate, setToDate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // ✅ Format helpers
   const formatDateForApi = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
     return (
@@ -79,7 +78,6 @@ const ReportScreen = ({ navigation }) => {
     return `${dd}-${mm}-${yyyy}`;
   };
 
-  // ✅ Generate report logic
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
       showErrorToast(t("pleaseSelectBothFromAndToDates"));
@@ -120,7 +118,6 @@ const ReportScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ Unified fetch function with Redux sync
   const fetchReports = async (pageNumber = 0, isRefreshing = false) => {
     try {
       const res = await getAllReports({
@@ -138,7 +135,7 @@ const ReportScreen = ({ navigation }) => {
 
       setHasMore(content.length === 20);
     } catch (err) {
-      console.log("❌ Error fetching reports", err);
+      console.log("Error fetching reports", err);
     }
   };
 
@@ -150,7 +147,7 @@ const ReportScreen = ({ navigation }) => {
         setAppToken(available >= 0 ? available : 0);
       }
     } catch (err) {
-      console.log("❌ Error fetching tokens", err);
+      console.log("Error fetching tokens", err);
     }
   };
 

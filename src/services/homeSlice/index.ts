@@ -10,39 +10,6 @@ import { api, formHeader } from "../api";
 
 export const HomeApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    //     userDetail: builder.mutation({
-    //       query: ({ data }: any) => {
-    //         return {
-    //           url: userDetailEndPoint,
-    //           method: "get",
-    //           body: data,
-    //         };
-    //       },
-    //       transformResponse: (result) => result,
-    //       //   invalidatesTags: ['readUser'],
-    //       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
-    //         try {
-    //           const { data } = await queryFulfilled;
-    //           const { navigation } = args;
-
-    //           console.log(
-    //             "user detail response :::::::::::: ",
-    //             JSON.stringify(data)
-    //           );
-
-    //           dispatch(setLoading(false));
-    //           dispatch(setUser(data));
-    //           //   showSuccessToast("Login successful!");
-    //         } catch (e: any) {
-    //           console.log(" user response error :::::::::::: ", JSON.stringify(e));
-    //           dispatch(setLoading(false));
-
-    //           //   errorMessage(e?.error?.data?.message || e?.error?.error);
-    //           showErrorToast("Something went wrong");
-    //         }
-    //       },
-    //     }),
-    //   }),
     userDetail: builder.query({
       query: (payload) => {
         return {
