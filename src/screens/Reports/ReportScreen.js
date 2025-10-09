@@ -78,6 +78,8 @@ const ReportScreen = ({ navigation }) => {
     return `${dd}-${mm}-${yyyy}`;
   };
 
+  console.log("all reprots ::::::::::: ", JSON.stringify(allReports));
+
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
       showErrorToast(t("pleaseSelectBothFromAndToDates"));

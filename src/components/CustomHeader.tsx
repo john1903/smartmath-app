@@ -1,15 +1,27 @@
-import { View, Text, StyleSheet } from "react-native";
 import React from "react";
+import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
 import BackButton from "./BackButton";
 import COLORS from "../theme/colors";
 import FONTS from "../theme/fonts";
 import FONTSIZE from "../theme/fontsSize";
 
-const CustomHeader = ({ title, goBack = true, onPress }) => {
+interface CustomHeaderProps {
+  title: string;
+  goBack?: boolean;
+  onPress?: () => void;
+  style?: ViewStyle;
+  titleStyle?: TextStyle;
+}
+
+const CustomHeader: React.FC<CustomHeaderProps> = ({
+  title,
+  goBack = true,
+  onPress,
+}) => {
   return (
     <View style={styles.container}>
       {goBack ? (
-        <BackButton onPress={onPress} />
+        <BackButton onPress={onPress || (() => {})} />
       ) : (
         <View style={{ width: 40 }} /> // placeholder to keep title centered
       )}

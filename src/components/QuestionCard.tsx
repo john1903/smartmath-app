@@ -1,11 +1,29 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  GestureResponderEvent,
+} from "react-native";
 import StatusBadge from "./StatusBadge";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import COLORS from "../theme/colors";
 
-export default function QuestionCard({ number, question, status, onPress }) {
+interface QuestionCardProps {
+  number: number;
+  question: string;
+  status?: string;
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
+const QuestionCard: React.FC<QuestionCardProps> = ({
+  number,
+  question,
+  status,
+  onPress,
+}) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <View style={styles.leftContainer}>
@@ -16,6 +34,7 @@ export default function QuestionCard({ number, question, status, onPress }) {
           {question}
         </Text>
       </View>
+
       {status && (
         <View style={styles.rightContainer}>
           <StatusBadge status={status} />
@@ -23,7 +42,7 @@ export default function QuestionCard({ number, question, status, onPress }) {
       )}
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -36,13 +55,12 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.borderColor,
   },
   leftContainer: {
-    flex: 1, // takes remaining space
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     marginRight: 8,
   },
   rightContainer: {
-    // flexShrink: 1, // prevents overflow
     alignItems: "flex-end",
   },
   circle: {
@@ -67,3 +85,5 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
 });
+
+export default QuestionCard;

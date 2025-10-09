@@ -10,7 +10,21 @@ import FONTS from "../theme/fonts";
 import CategoryButton from "./CategoryButton";
 import CustomButton from "./CustomButton";
 
-export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
+interface FilterBottomSheetProps {
+  isVisible: boolean;
+  onClose: () => void;
+  onApply: (filters: {
+    status: string;
+    difficultyLevel: string;
+    exerciseType: string;
+  }) => void;
+}
+
+const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
+  isVisible,
+  onClose,
+  onApply,
+}) => {
   const { t } = useTranslation();
 
   const OPTIONS = {
@@ -34,9 +48,9 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
     ],
   };
 
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [selectedTaskType, setSelectedTaskType] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
+  const [selectedTaskType, setSelectedTaskType] = useState<string>("");
 
   const handleApply = () => {
     onApply({
@@ -98,7 +112,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
           ))}
         </View>
 
-        <View style={styles.spacing}></View>
+        <View style={styles.spacing} />
 
         {/* Difficulty */}
         <Text style={styles.sectionTitle}>{t("filter.difficulty")}</Text>
@@ -116,7 +130,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
           ))}
         </View>
 
-        <View style={styles.spacing}></View>
+        <View style={styles.spacing} />
 
         {/* Task Type */}
         <Text style={styles.sectionTitle}>{t("filter.taskType")}</Text>
@@ -167,7 +181,7 @@ export default function FilterBottomSheet({ isVisible, onClose, onApply }) {
       </View>
     </Modal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   modal: {
@@ -227,3 +241,5 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 });
+
+export default FilterBottomSheet;

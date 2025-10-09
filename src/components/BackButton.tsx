@@ -1,14 +1,21 @@
-// components/BackButton.js
 import React from "react";
 import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Or any icon library
 import COLORS from "../theme/colors";
 
-const BackButton = ({
+interface BackButtonProps {
+  onPress: () => void;
+  size?: number;
+  style?: ViewStyle | ViewStyle[];
+  // iconName?: keyof typeof Feather.glyphMap;
+  iconName?: any;
+}
+
+const BackButton: React.FC<BackButtonProps> = ({
   onPress,
   size = 24,
   style = {},
-  iconName = "chevron-left", // default back icon
+  iconName = "chevron-left",
 }) => {
   return (
     <TouchableOpacity
