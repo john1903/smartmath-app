@@ -14,6 +14,7 @@ import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { setLoading } from "../../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { Dimensions } from "react-native";
+import ImageCarousel from "../../../components/ImageCarousel";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -98,10 +99,31 @@ const SingleChoice = ({ question, onPress, answer }) => {
     startTimer();
   };
 
+  // const apiResponse = {
+  //   illustrations: [
+  //     {
+  //       id: 1,
+  //       fileName: "ElifAyra-Logo-3333.png",
+  //       uri: "https://smartmath.fra1.digitaloceanspaces.com/users/581d500f-b339-497b-863e-6d1b300d680f.png",
+  //       mimeType: "image/png",
+  //     },
+  //     {
+  //       id: 2,
+  //       fileName: "ElifAyra-Logo-3333.png",
+  //       uri: "https://smartmath.fra1.digitaloceanspaces.com/users/f391f9a9-b441-4eec-9fca-4ee5f924529b.png",
+  //       mimeType: "image/png",
+  //     },
+  //   ],
+  // };
+
   return (
     <View>
       {/* Illustrations */}
-      {Array.isArray(question?.illustrations) &&
+
+      {question.illustrations && question.illustrations.length > 0 && (
+        <ImageCarousel illustrations={question.illustrations} />
+      )}
+      {/* {Array.isArray(question?.illustrations) &&
         question.illustrations.length > 0 &&
         (question.illustrations.length === 1 ? (
           <Image
@@ -137,7 +159,7 @@ const SingleChoice = ({ question, onPress, answer }) => {
               />
             ))}
           </ScrollView>
-        ))}
+        ))} */}
 
       {/* Question */}
       <View style={{ marginHorizontal: 30 }}>

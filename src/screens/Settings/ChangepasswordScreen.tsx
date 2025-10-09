@@ -103,6 +103,7 @@ const ChangepasswordScreen = ({ navigation }: any) => {
                       setErrors({ ...errors, currentPassword: "" });
                   }}
                   secureTextEntry
+                  error={errors.currentPassword}
                 />
                 {errors.currentPassword ? (
                   <Text style={styles.errorText}>{errors.currentPassword}</Text>
@@ -119,6 +120,7 @@ const ChangepasswordScreen = ({ navigation }: any) => {
                       setErrors({ ...errors, newPassword: "" });
                   }}
                   secureTextEntry
+                  error={errors.newPassword}
                 />
                 {errors.newPassword ? (
                   <Text style={styles.errorText}>{errors.newPassword}</Text>
@@ -135,6 +137,7 @@ const ChangepasswordScreen = ({ navigation }: any) => {
                       setErrors({ ...errors, rePassword: "" });
                   }}
                   secureTextEntry
+                  error={errors.rePassword}
                 />
                 {errors.rePassword ? (
                   <Text style={styles.errorText}>{errors.rePassword}</Text>
@@ -203,9 +206,9 @@ const styles = StyleSheet.create({
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,
     // marginTop: 5,
-    marginLeft: 25,
+    marginLeft: 22,
     position: "absolute",
-    bottom: -6,
+    bottom: -8,
   },
   inputWrapper: {
     // marginBottom: 30, // leaves space for error text

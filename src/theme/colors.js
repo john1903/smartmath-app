@@ -11,6 +11,7 @@ const COLORS = {
   lightBlue: "#2473fc10",
   green: "#3CCB3C",
   F5Gray: "#F5F5F5",
+  transparent: "transparent",
 };
 export default COLORS;
 

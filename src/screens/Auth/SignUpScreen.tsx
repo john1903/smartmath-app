@@ -23,6 +23,7 @@ import { useRegisterUserMutation } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
+import { setLoading } from "../../store/loading";
 
 // ----------------------
 // ✅ Interface Definitions
@@ -90,6 +91,8 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const signupFunc = async (): Promise<void> => {
     if (!validateForm()) return;
 
+    dispatch(setLoading(true));
+
     const obj: RegisterUserPayload = {
       data: {
         email,
@@ -137,6 +140,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                         if (errors.FName)
                           setErrors((prev: any) => ({ ...prev, FName: "" }));
                       }}
+                      error={errors.FName}
                     />
                     {errors.FName && (
                       <Text style={styles.errorText}>{errors.FName}</Text>
@@ -156,6 +160,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                         if (errors.LName)
                           setErrors((prev: any) => ({ ...prev, LName: "" }));
                       }}
+                      error={errors.LName}
                     />
                     {errors.LName && (
                       <Text style={styles.errorText}>{errors.LName}</Text>
@@ -173,6 +178,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                       if (errors.email)
                         setErrors((prev: any) => ({ ...prev, email: "" }));
                     }}
+                    error={errors.email}
                   />
                   {errors.email && (
                     <Text style={styles.errorText}>{errors.email}</Text>
@@ -190,6 +196,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                         setErrors((prev: any) => ({ ...prev, password: "" }));
                     }}
                     secureTextEntry
+                    error={errors.password}
                   />
                   {errors.password && (
                     <Text style={styles.errorText}>{errors.password}</Text>
@@ -263,7 +270,7 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    marginTop: 20,
+    marginTop: 18,
     marginHorizontal: 20,
     paddingBottom: 15,
   },
@@ -300,8 +307,8 @@ const styles = StyleSheet.create({
   },
   errorText: {
     position: "absolute",
-    bottom: -6,
-    left: 25,
+    bottom: -8,
+    left: 20,
     fontSize: FONTSIZE.size12,
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,
@@ -352,7 +359,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   footerText: {
-    marginTop: 13,
+    // marginTop: 10,
     textAlign: "center",
     fontSize: FONTSIZE.size12,
     fontFamily: FONTS.UrbanistRegular,
