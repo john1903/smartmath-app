@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
-  useColorScheme
+  useColorScheme,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import CalendarIcon from "../../assets/svgs/CalendarIcon.svg";
@@ -25,7 +25,7 @@ const AnimatedDatePicker: React.FC<Props> = ({
   maximumDate,
   onSelect,
 }) => {
-    const colorScheme = useColorScheme(); // "light" or "dark"
+  const colorScheme = useColorScheme(); // "light" or "dark"
   const isDarkMode = colorScheme === "dark";
   const [visible, setVisible] = useState(false);
 
@@ -43,26 +43,28 @@ const AnimatedDatePicker: React.FC<Props> = ({
         <CalendarIcon width={22} height={22} />
       </TouchableOpacity>
 
-        <DateTimePickerModal
-      isVisible={visible}
-      mode="date"
-      display={Platform.select({
-        ios: "inline",
-        android: "default",
-      })}
-      isDarkModeEnabled={isDarkMode}
-      minimumDate={minimumDate}
-      maximumDate={maximumDate}
-      onConfirm={handleConfirm}
-      onCancel={() => setVisible(false)}
-      {...(Platform.OS === "ios" ? { textColor: isDarkMode ? "white" : "black" } : {})}
-      pickerContainerStyleIOS={{
-        backgroundColor: isDarkMode ? "#000" : "#fff",
-      }}
-      pickerComponentStyleIOS={{
-        backgroundColor: isDarkMode ? "#000" : "#fff",
-      }}
-    />
+      <DateTimePickerModal
+        isVisible={visible}
+        mode="date"
+        display={Platform.select({
+          ios: "inline",
+          android: "default",
+        })}
+        isDarkModeEnabled={isDarkMode}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        onConfirm={handleConfirm}
+        onCancel={() => setVisible(false)}
+        {...(Platform.OS === "ios"
+          ? { textColor: isDarkMode ? "white" : "black" }
+          : {})}
+        pickerContainerStyleIOS={{
+          backgroundColor: isDarkMode ? "#000" : "#fff",
+        }}
+        pickerComponentStyleIOS={{
+          backgroundColor: isDarkMode ? "#000" : "#fff",
+        }}
+      />
     </View>
   );
 };
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 100,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

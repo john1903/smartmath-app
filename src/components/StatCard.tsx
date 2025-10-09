@@ -23,7 +23,6 @@ const StatCard: React.FC<StatCardProps> = ({ value, onCalendarPress }) => {
           <Text style={styles.title}>{t("completed")}</Text>
         </View>
 
-        {/* Calendar button */}
         <TouchableOpacity onPress={onCalendarPress}>
           <CalanderWhiteIcon />
         </TouchableOpacity>
@@ -34,9 +33,9 @@ const StatCard: React.FC<StatCardProps> = ({ value, onCalendarPress }) => {
           <Text style={styles.subtitle}>{t("tasks_solve")}</Text>
           <Text style={styles.value}>{value}</Text>
         </View>
-        <View style={styles.arrowContainer}>
+        {/* <View style={styles.arrowContainer}>
           <ArrowIcon />
-        </View>
+        </View> */}
       </View>
     </View>
   );

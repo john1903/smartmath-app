@@ -20,6 +20,7 @@ interface AnimatedInputProps extends TextInputProps {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   style?: ViewStyle | ViewStyle[];
+  error?: string; // ✅ new prop
 }
 
 const AnimatedInput: React.FC<AnimatedInputProps> = ({
@@ -28,6 +29,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
   onChangeText,
   secureTextEntry = false,
   style = {},
+  error,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -43,72 +45,91 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
     }).start();
   }, [isFocused, value]);
 
+  // Dynamic border color based on state
+  const getBorderColor = () => {
+    if (error) return COLORS.danger;
+    if (isFocused) return COLORS.black;
+    return COLORS.secondary;
+  };
+
   const labelStyle: Animated.WithAnimatedObject<TextStyle> = {
     position: "absolute",
-    left: 25,
+    left: 18,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [31, -2],
+      outputRange: [14, -18],
     }),
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
-    color: animatedIsFocused.interpolate({
-      inputRange: [0, 1],
-      outputRange: [COLORS.secondary, COLORS.black],
-    }),
+    color: error
+      ? COLORS.danger
+      : animatedIsFocused.interpolate({
+          inputRange: [0, 1],
+          outputRange: [COLORS.secondary, COLORS.black],
+        }),
+    backgroundColor: "transparent",
+    paddingHorizontal: 4,
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container]}>
       <Animated.Text style={labelStyle}>{label}</Animated.Text>
 
-      <TextInput
-        style={styles.input}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry && !showPassword}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        {...rest}
-      />
+      <View
+        style={[styles.inputWrapper, { borderColor: getBorderColor() }, style]}
+      >
+        <TextInput
+          style={styles.input}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry && !showPassword}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          {...rest}
+        />
 
-      {secureTextEntry && (
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => setShowPassword(!showPassword)}
-        >
-          <Ionicons
-            name={showPassword ? "eye" : "eye-off"}
-            size={20}
-            color={COLORS.secondary}
-          />
-        </TouchableOpacity>
-      )}
+        {secureTextEntry && (
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Ionicons
+              name={showPassword ? "eye" : "eye-off"}
+              size={20}
+              color={error ? COLORS.danger : COLORS.secondary}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 18,
     marginVertical: 6,
     justifyContent: "center",
+    marginTop: 26,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 25,
+    height: 45,
+    paddingHorizontal: 18,
   },
   input: {
-    paddingLeft: 25,
-    height: 45,
-    borderWidth: 1,
-    borderColor: COLORS.secondary,
-    borderRadius: 25,
-    paddingHorizontal: 15,
+    flex: 1,
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
-    paddingRight: 40, // space for eye icon
+    paddingVertical: 0,
+    includeFontPadding: false,
   },
   iconContainer: {
-    position: "absolute",
-    right: 15,
-    top: "68%",
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

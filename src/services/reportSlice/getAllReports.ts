@@ -6,7 +6,6 @@ import { showErrorToast } from "../../utils/toast";
 
 export default (build: any) =>
   build.query({
-    // ✅ Accept params like { page, size }
     query: (params: { page?: number; size?: number } = {}) => {
       const { page = 0, size = 20 } = params;
       return {
@@ -21,25 +20,16 @@ export default (build: any) =>
       arg: any,
       { dispatch, queryFulfilled, getState }: any
     ) {
-      // dispatch(setLoading(true));
       try {
         const res = await queryFulfilled;
         const newData = res?.data?.content || [];
-
-        // ✅ Get existing data
         const currentData = getState()?.reports?.allReports || [];
 
-        // ✅ Append if page > 0 else replace
         if (arg.page > 0) {
           dispatch(setAllReports([...currentData, ...newData]));
         } else {
           dispatch(setAllReports(newData));
         }
-
-        // console.log(
-        //   "✅ reports fetch response ::::::::: ",
-        //   JSON.stringify(res)
-        // );
       } catch (e: any) {
         console.log(" reports fetch error", e);
         if (e?.meta?.response?.status === 400) {

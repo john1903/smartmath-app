@@ -34,21 +34,33 @@ export const AuthApi = api.injectEndpoints({
             JSON.stringify(data)
           );
 
-          showSuccessToast(i18n.t("requestMessages.user_created_successfully"));
+          showSuccessToast(
+            i18n.t("congratulations"),
+            i18n.t("requestMessages.user_created_successfully")
+          );
 
           navigation.navigate("SignIn");
 
           dispatch(setLoading(false));
-        } catch (e) {
+        } catch (e: any) {
           console.log("register user error :::::::::::: ", JSON.stringify(e));
           dispatch(setLoading(false));
 
           if (e?.meta?.response?.status === 400) {
-            showErrorToast(i18n.t("requestMessages.invalid_request_data"));
+            showErrorToast(
+              i18n.t("sorry"),
+              i18n.t("requestMessages.invalid_request_data")
+            );
           } else if (e?.meta?.response?.status === 409) {
-            showErrorToast(i18n.t("requestMessages.email_already_use"));
+            showErrorToast(
+              i18n.t("sorry"),
+              i18n.t("requestMessages.email_already_use")
+            );
           } else {
-            showErrorToast(i18n.t("requestMessages.something_went_wrong"));
+            showErrorToast(
+              i18n.t("sorry"),
+              i18n.t("requestMessages.something_went_wrong")
+            );
           }
         }
       },
@@ -77,6 +89,7 @@ export const AuthApi = api.injectEndpoints({
           dispatch(setToken(data?.token));
           dispatch(setRefreshToken(data?.refreshToken));
           showSuccessToast(
+            i18n.t("congratulations"),
             i18n.t("requestMessages.user_authenticated_successfully")
           );
         } catch (e: any) {
@@ -87,50 +100,20 @@ export const AuthApi = api.injectEndpoints({
           dispatch(setLoading(false));
 
           if (e?.meta?.response?.status === 401) {
-            showErrorToast(i18n.t("requestMessages.invalid_credentials"));
+            showErrorToast(
+              i18n.t("sorry"),
+              i18n.t("requestMessages.invalid_credentials")
+            );
           } else {
-            showErrorToast(e?.error?.data?.message || e?.error?.error);
+            showErrorToast(
+              i18n.t("sorry"),
+              e?.error?.data?.message || e?.error?.error
+            );
           }
-
-          // showErrorToast("Something went wrong");
         }
       },
     }),
-    // updateUser: builder.mutation({
-    //   query: ({ data }: any) => {
-    //     return {
-    //       url: userDetailEndPoint,
-    //       method: "patch",
-    //       body: data,
-    //     };
-    //   },
-    //   transformResponse: (result) => result,
-    //   //   invalidatesTags: ['readUser'],
-    //   async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
-    //     try {
-    //       const result = await queryFulfilled;
-    //       const { navigation } = args;
 
-    //       console.log(
-    //         "user update response :::::::::::: ",
-    //         JSON.stringify(result)
-    //       );
-
-    //       dispatch(setLoading(false));
-    //       // dispatch(setUser(data?.));
-    //       showSuccessToast("User update successfully!");
-    //     } catch (e: any) {
-    //       console.log(
-    //         "update user response error :::::::::::: ",
-    //         JSON.stringify(e)
-    //       );
-    //       dispatch(setLoading(false));
-
-    //       //   errorMessage(e?.error?.data?.message || e?.error?.error);
-    //       showErrorToast("Something went wrong");
-    //     }
-    //   },
-    // }),
     updateUser: builder.mutation({
       query: ({ data }: any) => ({
         url: "/users/me",
@@ -139,17 +122,20 @@ export const AuthApi = api.injectEndpoints({
       }),
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          const { meta, data } = await queryFulfilled; // meta has response info
+          const { meta, data }: any = await queryFulfilled; // meta has response info
           const status = meta?.response?.status;
 
           console.log("user data ::: ", JSON.stringify(data));
 
           if (status === 204) {
-            showSuccessToast("User updated successfully!");
+            showSuccessToast(
+              i18n.t("congratulations"),
+              i18n.t("requestMessages.user_update_successfully")
+            );
           }
-        } catch (err) {
+        } catch (err: any) {
           console.log("Update user error ::::::::::: ", err);
-          showErrorToast("Something went wrong!");
+          showErrorToast(i18n.t("sorry"), "Something went wrong!");
         } finally {
           dispatch(setLoading(false));
         }
@@ -178,7 +164,10 @@ export const AuthApi = api.injectEndpoints({
 
           dispatch(setLoading(false));
           // dispatch(setUser(data?.));
-          showSuccessToast("File update successfully!");
+          showSuccessToast(
+            i18n.t("congratulations"),
+            i18n.t("requestMessages.file_update_successfully")
+          );
         } catch (e: any) {
           console.log(
             "update user file response error :::::::::::: ",
@@ -186,7 +175,10 @@ export const AuthApi = api.injectEndpoints({
           );
           dispatch(setLoading(false));
 
-          showErrorToast(e?.error?.data?.message || e?.error?.error);
+          showErrorToast(
+            i18n.t("sorry"),
+            e?.error?.data?.message || e?.error?.error
+          );
           // showErrorToast("Something went wrong");
         }
       },
@@ -208,7 +200,10 @@ export const AuthApi = api.injectEndpoints({
           const { navigation } = args;
 
           dispatch(setLoading(false));
-          showSuccessToast("File deleted successfully!");
+          showSuccessToast(
+            i18n.t("congratulations"),
+            i18n.t("requestMessages.file_deleted_successfully")
+          );
         } catch (e: any) {
           console.log(
             "delete file response error :::::::::::: ",
@@ -216,7 +211,10 @@ export const AuthApi = api.injectEndpoints({
           );
           dispatch(setLoading(false));
 
-          showErrorToast(e?.error?.data?.message || e?.error?.error);
+          showErrorToast(
+            i18n.t("sorry"),
+            e?.error?.data?.message || e?.error?.error
+          );
           // showErrorToast("Something went wrong");
         }
       },

@@ -23,8 +23,6 @@ import { setLoading } from "../../store/loading";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
 
-// ---------------------- INTERFACES ----------------------
-
 interface SignInScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
 }
@@ -34,18 +32,15 @@ interface ErrorState {
   password: string;
 }
 
-// ---------------------- COMPONENT ----------------------
-
 const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("hani4u13@gmail.com");
+  const [password, setPassword] = useState<string>("12345678");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
 
-  // ---------------------- VALIDATION ----------------------
   const validate = (): boolean => {
     let valid = true;
     const newErrors: ErrorState = { email: "", password: "" };
@@ -73,14 +68,12 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
     return valid;
   };
 
-  // ---------------------- LOGIN FUNCTION ----------------------
   const loginFunc = async (): Promise<void> => {
     if (!validate()) return;
     dispatch(setLoading(true));
     await loginUser({ data: { username: email, password } });
   };
 
-  // ---------------------- UI ----------------------
   return (
     <CustomBackground showImage={false}>
       <KeyboardAwareScrollView
@@ -94,13 +87,11 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
 
         <View style={styles.innerContainer}>
           <View>
-            {/* Title Section */}
             <View style={styles.mainTitleContainer}>
               <Text style={styles.title}>{t("login")}</Text>
               <Text style={styles.subtitle}>{t("login_subtitle")}</Text>
             </View>
 
-            {/* Email Input */}
             <View style={styles.inputWrapper}>
               <AnimatedInput
                 label={t("email_or_phone")}
@@ -109,13 +100,13 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
                   setEmail(text);
                   setErrors((prev) => ({ ...prev, email: "" }));
                 }}
+                error={errors.email} // ✅ now label and border turn red if error exists
               />
               {errors.email && (
                 <Text style={styles.errorTextAbsolute}>{errors.email}</Text>
               )}
             </View>
 
-            {/* Password Input */}
             <View style={styles.inputWrapper}>
               <AnimatedInput
                 label={t("password")}
@@ -124,6 +115,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
                   setPassword(text);
                   setErrors((prev) => ({ ...prev, password: "" }));
                 }}
+                error={errors.password}
                 secureTextEntry
               />
               {errors.password && (
@@ -135,7 +127,6 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               <Text style={styles.forgotText}>{t("forgot_password")}</Text>
             </TouchableOpacity>
 
-            {/* Login Button */}
             <CustomButton
               title={t("sign_in")}
               buttonStyle={{ width: "100%", marginVertical: 10 }}
@@ -148,7 +139,6 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               onPress={loginFunc}
             />
 
-            {/* Create Account */}
             <View style={styles.createAccountContainer}>
               <Text style={styles.createAccount}>{t("no_account")}</Text>
               <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
@@ -156,14 +146,12 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            {/* Divider */}
             <View style={styles.divider}>
               <View style={styles.line} />
               <Text style={styles.orText}>{t("or")}</Text>
               <View style={styles.line} />
             </View>
 
-            {/* Social Buttons */}
             <CustomButton
               title={t("sign_in_with_google")}
               buttonStyle={[styles.socialButton, { marginTop: 10 }]}
@@ -180,7 +168,6 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
             />
           </View>
 
-          {/* Footer */}
           <Text style={styles.footerText}>
             {t("terms_text")} <Text style={styles.link}>{t("terms")}</Text>{" "}
             {t("and")} <Text style={styles.link}>{t("privacy")}</Text>.
@@ -286,8 +273,8 @@ const styles = StyleSheet.create({
   },
   errorTextAbsolute: {
     position: "absolute",
-    bottom: -6,
-    left: 25,
+    bottom: -8,
+    left: 20,
     fontSize: FONTSIZE.size12,
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,

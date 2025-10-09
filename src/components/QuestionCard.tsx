@@ -35,9 +35,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         </Text>
       </View>
 
-      {status && (
+      {status ? (
         <View style={styles.rightContainer}>
           <StatusBadge status={status} />
+        </View>
+      ) : (
+        <View>
+          <StatusBadge status={"solve"} />
         </View>
       )}
     </TouchableOpacity>
