@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Dimensions,
+  Alert,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import React, { useEffect, useState } from "react";
@@ -33,10 +34,16 @@ import {
   useUpdateFileMutation,
 } from "../../../services/authSlice";
 import { setLoading } from "../../../store/loading";
-import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "../../../utils/toast";
 import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import { useLazyGetPromptsQuery } from "../../../services/prompts";
+import ImageCarousel from "../../../components/ImageCarousel";
+import GlobalModal from "../../../components/GlobalModal";
 
 const windowWidth = Dimensions.get("window").width;
 const OpenEnded = ({ question, onPress, navigation, answerData }) => {
@@ -57,6 +64,8 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
 
   const [files, setFiles] = useState([]);
   const [appToken, setAppToken] = useState();
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const pickFile = async () => {
     try {
@@ -151,15 +160,15 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
     }
 
     if (appToken < 50) {
-      showErrorToast(t("notEnoughTokenstoSubmit"));
+      setModalVisible(true);
+      showInfoToast(t("newTokensAvailableToPurchase"));
       return;
     }
 
     try {
       dispatch(setLoading(true));
-      const duration = stopTimer(); // e.g. "PT2M15S"
+      const duration = stopTimer();
 
-      // Ensure all ids are strings
       const answerFileIds = files.map((f) => String(f.id));
 
       let payload = {
@@ -177,9 +186,8 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
 
       console.log("Submit response :::::::::::::", response);
       showSuccessToast(t("answerSubmittedSuccessfully"));
-
       if (response?.feedbackStatus === "PENDING") {
-        setWaitingPopup(true);
+        setTimeout(() => setWaitingPopup(true), 1000);
       }
       setSubmitted(true);
     } catch (err) {
@@ -210,58 +218,37 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
     fetchPrompts();
   }, []);
 
+  const handleCancel = () => {
+    setModalVisible(false);
+    console.log("User cancelled");
+  };
+
+  const handleConfirm = () => {
+    setModalVisible(false);
+
+    navigation.navigate("SettingsTab", { screen: "Tokens" });
+    console.log("User confirmed");
+  };
+
   return (
     <View>
-      {/* Question Image */}
-      {Array.isArray(question?.illustrations) &&
-        question.illustrations.length > 0 &&
-        (question.illustrations.length === 1 ? (
-          // Single image: use screen width minus container margins
-          <Image
-            source={{ uri: question.illustrations[0].uri }}
-            style={{
-              width: windowWidth - 60, // 30 margin each side
-              height: 200,
-              borderRadius: 10,
-              marginBottom: 16,
-              alignSelf: "center",
-            }}
-            resizeMode="stretch"
-          />
-        ) : (
-          // Multiple images: horizontal scroll
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.carouselContainer}
-            contentContainerStyle={{ paddingHorizontal: 10 }}
-          >
-            {question.illustrations.map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: item.uri }}
-                style={[
-                  styles.carouselImage,
-                  {
-                    marginRight:
-                      index === question.illustrations.length - 1 ? 0 : 10,
-                  },
-                ]}
-                resizeMode="stretch"
-              />
-            ))}
-          </ScrollView>
-        ))}
+      {question.illustrations && question.illustrations.length > 0 && (
+        <ImageCarousel illustrations={question.illustrations} />
+      )}
 
       <View
         style={{
           marginHorizontal: 30,
         }}
       >
-        {/* Question */}
         <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {splitMathString(question.description).map((part, idx) =>
+          <MathRenderer
+            formula={question.description}
+            style={{ marginRight: 4 }}
+            fontSize={20}
+          />
+          {/* {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
               <MathRenderer
                 key={idx}
@@ -273,7 +260,7 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                 {part}
               </Text>
             )
-          )}
+          )} */}
         </View>
       </View>
 
@@ -445,28 +432,6 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
 
               <View
                 style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  marginTop: 20,
-                }}
-              >
-                {splitMathString(answer?.feedback).map((part, idx) =>
-                  part.startsWith("$") ? (
-                    <MathRenderer
-                      key={idx}
-                      formula={part}
-                      style={{ marginRight: 4 }}
-                    />
-                  ) : (
-                    <Text key={idx} style={styles.answerFeedback}>
-                      {part}
-                    </Text>
-                  )
-                )}
-              </View>
-
-              <View
-                style={{
                   marginVertical: 20,
                 }}
               >
@@ -475,30 +440,33 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                     styles.commentStatus,
                     {
                       color:
-                        answer?.feedbackStatus === "INCORRECT"
+                        answer?.feedbackStatus === "INCORRECT" ||
+                        answer?.feedbackStatus === "FAILED"
                           ? COLORS.danger
                           : COLORS.green,
                     },
                   ]}
                 >
-                  {answer?.feedbackStatus === "INCORRECT"
+                  {answer?.feedbackStatus === "INCORRECT" ||
+                  answer?.feedbackStatus === "FAILED"
                     ? t("exerciseWrong")
                     : t("exerciseCorrectly")}
                 </Text>
               </View>
 
               <View style={styles.buttons}>
-                {answer?.feedbackStatus === "INCORRECT" && (
-                  <CustomButton
-                    title={t("retry")}
-                    buttonStyle={[styles.btnStyle, styles.retryBtn]}
-                    textStyle={[
-                      styles.retryText,
-                      { includeFontPadding: false },
-                    ]}
-                    onPress={() => setAnswer(null)}
-                  />
-                )}
+                {answer?.feedbackStatus === "INCORRECT" ||
+                  (answer?.feedbackStatus === "FAILED" && (
+                    <CustomButton
+                      title={t("retry")}
+                      buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                      textStyle={[
+                        styles.retryText,
+                        { includeFontPadding: false },
+                      ]}
+                      onPress={() => setAnswer(null)}
+                    />
+                  ))}
 
                 <CustomButton
                   title={t("next")}
@@ -560,12 +528,26 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                 ]}
                 onPress={() => {
                   setWaitingPopup(false);
+
+                  setTimeout(() => {
+                    navigation.navigate("TasksMain");
+                  }, 1000);
                 }}
               />
             </View>
           </View>
         </View>
       </Modal>
+
+      <GlobalModal
+        visible={modalVisible}
+        title={t("tokenLimitExceeded")}
+        message={t("greatProgressToUnlock")}
+        cancelText={t("cancel")}
+        confirmText={t("buyMore")}
+        onCancel={handleCancel}
+        onConfirm={handleConfirm}
+      />
     </View>
   );
 };

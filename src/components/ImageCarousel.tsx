@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     position: "relative",
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 20,
   },
   slide: {
     borderRadius: 15,
@@ -91,9 +92,9 @@ const styles = StyleSheet.create({
   },
   arrowButton: {
     position: "absolute",
-    top: "45%",
-    backgroundColor: "rgba(0,0,0,0.4)",
-    padding: 8,
+    top: "40%",
+    backgroundColor: "rgba(0, 0, 0, 0.21)",
+    padding: 4,
     borderRadius: 25,
   },
 });

@@ -30,9 +30,14 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../store/loading";
-import { showErrorToast, showSuccessToast } from "../../utils/toast";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "../../utils/toast";
 import { useLazyGetPromptsQuery } from "../../services/prompts";
 import { setAllReports } from "../../store/reports";
+import GlobalModal from "../../components/GlobalModal";
 
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -51,6 +56,8 @@ const ReportScreen = ({ navigation }) => {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const formatDateForApi = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
@@ -78,7 +85,7 @@ const ReportScreen = ({ navigation }) => {
     return `${dd}-${mm}-${yyyy}`;
   };
 
-  console.log("all reprots ::::::::::: ", JSON.stringify(allReports));
+  // console.log("all reprots ::::::::::: ", JSON.stringify(allReports));
 
   const handleGenerateReport = async () => {
     if (!fromDate || !toDate) {
@@ -87,7 +94,9 @@ const ReportScreen = ({ navigation }) => {
     }
 
     if (appToken < 50) {
-      showErrorToast(t("notEnoughTokens"));
+      // showErrorToast(t("notEnoughTokens"));
+      setModalVisible(true);
+      showInfoToast(t("newTokensAvailableToPurchase"));
       return;
     }
 
@@ -144,6 +153,8 @@ const ReportScreen = ({ navigation }) => {
   const fetchTokens = async () => {
     try {
       const res = await getPrompts().unwrap();
+
+      console.log("res of tokens ", JSON.stringify(res));
       if (res?.usage !== undefined && res?.limit !== undefined) {
         const available = res.limit - res.usage;
         setAppToken(available >= 0 ? available : 0);
@@ -185,6 +196,18 @@ const ReportScreen = ({ navigation }) => {
         <ActivityIndicator color={COLORS.primary} />
       </View>
     ) : null;
+
+  const handleCancel = () => {
+    setModalVisible(false);
+    console.log("User cancelled");
+  };
+
+  const handleConfirm = () => {
+    setModalVisible(false);
+
+    navigation.navigate("SettingsTab", { screen: "Tokens" });
+    console.log("User confirmed");
+  };
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -303,6 +326,16 @@ const ReportScreen = ({ navigation }) => {
           contentContainerStyle={styles.container}
         />
       </MenuProvider>
+
+      <GlobalModal
+        visible={modalVisible}
+        title={t("tokenLimitExceeded")}
+        message={t("greatProgressToUnlock")}
+        cancelText={t("cancel")}
+        confirmText={t("buyMore")}
+        onCancel={handleCancel}
+        onConfirm={handleConfirm}
+      />
     </SafeAreaView>
   );
 };

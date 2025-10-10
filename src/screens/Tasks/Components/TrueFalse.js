@@ -19,6 +19,7 @@ import CustomButton from "../../../components/CustomButton";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import { setLoading } from "../../../store/loading";
 import { useTranslation } from "react-i18next";
+import ImageCarousel from "../../../components/ImageCarousel";
 
 const TrueFalse = ({ question, onPress, answer }) => {
   const { t } = useTranslation();
@@ -32,10 +33,8 @@ const TrueFalse = ({ question, onPress, answer }) => {
     Object.keys(answers).length ===
     Object.keys(question?.statements || {}).length;
 
-  // ---- handle prefilled answer from API ----
   useEffect(() => {
     if (answer) {
-      // If answer.answer is an object of { key: boolean }
       if (answer.answer) {
         setAnswers(answer.answer);
       }
@@ -51,17 +50,15 @@ const TrueFalse = ({ question, onPress, answer }) => {
     }
   }, [answer]);
 
-  // Handle selection
   const handleSelect = (id, value) => {
     if (!submitted) {
       setAnswers((prev) => ({ ...prev, [id]: value }));
     }
   };
 
-  // Submit
   const handleSubmit = () => {
     if (submitted) {
-      onPress?.(); // go to next question
+      onPress?.();
       return;
     }
 
@@ -99,50 +96,20 @@ const TrueFalse = ({ question, onPress, answer }) => {
 
   return (
     <View>
-      {/* Images */}
-      {Array.isArray(question?.illustrations) &&
-        question.illustrations.length > 0 &&
-        (question.illustrations.length === 1 ? (
-          <Image
-            source={{ uri: question.illustrations[0].uri }}
-            style={{
-              width: windowWidth - 60,
-              height: 200,
-              borderRadius: 10,
-              marginBottom: 16,
-              alignSelf: "center",
-            }}
-            resizeMode="stretch"
-          />
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.carouselContainer}
-            contentContainerStyle={{ paddingHorizontal: 10 }}
-          >
-            {question.illustrations.map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: item.uri }}
-                style={[
-                  styles.carouselImage,
-                  {
-                    marginRight:
-                      index === question.illustrations.length - 1 ? 0 : 10,
-                  },
-                ]}
-                resizeMode="stretch"
-              />
-            ))}
-          </ScrollView>
-        ))}
+      {question.illustrations && question.illustrations.length > 0 && (
+        <ImageCarousel illustrations={question.illustrations} />
+      )}
 
-      {/* Question */}
       <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>Question 1: {question?.text}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {splitMathString(question.description).map((part, idx) =>
+          <MathRenderer
+            formula={question.description}
+            style={{ marginRight: 4 }}
+            fontSize={20}
+          />
+
+          {/* {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
               <MathRenderer
                 key={idx}
@@ -154,26 +121,38 @@ const TrueFalse = ({ question, onPress, answer }) => {
                 {part}
               </Text>
             )
-          )}
+          )} */}
         </View>
       </View>
 
-      {/* Statements */}
       <View style={{ marginHorizontal: 30 }}>
         {Object.entries(question?.statements || {}).map(
           ([key, statement], index) => {
             const letter = getLetter(index);
             return (
-              <View key={key} style={{ marginVertical: 10 }}>
-                <View style={styles.questionDisplay}>
+              <View key={key} style={{ marginVertical: 10, marginBottom: 50 }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={[styles.optionLetter]}>{`${letter})`}</Text>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                    <MathRenderer
+                      formula={statement}
+                      style={{ marginRight: 4 }}
+                      fontSize={14}
+                    />
+                  </View>
+                </View>
+
+                {/* <View style={styles.questionDisplay}>
                   <Text style={[styles.optionLetter]}>{`${letter})`}</Text>
                   <View>
+                   
                     {splitMathString(statement).map((part, idx) =>
                       part.startsWith("$") ? (
                         <MathRenderer
                           key={idx}
                           formula={part}
                           style={{ marginRight: 4 }}
+                          fontSize={16}
                         />
                       ) : (
                         <Text key={idx} style={styles.statmentQuestion}>
@@ -182,7 +161,7 @@ const TrueFalse = ({ question, onPress, answer }) => {
                       )
                     )}
                   </View>
-                </View>
+                </View> */}
 
                 {/* True / False Buttons */}
                 <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>

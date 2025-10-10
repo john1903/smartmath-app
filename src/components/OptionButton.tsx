@@ -75,6 +75,7 @@ const OptionButton: React.FC<OptionButtonProps> = ({
           formula={label}
           style={[styles.label, selected && styles.selectedLabel]}
           selected={selected}
+          fontSize={14}
         />
       </View>
 

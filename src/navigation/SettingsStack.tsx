@@ -9,6 +9,7 @@ import SubscriptionScreen from "../screens/Settings/SubscriptionScreen";
 import TokensScreen from "../screens/Settings/TokensScreen";
 import AffiliateLinkScreen from "../screens/Settings/AffiliateLinkScreen";
 import CountryScreen from "../screens/Settings/CountryScreen";
+import PurchaseHistory from "../screens/Settings/PurchaseHistory";
 
 // --- Navigation types ---
 export type SettingsStackParamList = {
@@ -18,6 +19,7 @@ export type SettingsStackParamList = {
   Changepassword: undefined;
   Subscription: undefined;
   Tokens: undefined;
+  PurchaseHistory: undefined;
   AffiliateLink: undefined;
   Country: undefined;
 };
@@ -37,6 +39,7 @@ const SettingsStack: FC = () => {
       <Stack.Screen name="Changepassword" component={ChangepasswordScreen} />
       <Stack.Screen name="Subscription" component={SubscriptionScreen} />
       <Stack.Screen name="Tokens" component={TokensScreen} />
+      <Stack.Screen name="PurchaseHistory" component={PurchaseHistory} />
       <Stack.Screen name="AffiliateLink" component={AffiliateLinkScreen} />
       <Stack.Screen name="Country" component={CountryScreen} />
     </Stack.Navigator>

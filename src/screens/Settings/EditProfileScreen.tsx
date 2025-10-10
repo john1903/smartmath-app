@@ -225,8 +225,7 @@ import COLORS from "../../theme/colors";
 import ProfileImagePicker from "../../components/ProfileImagePicker";
 import AnimatedInput from "../../components/AnimatedInput";
 import { useTranslation } from "react-i18next";
-import TokenIcon from "../../../assets/svgs/TokenIcon.svg";
-import * as Progress from "react-native-progress";
+
 import FONTS from "../../theme/fonts";
 import FONTSIZE from "../../theme/fontsSize";
 import CustomButton from "../../components/CustomButton";
@@ -249,10 +248,6 @@ const EditProfileScreen = ({ navigation }: any) => {
   const [userAvatar, setUserAvatar] = useState(user?.avatar?.uri || "");
 
   const [errors, setErrors] = useState<any>({});
-
-  const used = 70000;
-  const total = 100000;
-  const progress = used / total;
 
   // ✅ Validation before submit
   const validate = () => {
@@ -379,38 +374,6 @@ const EditProfileScreen = ({ navigation }: any) => {
           </View>
         </View>
 
-        {/* Token Section */}
-        <View style={styles.tokenContainer}>
-          <View style={styles.tokenHeader}>
-            <TokenIcon width={22} height={22} />
-            <Text style={styles.title}>{t("token")}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.infoText}>
-              {(used / 1000).toFixed(0)}k {t("used")}
-            </Text>
-            <Text style={styles.infoText}>
-              {(total / 1000).toFixed(0)}k {t("total")}
-            </Text>
-          </View>
-
-          <Progress.Bar
-            progress={progress}
-            width={null}
-            height={12}
-            borderRadius={10}
-            color={COLORS.primary}
-            unfilledColor={COLORS.D9Gray}
-            borderWidth={0}
-            style={{ marginVertical: 10 }}
-          />
-
-          <TouchableOpacity onPress={() => navigation.navigate("Tokens")}>
-            <Text style={styles.buyToken}>{t("buyToken")}</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.bottomButton}>
           <CustomButton
             title={t("save")}
@@ -457,34 +420,6 @@ const styles = StyleSheet.create({
     // flex: 1,
   },
 
-  tokenContainer: { marginTop: 20 },
-  tokenHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: FONTSIZE.size16,
-    fontFamily: FONTS.UrbanistSemiBold,
-    color: COLORS.black,
-    marginLeft: 8,
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  infoText: {
-    fontSize: FONTSIZE.size12,
-    fontFamily: FONTS.UrbanistMedium,
-    color: COLORS.black,
-  },
-  buyToken: {
-    textAlign: "center",
-    fontSize: FONTSIZE.size14,
-    fontFamily: FONTS.UrbanistSemiBold,
-    color: COLORS.primary,
-    marginTop: 6,
-  },
   bottomButton: {
     justifyContent: "center",
     alignItems: "center",

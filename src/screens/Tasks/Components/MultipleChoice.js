@@ -20,6 +20,7 @@ import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { setLoading } from "../../../store/loading";
 import { useDispatch } from "react-redux";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import ImageCarousel from "../../../components/ImageCarousel";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -101,50 +102,20 @@ const MultipleChoice = ({ question, onPress, answer }) => {
 
   return (
     <View>
-      {/* Illustrations */}
-      {Array.isArray(question?.illustrations) &&
-        question.illustrations.length > 0 &&
-        (question.illustrations.length === 1 ? (
-          <Image
-            source={{ uri: question.illustrations[0].uri }}
-            style={{
-              width: windowWidth - 60,
-              height: 200,
-              borderRadius: 10,
-              marginBottom: 16,
-              alignSelf: "center",
-            }}
-            resizeMode="stretch"
-          />
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.carouselContainer}
-            contentContainerStyle={{ paddingHorizontal: 10 }}
-          >
-            {question.illustrations.map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: item.uri }}
-                style={[
-                  styles.carouselImage,
-                  {
-                    marginRight:
-                      index === question.illustrations.length - 1 ? 0 : 10,
-                  },
-                ]}
-                resizeMode="stretch"
-              />
-            ))}
-          </ScrollView>
-        ))}
+      {question.illustrations && question.illustrations.length > 0 && (
+        <ImageCarousel illustrations={question.illustrations} />
+      )}
 
-      {/* Question Text */}
       <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {splitMathString(question.description).map((part, idx) =>
+          <MathRenderer
+            formula={question.description}
+            style={{ marginRight: 4 }}
+            fontSize={20}
+          />
+
+          {/* {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
               <MathRenderer
                 key={idx}
@@ -156,22 +127,19 @@ const MultipleChoice = ({ question, onPress, answer }) => {
                 {part}
               </Text>
             )
-          )}
+          )} */}
         </View>
       </View>
 
-      {/* Options */}
       <View style={{ marginHorizontal: 30 }}>
         {Object.entries(question.options).map(([key, value], index) => {
           let correct = false;
           let incorrect = false;
 
-          // ✅ If feedbackStatus is incorrect → mark only selected as red
           if (submitted && isCorrect === false) {
             incorrect = selectedOptions.includes(key);
           }
 
-          // ✅ If correct → show normal correct feedback (like true/false)
           if (submitted && isCorrect === true) {
             correct = selectedOptions.includes(key);
           }
@@ -191,7 +159,6 @@ const MultipleChoice = ({ question, onPress, answer }) => {
           );
         })}
 
-        {/* Buttons */}
         <View style={styles.buttons}>
           {submitted && isCorrect === false && (
             <CustomButton

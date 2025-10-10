@@ -16,6 +16,7 @@ interface QuestionCardProps {
   question: string;
   status?: string;
   onPress?: (event: GestureResponderEvent) => void;
+  disable?: boolean;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -23,9 +24,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   question,
   status,
   onPress,
+  disable = false,
 }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={styles.container}
+      disabled={disable}
+    >
       <View style={styles.leftContainer}>
         <View style={styles.circle}>
           <Text style={styles.number}>Q{number}</Text>

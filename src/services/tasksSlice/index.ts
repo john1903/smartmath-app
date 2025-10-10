@@ -53,7 +53,9 @@ export const TasksApi = api.injectEndpoints({
 
           console.log("exercise question :::::: ", JSON.stringify(res?.data));
 
-          dispatch(setLoading(false));
+          setTimeout(() => {
+            dispatch(setLoading(false));
+          }, 2000);
         } catch (error) {
           dispatch(setLoading(false));
         }
