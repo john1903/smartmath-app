@@ -561,6 +561,9 @@ export default function TasksScreen({ navigation }) {
               onPress={() =>
                 navigation.navigate("TaskDetail", { exerciseId: item?.id })
               }
+              disable={
+                item?.answer?.feedbackStatus === "PENDING" ? true : false
+              }
             />
           )}
           onEndReached={loadMore}

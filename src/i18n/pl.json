@@ -1,10 +1,10 @@
 {
-  "getstarted": "Rozpocznij",
-  "your": "Twoja",
+  "getstarted": "Zacznij",
+  "your": "Twój",
   "shortcut": "Skrót",
   "to": "do",
-  "math": "Matematyka",
-  "success": "Sukces",
+  "math": "Matematyki",
+  "success": "Sukcesu",
   "language": "Język",
   "search": "Szukaj",
   "select_language": "Wybierz język",
@@ -12,50 +12,53 @@
   "polish": "Polski",
   "next": "Dalej",
   "login": "Zaloguj się",
-  "login_subtitle": "Zaloguj się, aby kontynuować!",
-  "email_or_phone": "Email lub Telefon",
+  "login_subtitle": "Proszę się zalogować, aby kontynuować!",
+  "email_or_phone": "Email lub telefon",
   "phone": "Telefon",
   "password": "Hasło",
   "forgot_password": "Zapomniałeś hasła?",
   "sign_in": "Zaloguj się",
-  "no_account": "Nie masz jeszcze konta?",
-  "create_account": "Utwórz konto",
+  "no_account": "Jeśli nie masz jeszcze konta?",
+  "create_account": "Załóż konto",
   "or": "LUB",
-  "sign_in_with_email": "Zaloguj się przez Email",
+  "sign_in_with_email": "Zaloguj się przez email",
   "sign_in_with_google": "Zaloguj się przez Google",
   "sign_in_with_apple": "Zaloguj się przez Apple",
-  "terms_text": "Korzystając z naszych usług zgadzasz się na",
-  "terms": "Regulamin",
-  "and": "oraz",
-  "privacy": "Politykę Prywatności",
-  "register": "Rejestracja",
-  "register_subtitle": "Zarejestruj się, aby się zalogować!",
+  "terms_text": "Korzystając z naszych usług, zgadzasz się z naszym",
+  "terms": "Regulaminem",
+  "and": "i",
+  "privacy": "Polityką prywatności",
+  "register": "Zarejestruj się",
+  "register_subtitle": "Proszę się zarejestrować, aby zalogować!",
   "first_name": "Imię",
   "last_name": "Nazwisko",
   "sign_up": "Zarejestruj się",
-  "already_account": "Masz już konto?",
+  "already_account": "Jeśli już masz konto?",
   "hi": "Cześć",
-  "welcome_back": "Witaj ponownie",
+  "welcome_back": "Witamy ponownie",
   "all_exercises": "Wszystkie ćwiczenia",
-  "mcqs": "Testy wielokrotnego wyboru",
+  "mcqs": "Pytania wielokrotnego wyboru",
   "true_false": "Prawda / Fałsz",
-  "single_choice": "Jednokrotny wybór",
-  "open_ended": "Otwarte pytanie",
+  "single_choice": "Wybór pojedynczy",
+  "open_ended": "Odpowiedź otwarta",
   "matching": "Dopasowywanie",
   "accuracy": "Dokładność",
-  "recommended_tasks": "Polecane zadania",
+  "recommended_tasks": "Zalecane zadania",
   "pending_tasks": "{{count}} zadań oczekujących",
   "question_sample": "Jaka jest suma 130+125+191?",
   "solve": "Rozwiąż",
-  "tasks_solve": "Zadania rozwiązane",
+  "tasks_solve": "Rozwiązywanie zadań",
   "correct_answers": "Poprawne odpowiedzi",
-
+  
   "status": {
     "solve": "Rozwiąż",
-    "completed": "Ukończone",
-    "failed": "Niepowodzenie",
-    "limitexceeded": "Limit przekroczony",
-    "pending": "Oczekujące"
+    "CORRECT": "Poprawne",
+    "PENDING": "Oczekujące",
+    "INCORRECT": "Niepoprawne",
+    "FAILED": "Nieudane",
+    "NOT_ENOUGH_TOKENS": "Za mało tokenów",
+    "COMPLETED": "Zakończone",
+    "INCOMPLETE": "Niezakończone"
   },
 
   "tasks": {
@@ -65,19 +68,23 @@
 
   "categories": {
     "all": "Wszystkie zadania",
-    "completed": "Ukończone",
-    "notCompleted": "Nieukończone",
+    "correct": "Poprawne",
     "pending": "Oczekujące",
-    "limitexceeded": "Limit przekroczony",
-    "solve": "Rozwiąż",
-    "failed": "Niepowodzenie"
+    "inCorrect": "Niepoprawne",
+    "failed": "Nieudane",
+    "notEnoughTokens": "Za mało tokenów",
+    "completed": "Zakończone",
+    "inComplete": "Niezakończone",
+    "notCompleted": "Nieukończone",
+    "limitexceeded": "Przekroczono limit",
+    "solve": "Rozwiąż"
   },
 
   "questions": {
     "q1": "Jaka jest suma 130+125+191?",
-    "q2": "Jaki jest wynik odejmowania 130-125-191?",
-    "q3": "Jaki jest wynik 130-125+191?",
-    "q4": "Jaki jest wynik mnożenia 130*125*191?"
+    "q2": "Jaki jest wynik 130−125−191?",
+    "q3": "Jaki jest wynik 130−125+191?",
+    "q4": "Jaki jest wynik 130×125×191?"
   },
 
   "filter": {
@@ -88,17 +95,17 @@
   },
 
   "difficulty": {
-    "hard": "Trudny",
-    "medium": "Średni",
-    "easy": "Łatwy"
+    "hard": "Trudne",
+    "medium": "Średnie",
+    "easy": "Łatwe"
   },
 
   "taskType": {
-    "multiple_choice": "Testy wielokrotnego wyboru",
-    "true_false": "Prawda/Fałsz",
+    "multiple_choice": "Pytania wielokrotnego wyboru",
+    "true_false": "Prawda / Fałsz",
     "matching": "Dopasowywanie par",
-    "open_ended": "Otwarte pytanie",
-    "single_choice": "Jednokrotny wybór"
+    "open_ended": "Odpowiedź otwarta",
+    "single_choice": "Wybór pojedynczy"
   },
 
   "actions": {
@@ -116,61 +123,60 @@
   "editProfile": "Edytuj profil",
   "changePassword": "Zmień hasło",
   "subscription": "Subskrypcja",
+  "purchaseHistory": "Historia zakupów",
   "tokens": "Tokeny",
   "token": "Token",
-  "affiliateLink": "Link partnerski i statystyki",
-  "notification": "Powiadomienie",
+  "affiliateLink": "Link partnerski & statystyki",
+  "notification": "Powiadomienia",
   "appNotification": "Powiadomienia aplikacji",
   "more": "Więcej",
   "country": "Kraj",
   "theme": "Motyw",
-  "dark/light": "Ciemny/Jasny",
+  "dark/light": "Ciemny / Jasny",
   "logout": "Wyloguj się",
-  "used": "Użyto",
+  "used": "Użyte",
   "total": "Razem",
-  "buyToken": "Kup Token",
+  "buyToken": "Kup token",
   "save": "Zapisz",
 
   "report": "Raport",
 
-  "retry": "Spróbuj ponownie",
-  "currentPassword": "Obecne hasło",
+  "retry": "Ponów",
+  "currentPassword": "Aktualne hasło",
   "newPassword": "Nowe hasło",
   "rePassword": "Powtórz hasło",
 
-  "currentPasswordRequired": "Wymagane jest obecne hasło",
+  "currentPasswordRequired": "Wymagane aktualne hasło",
   "passwordLengthError": "Hasło musi mieć co najmniej 8 znaków",
-  "passwordMismatch": "Hasła nie są zgodne",
+  "passwordMismatch": "Hasła nie pasują",
 
   "waitForaWhile": "Poczekaj chwilę...",
 
   "selectDateFrom": "Wybierz datę od",
   "selectDateTo": "Wybierz datę do",
 
-  "50TokenToGenerateReport": "50 Tokenów, aby wygenerować raport",
-  "buyTokens": "Kup Tokeny",
+  "50TokenToGenerateReport": "50 tokenów aby wygenerować raport",
+  "buyTokens": "Kup tokeny",
   "noReportsFound": "Nie znaleziono raportów",
-  "pleaseSelectBothFromAndToDates": "Wybierz zarówno datę od, jak i do.",
-  "notEnoughTokens": "Za mało tokenów. Potrzebujesz co najmniej 50 tokenów, aby wygenerować raport.",
-
-  "pleaseUploadOneFile": "Prześlij co najmniej jeden plik z odpowiedzią przed wysłaniem.",
-  "notEnoughTokenstoSubmit": "Za mało tokenów. Potrzebujesz co najmniej 50 tokenów, aby wysłać.",
-
-  "answerSubmittedSuccessfully": "Odpowiedź wysłana pomyślnie!",
+  "pleaseSelectBothFromAndToDates": "Proszę wybrać zarówno datę „od” jak i „do”.",
+  "notEnoughTokens": "Brak wystarczającej liczby tokenów. Potrzebujesz co najmniej 50 tokenów, aby wygenerować raport.",
+  "pleaseUploadOneFile": "Proszę przesłać przynajmniej jeden plik odpowiedzi przed wysłaniem.",
+  "notEnoughTokenstoSubmit": "Brak wystarczającej liczby tokenów. Potrzebujesz co najmniej 50 tokenów, aby wysłać.",
+  "answerSubmittedSuccessfully": "Odpowiedź została pomyślnie przesłana!",
   "somethingWentWrong": "Coś poszło nie tak!",
   "question1": "Pytanie 1:",
   "selectFileToUpload": "Wybierz plik do przesłania",
-  "sypportedFormate": "Obsługiwane formaty: Jpeg, PNG i PDF",
-  "maxSize": "(maks. 10 MB)",
+  "sypportedFormate": "Obsługiwane formaty: Jpeg, PNG & PDF",
+  "maxSize": "(max 10 MB)",
   "selectFile": "Wybierz plik",
   "solutionOfQuestion": "Rozwiązanie pytania",
-  "50TokenToSubmit": "50 Tokenów, aby wysłać",
+  "50TokenToSubmit": "50 tokenów do wysłania",
 
-  "tokenAvailable": "Token dostępny",
-  "goToHome": "Przejdź do Strony Głównej",
+  "tokenAvailable": "Dostępnych tokenów",
+  "goToHome": "Idź do strony głównej",
   "yourAnswerhasBeenSubmitted": "Twoja odpowiedź została przesłana",
-  "feedbackInFewMins": "Otrzymasz opinię w ciągu kilku minut!",
-  "backToTasks": "Wróć do Zadań",
+  "feedbackInFewMins": "Otrzymasz informację zwrotną w kilka minut!",
+  "backToTasks": "Powrót do zadań",
   "taskDetail": "Szczegóły zadania",
 
   "submit": "Wyślij",
@@ -180,8 +186,59 @@
   "true": "Prawda",
   "false": "Fałsz",
 
-  "select_date_range": "Wybierz datę",
+  "select_date_range": "Wybierz zakres dat",
+
   "apply": "Zastosuj",
   "cancel": "Anuluj",
-  "noRecommendedTaskFound": "Nie znaleziono polecanych zadań"
+
+  "noRecommendedTaskFound": "Nie znaleziono rekomendowanych zadań",
+
+  "validation": {
+    "first_name_required": "Imię jest wymagane",
+    "last_name_required": "Nazwisko jest wymagane",
+    "email_required": "Email jest wymagany",
+    "email_invalid": "Nieprawidłowy format email",
+    "password_required": "Hasło jest wymagane",
+    "password_min_length": "Hasło musi mieć co najmniej 8 znaków",
+    "invalid_email_or_phone": "Nieprawidłowy email lub numer telefonu"
+  },
+
+  "requestMessages": {
+    "user_created_successfully": "Użytkownik został pomyślnie utworzony!",
+    "invalid_request_data": "Nieprawidłowe dane żądania",
+    "email_already_use": "Email już istnieje",
+    "invalid_credentials": "Nieprawidłowe dane uwierzytelniające",
+    "user_authenticated_successfully": "Użytkownik pomyślnie uwierzytelniony!",
+    "something_went_wrong": "Coś poszło nie tak",
+    "invalid_request_parameters": "Nieprawidłowe parametry żądania",
+    "unauthorized": "Nieautoryzowany",
+    "file_deleted_successfully": "Plik został pomyślnie usunięty!",
+    "file_update_successfully": "Plik został pomyślnie zaktualizowany!",
+    "user_update_successfully": "Użytkownik został pomyślnie zaktualizowany!",
+    "successfully_retrived_token_usage": "Pomyślnie pobrano wykorzystanie tokenów",
+    "token_usage_data_not_found": "Nie znaleziono danych użycia tokenów dla użytkownika"
+  },
+
+  "download": "Pobierz",
+  "generationStarted": "Rozpoczęto generowanie raportu",
+  "NOT_ENOUGH_TOKENS": "Za mało tokenów",
+  "systemComment": "Komentarz systemowy",
+
+  "exerciseCorrectly": "Ćwiczenie wykonane poprawnie",
+  "exerciseWrong": "Ćwiczenie wykonane źle",
+  "exerciseInReview": "Ćwiczenie w recenzji",
+  "sorry": "Przepraszamy!",
+  "congratulations": "Gratulacje",
+  "info": "Informacje",
+  "applyDate": "Zastosuj datę",
+  "limitExceeded": "Przekroczono limit",
+  "pleaseSelectPlan": "Proszę wybrać jakiś plan",
+  "successFullyPurchasedToken": "Token został pomyślnie zakupiony",
+  "yourPurchases": "Twoje zakupy",
+  "buyNow": "Kup teraz",
+
+  "tokenLimitExceeded": "Przekroczono limit tokenów",
+  "greatProgressToUnlock": "Świetny postęp! Osiągnąłeś limit tokenów — doładuj, by odblokować więcej wyzwań.",
+  "buyMore": "Kup więcej",
+  "newTokensAvailableToPurchase": "Nowe tokeny dostępne do zakupu."
 }

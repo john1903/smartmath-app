@@ -25,7 +25,7 @@ const SingleChoice = ({ question, onPress, answer }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
-  const [locked, setLocked] = useState(false); // prevent changes after submit
+  const [locked, setLocked] = useState(false);
 
   const [submitExerciseAnswer, { isLoading }] =
     useSubmitExerciseAnswerMutation();
@@ -99,73 +99,22 @@ const SingleChoice = ({ question, onPress, answer }) => {
     startTimer();
   };
 
-  // const apiResponse = {
-  //   illustrations: [
-  //     {
-  //       id: 1,
-  //       fileName: "ElifAyra-Logo-3333.png",
-  //       uri: "https://smartmath.fra1.digitaloceanspaces.com/users/581d500f-b339-497b-863e-6d1b300d680f.png",
-  //       mimeType: "image/png",
-  //     },
-  //     {
-  //       id: 2,
-  //       fileName: "ElifAyra-Logo-3333.png",
-  //       uri: "https://smartmath.fra1.digitaloceanspaces.com/users/f391f9a9-b441-4eec-9fca-4ee5f924529b.png",
-  //       mimeType: "image/png",
-  //     },
-  //   ],
-  // };
-
   return (
     <View>
-      {/* Illustrations */}
-
       {question.illustrations && question.illustrations.length > 0 && (
         <ImageCarousel illustrations={question.illustrations} />
       )}
-      {/* {Array.isArray(question?.illustrations) &&
-        question.illustrations.length > 0 &&
-        (question.illustrations.length === 1 ? (
-          <Image
-            source={{ uri: question.illustrations[0].uri }}
-            style={{
-              width: windowWidth - 60,
-              height: 200,
-              borderRadius: 10,
-              marginBottom: 16,
-              alignSelf: "center",
-            }}
-            resizeMode="stretch"
-          />
-        ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.carouselContainer}
-            contentContainerStyle={{ paddingHorizontal: 10 }}
-          >
-            {question.illustrations.map((item, index) => (
-              <Image
-                key={index}
-                source={{ uri: item.uri }}
-                style={[
-                  styles.carouselImage,
-                  {
-                    marginRight:
-                      index === question.illustrations.length - 1 ? 0 : 10,
-                  },
-                ]}
-                resizeMode="stretch"
-              />
-            ))}
-          </ScrollView>
-        ))} */}
 
-      {/* Question */}
       <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>Question 1:</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {splitMathString(question.description).map((part, idx) =>
+          <MathRenderer
+            formula={question.description}
+            style={{ marginRight: 4 }}
+            fontSize={20}
+          />
+
+          {/* {splitMathString(question.description).map((part, idx) =>
             part.startsWith("$") ? (
               <MathRenderer
                 key={idx}
@@ -177,14 +126,12 @@ const SingleChoice = ({ question, onPress, answer }) => {
                 {part}
               </Text>
             )
-          )}
+          )} */}
         </View>
       </View>
 
-      {/* Options */}
       <View style={{ marginHorizontal: 20 }}>
         {Object.entries(question.options).map(([key, value], indx) => {
-          // Determine style for each option
           let optionCorrectness = null;
           if (submitted) {
             if (isCorrect && selectedOption === key) {

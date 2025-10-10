@@ -311,6 +311,7 @@ export type RootStackParamList = {
   AffiliateLink: undefined;
   Country: undefined;
   SignIn: undefined;
+  PurchaseHistory: undefined;
 };
 
 type Props = NativeStackScreenProps<RootStackParamList>;
@@ -385,6 +386,12 @@ export default function SettingsScreen({ navigation }: Props) {
               label={t("tokens")}
               onPress={() => {
                 navigation.navigate("Tokens");
+              }}
+            />
+            <SettingItem
+              label={t("purchaseHistory")}
+              onPress={() => {
+                navigation.navigate("PurchaseHistory");
               }}
             />
             {/* <SettingItem

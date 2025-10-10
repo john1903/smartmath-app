@@ -37,8 +37,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState<string>("hani4u13@gmail.com");
-  const [password, setPassword] = useState<string>("12345678");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
 
   const validate = (): boolean => {
@@ -100,7 +100,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
                   setEmail(text);
                   setErrors((prev) => ({ ...prev, email: "" }));
                 }}
-                error={errors.email} // ✅ now label and border turn red if error exists
+                error={errors.email}
+                autoComplete={"email"}
               />
               {errors.email && (
                 <Text style={styles.errorTextAbsolute}>{errors.email}</Text>
@@ -117,6 +118,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
                 }}
                 error={errors.password}
                 secureTextEntry
+                autoComplete={"password"}
               />
               {errors.password && (
                 <Text style={styles.errorTextAbsolute}>{errors.password}</Text>

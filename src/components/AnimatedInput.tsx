@@ -8,6 +8,7 @@ import {
   TextInputProps,
   ViewStyle,
   TextStyle,
+  Platform,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import COLORS from "../theme/colors";
@@ -21,6 +22,7 @@ interface AnimatedInputProps extends TextInputProps {
   secureTextEntry?: boolean;
   style?: ViewStyle | ViewStyle[];
   error?: string; // ✅ new prop
+  autoComplete?: any;
 }
 
 const AnimatedInput: React.FC<AnimatedInputProps> = ({
@@ -30,6 +32,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
   secureTextEntry = false,
   style = {},
   error,
+  autoComplete,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -57,7 +60,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
     left: 18,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: [14, -18],
+      outputRange: Platform.OS === "android" ? [10, -18] : [12, -18],
     }),
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
@@ -86,6 +89,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...rest}
+          autoComplete={autoComplete}
         />
 
         {secureTextEntry && (
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 25,
-    height: 45,
+    // height: 45,
     paddingHorizontal: 18,
   },
   input: {
@@ -125,6 +129,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.UrbanistMedium,
     paddingVertical: 0,
     includeFontPadding: false,
+    height: 38,
   },
   iconContainer: {
     marginLeft: 8,

@@ -124,6 +124,7 @@
   "editProfile": "Edit Profile",
   "changePassword": "Change Password",
   "subscription": "Subscription",
+  "purchaseHistory": "Purchase History",
   "tokens": "Tokens",
   "token": "Token",
   "affiliateLink": "Affiliate Link & Stats",
@@ -216,7 +217,9 @@
     "unauthorized": "Unauthorized",
     "file_deleted_successfully": "File deleted successfully!",
     "file_update_successfully":"File update successfully!",
-    "user_update_successfully":"User updated successfully!"
+    "user_update_successfully":"User updated successfully!",
+    "successfully_retrived_token_usage": "Successfully retrieved token usage",
+    "token_usage_data_not_found":"Token usage data not found for the user"
     
   },
 
@@ -231,8 +234,16 @@
   "sorry": "Sorry!",
   "congratulations": "Congratulations",
   "info": "Info",
-  "applyDate": "Apply Date"
+  "applyDate": "Apply Date",
+  "limitExceeded": "Limit Exceeded",
+  "pleaseSelectPlan": "Please select any plan",
+  "successFullyPurchasedToken": "Successfully purchased Token",
+  "yourPurchases": "Your Purchases",
+  "buyNow": "Buy Now",
 
-
+  "tokenLimitExceeded": "Token limit exceeded",
+  "greatProgressToUnlock": "Great progress! You've reached your token limit — recharge to unlock more challenges.",
+  "buyMore": "Buy more",
+  "newTokensAvailableToPurchase": "New tokens available for purchase."
 
 }

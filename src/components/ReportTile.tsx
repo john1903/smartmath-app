@@ -4,6 +4,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import ReportFileIcon from "../../assets/svgs/ReportFileIcon.svg";
+import ReportFileYellowIcon from "../../assets/svgs/ReportFileYellowIcon.svg";
+import ReportFileRedIcon from "../../assets/svgs/ReportFileRedIcon.svg";
 
 import {
   Menu,
@@ -34,17 +36,23 @@ const ReportTile: React.FC<Props> = ({
     <View style={styles.card}>
       <View
         style={{
-          backgroundColor:
-            status === "SUCCESS"
-              ? "rgba(36,117,252,0.1)"
-              : status === "PENDING"
-              ? "rgba(252, 248, 36, 0.33)"
-              : "rgba(252, 36, 36, 0.34)",
+          backgroundColor: "rgba(36,117,252,0.1)",
+          // status === "SUCCESS"
+          //   ? "rgba(36,117,252,0.1)"
+          //   : status === "PENDING"
+          //   ? "rgba(252, 248, 36, 0.33)"
+          //   : "rgba(252, 36, 36, 0.34)",
           padding: 12,
           borderRadius: 60,
         }}
       >
-        <ReportFileIcon width={28} height={28} />
+        {status === "SUCCESS" ? (
+          <ReportFileIcon width={28} height={28} />
+        ) : status === "PENDING" ? (
+          <ReportFileYellowIcon width={28} height={28} />
+        ) : (
+          <ReportFileRedIcon width={28} height={28} />
+        )}
       </View>
       <View style={{ flex: 1, marginLeft: 10 }}>
         <Text style={styles.title}>{title}</Text>
