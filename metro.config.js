@@ -1,28 +1,23 @@
-// const { getDefaultConfig } = require("expo/metro-config");
-
-// const config = getDefaultConfig(__dirname);
-
-// config.transformer.babelTransformerPath = require.resolve(
-//   "react-native-svg-transformer"
-// );
-// config.resolver.assetExts = config.resolver.assetExts.filter(
-//   (ext) => ext !== "svg"
-// );
-// config.resolver.sourceExts.push("svg");
-
-// module.exports = config;
-
 const { getDefaultConfig } = require("expo/metro-config");
 
-module.exports = (async () => {
-  const config = await getDefaultConfig(__dirname);
-  const { assetExts, sourceExts } = config.resolver;
+const config = getDefaultConfig(__dirname);
 
-  config.resolver.assetExts = assetExts.filter((ext) => ext !== "svg");
-  config.resolver.sourceExts = [...sourceExts, "svg"];
-  config.transformer.babelTransformerPath = require.resolve(
-    "react-native-svg-transformer"
-  );
+// Enable SVG transformer
+config.transformer.babelTransformerPath = require.resolve(
+  "react-native-svg-transformer"
+);
 
-  return config;
-})();
+// Remove svg from assets (so it's treated as component)
+config.resolver.assetExts = config.resolver.assetExts.filter(
+  (ext) => ext !== "svg"
+);
+
+// Ensure .ttf is in assetExts
+if (!config.resolver.assetExts.includes("ttf")) {
+  config.resolver.assetExts.push("ttf");
+}
+
+// Add .svg to source extensions
+config.resolver.sourceExts.push("svg");
+
+module.exports = config;

@@ -9,57 +9,62 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-  Storage,
 } from "redux-persist";
-// import {MMKV} from 'react-native-mmkv';
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { api } from "../services/api";
-
-import auth from "./auth";
-import loading from "./loading";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const reducers = combineReducers({
+import { api } from "../services/api";
+import auth from "./auth";
+import loading from "./loading";
+import home from "./home";
+import lang from "./lang";
+import tasks from "./tasks";
+import reports from "./reports";
+
+// ✅ Combine all reducers
+const rootReducer = combineReducers({
   auth,
   loading,
-
-  [api.reducerPath]: api.reducer,
+  home,
+  lang,
+  tasks,
+  reports,
+  [api.reducerPath]: api.reducer, // RTK Query slice (not persisted)
 });
 
+// ✅ Persist only `auth`
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["auth"],
+  whitelist: ["auth"], // only auth is persisted
 };
 
-const persistedReducer = persistReducer(persistConfig, reducers);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+// ✅ Configure store
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) => {
-    const middlewares = getDefaultMiddleware({
-      immutableCheck: {
-        warnAfter: 300, // Set a higher threshold in milliseconds
-      },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: { warnAfter: 300 },
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-        warnAfter: 100,
-        serializableCheck: false,
       },
-    }).concat(api.middleware);
-
-    return middlewares;
-  },
+    }).concat(api.middleware),
 });
 
+// ✅ Persistor
 const persistor = persistStore(store);
 
+// ✅ Enable RTK Query listeners
 setupListeners(store.dispatch);
 
+// ✅ Types
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+// ✅ Hooks
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useAppDispatch: () => AppDispatch = useDispatch;
+
 export { store, persistor };
-
-export const useAppSelector: TypedUseSelectorHook<
-  ReturnType<typeof store.getState>
-> = useSelector;
-
-export const useAppDispatch: () => typeof store.dispatch = useDispatch;

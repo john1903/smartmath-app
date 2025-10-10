@@ -39,19 +39,27 @@
   "all_exercises": "All Exercises",
   "mcqs": "MCQs",
   "true_false": "True / False",
+  "single_choice": "Single Choice",
+  "open_ended": "Open Ended",
   "matching": "Matching",
   "accuracy": "Accuracy",
   "recommended_tasks": "Recommended Tasks",
   "pending_tasks": "{{count}} Tasks Pending",
   "question_sample": "What is the sum of 130+125+191?",
   "solve": "Solve",
+  "tasks_solve": "Tasks Solve",
+  "correct_answers": "Correct Answers",
+  
 
   "status": {
     "solve": "Solve",
-    "completed": "Completed",
-    "failed": "Failed",
-    "limitexceeded": "Limit Exceeded",
-    "pending": "Pending"
+    "CORRECT":"Correct",
+    "PENDING": "Pending",
+    "INCORRECT":"Not Correct",
+    "FAILED": "Failed",
+    "NOT_ENOUGH_TOKENS":"Not enough tokens",
+    "COMPLETED": "Completed",
+    "INCOMPLETE":"Not Complete"
   },
 
   "tasks": {
@@ -61,12 +69,16 @@
 
   "categories": {
     "all": "All tasks",
-    "completed": "Completed",
-    "notCompleted": "Not Completed",
+    "correct":"Correct",
     "pending": "Pending",
+    "inCorrect":"Not Correct",
+    "failed": "Failed",
+    "notEnoughTokens":"Not enough tokens",
+    "completed": "Completed",
+    "inComplete":"Not Complete",
+    "notCompleted": "Not Completed",
     "limitexceeded": "Limit Exceeded",
-    "solve": "Solve",
-    "failed": "Failed"
+    "solve": "Solve"
   },
 
   "questions": {
@@ -85,14 +97,16 @@
 
   "difficulty": {
     "hard": "Hard",
-    "normal": "Normal",
+    "medium": "Medium",
     "easy": "Easy"
   },
 
   "taskType": {
-    "mcq": "MCQs",
-    "trueFalse": "True/False",
-    "matching": "Matching Pair"
+    "multiple_choice": "MCQs",
+    "true_false": "True/False",
+    "matching": "Matching Pair",
+    "open_ended": "Open Ended",
+    "single_choice": "Single Choice"
   },
 
   "actions": {
@@ -110,6 +124,7 @@
   "editProfile": "Edit Profile",
   "changePassword": "Change Password",
   "subscription": "Subscription",
+  "purchaseHistory": "Purchase History",
   "tokens": "Tokens",
   "token": "Token",
   "affiliateLink": "Affiliate Link & Stats",
@@ -125,6 +140,110 @@
   "buyToken": "Buy Token",
   "save": "Save",
 
-  "report": "Report"
+  "report": "Report",
+
+  "retry": "Retry",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "rePassword": "Repeat Password",
+
+  "currentPasswordRequired": "Current password is required",
+  "passwordLengthError": "Password must be at least 8 characters",
+  "passwordMismatch": "Passwords do not match",
+
+  "waitForaWhile": "Wait for a while...",
+
+  "selectDateFrom": "Select Date From",
+  "selectDateTo": "Select Date To",
+
+  "50TokenToGenerateReport": "50 Token to generate report",
+  "buyTokens": "Buy Tokens",
+  "noReportsFound": "No reports found",
+  "pleaseSelectBothFromAndToDates": "Please select both From and To dates.",
+  "notEnoughTokens": "Not enough tokens available. You need at least 50 tokens to generate report.",
+
+  "pleaseUploadOneFile": "Please upload at least one answer file before submitting.",
+  "notEnoughTokenstoSubmit": "Not enough tokens available. You need at least 50 tokens to submit.",
+
+  "answerSubmittedSuccessfully": "Answer submitted successfully!",
+  "somethingWentWrong": "Something went wrong!",
+  "question1": "Question 1:",
+  "selectFileToUpload": "Select File to Upload",
+  "sypportedFormate": "Supported Format: Jpeg, PNG & PDF",
+  "maxSize": "(10mb max)",
+  "selectFile": "Select File",
+  "solutionOfQuestion": "Solution Of Question",
+  "50TokenToSubmit":"50 Token to Submit",
+
+  "tokenAvailable": "Token available",
+  "goToHome": "Go to Home",
+  "yourAnswerhasBeenSubmitted": "Your answer has been submitted",
+  "feedbackInFewMins": "You'll get feedback in few minutes!",
+  "backToTasks": "Back to Tasks",
+  "taskDetail": "Task Detail",
+
+  "submit": "Submit",
+
+  "yourAnswerIsWrong": "Your answer is wrong!",
+  "yourAnswerIsCorrect": "Your answer is correct!",
+  "true": "True",
+  "false": "False",
+
+  "select_date_range": "Select Date",
+
+  "apply": "Apply",
+  "cancel": "Cancel",
+
+  "noRecommendedTaskFound": "No recommended tasks found",
+
+  "validation":{
+    "first_name_required": "First name is required",
+    "last_name_required": "Last name is required",
+    "email_required": "Email is required",
+    "email_invalid": "Invalid email format",
+    "password_required": "Password is required",
+    "password_min_length": "Password must be at least 8 characters",
+    "invalid_email_or_phone": "Email or Phone Number is invalid"
+  },
+
+  "requestMessages":{
+    "user_created_successfully": "User created successfully!",
+    "invalid_request_data": "Invalid request data",
+    "email_already_use": "Email already exist",
+    "invalid_credentials": "Invalid credentials",
+    "user_authenticated_successfully": "User authenticated successfully!",
+    "something_went_wrong": "Something went wrong",
+    "invalid_request_parameters": "Invalid request parameters",
+    "unauthorized": "Unauthorized",
+    "file_deleted_successfully": "File deleted successfully!",
+    "file_update_successfully":"File update successfully!",
+    "user_update_successfully":"User updated successfully!",
+    "successfully_retrived_token_usage": "Successfully retrieved token usage",
+    "token_usage_data_not_found":"Token usage data not found for the user"
+    
+  },
+
+  "download": "Download",
+  "generationStarted": "Report generation is in Progress",
+  "NOT_ENOUGH_TOKENS":"Not enough tokens",
+  "systemComment": "System Comment",
+
+  "exerciseCorrectly": "Exercise done correctly",
+  "exerciseWrong": "Exercise done Wrong",
+  "exerciseInReview": "Exercise is in Review",
+  "sorry": "Sorry!",
+  "congratulations": "Congratulations",
+  "info": "Info",
+  "applyDate": "Apply Date",
+  "limitExceeded": "Limit Exceeded",
+  "pleaseSelectPlan": "Please select any plan",
+  "successFullyPurchasedToken": "Successfully purchased Token",
+  "yourPurchases": "Your Purchases",
+  "buyNow": "Buy Now",
+
+  "tokenLimitExceeded": "Token limit exceeded",
+  "greatProgressToUnlock": "Great progress! You've reached your token limit — recharge to unlock more challenges.",
+  "buyMore": "Buy more",
+  "newTokensAvailableToPurchase": "New tokens available for purchase."
 
 }

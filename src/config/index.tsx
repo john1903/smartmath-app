@@ -1,8 +1,3 @@
-export const envURL = "dev";
-// export const envURL = 'stage';
-// export const envURL = 'prod';
+import Constants from 'expo-constants';
 
-export const dev_url = "https://smartmath-api.pl/api/v1";
-export const stage_url = "https://smartmath-api.pl/api/v1";
-
-export const BASE_URL = envURL == "dev" ? dev_url : stage_url;
+export const BASE_URL: string = Constants.expoConfig?.extra?.API_URL as string;

@@ -13,6 +13,9 @@ import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./src/store";
 import GlobalLoader from "./src/components/GlobalLoader";
 import Toast from "react-native-toast-message";
+import { enableScreens } from "react-native-screens";
+import { ThemeProvider } from "./src/context/ThemeContext";
+import { ToastConfigComponent } from "./src/utils/toast";
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -60,8 +63,10 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <I18nextProvider i18n={i18n}>
           <NavigationContainer>
-            <RootNavigator />
-            <Toast />
+            <ThemeProvider>
+              <RootNavigator />
+              <ToastConfigComponent />
+            </ThemeProvider>
           </NavigationContainer>
         </I18nextProvider>
       </PersistGate>
@@ -69,6 +74,8 @@ export default function App() {
     </Provider>
   );
 }
+
+enableScreens();
 
 const styles = StyleSheet.create({
   container: {

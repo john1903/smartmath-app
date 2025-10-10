@@ -1,20 +1,13 @@
-import { persistor, store } from "../store";
+// src/utils/logout.ts
 import { setLogout } from "../store/auth";
 import { setLoading } from "../store/loading";
 
-export const logoutUser = async () => {
-  // Show loader
-  store.dispatch(setLoading(true));
+export const logoutUser = async (dispatch: any) => {
+  dispatch(setLoading(true));
 
-  // Wait 3 seconds
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // Reset redux state
-  store.dispatch(setLogout());
+  dispatch(setLogout());
 
-  // Hide loader
-  store.dispatch(setLoading(false));
-
-  // Clear persisted auth
-  await persistor.purge();
+  dispatch(setLoading(false));
 };
