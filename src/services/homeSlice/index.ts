@@ -41,7 +41,7 @@ export const HomeApi = api.injectEndpoints({
       },
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
-          dispatch(setLoading(true));
+          // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
           // console.log(

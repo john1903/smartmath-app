@@ -1,48 +1,92 @@
+// // components/MathRenderer.js
+// import React, { useEffect, useState } from "react";
+// import { View, StyleSheet } from "react-native";
+// import MathJax from "react-native-mathjax";
+// import { normalizeLatex } from "../utils/helpers";
+// import COLORS from "../theme/colors";
+
+// export default function MathRenderer({ formula, style, selected, fontSize }) {
+//   const color = selected ? COLORS.white : COLORS.black;
+
+//   return (
+//     <View style={[styles.container, style]}>
+//       <MathJax
+//         html={`<span style="font-size: ${fontSize}px; color:${color};">${normalizeLatex(
+//           formula
+//         )}</span >`}
+//         // html={`<div style="font-size: 18px; text-align: left;">
+//         //   ${normalizeLatex(formula)}
+//         // </div>`}
+//         mathJaxOptions={{
+//           messageStyle: "none",
+//           extensions: ["tex2jax.js"],
+//           jax: ["input/TeX", "output/HTML-CSS"],
+//           tex2jax: {
+//             inlineMath: [
+//               ["$", "$"],
+//               ["\\(", "\\)"],
+//             ],
+//             displayMath: [
+//               ["$$", "$$"],
+//               ["\\[", "\\]"],
+//             ],
+//             processEscapes: true,
+//           },
+//           "HTML-CSS": { availableFonts: ["TeX"] },
+//         }}
+//         style={{ backgroundColor: "transparent" }}
+//       />
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     width: "100%",
+//     justifyContent: "center",
+//   },
+// });
+
 // components/MathRenderer.js
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import MathJax from "react-native-mathjax";
 import { normalizeLatex } from "../utils/helpers";
 import COLORS from "../theme/colors";
 
-export default function MathRenderer({ formula, style, selected, fontSize }) {
+export default function MathRenderer({
+  formula,
+  style,
+  selected,
+  fontSize = 16,
+}) {
   const color = selected ? COLORS.white : COLORS.black;
-
-  const [fontUri, setFontUri] = useState(null);
-
-  useEffect(() => {
-    const loadFont = async () => {
-      const asset = Asset.fromModule(
-        require("../../assets/fonts/Urbanist-Medium.ttf")
-      );
-      await asset.downloadAsync();
-      setFontUri(asset.localUri);
-    };
-    loadFont();
-  }, []);
 
   return (
     <View style={[styles.container, style]}>
       <MathJax
-        // html={`<span style="font-size: 13px; color:${color};">${formula}</span >`}
-
         html={`
-          <style>
-            @font-face {
-              font-family: 'UrbanistSemiBold';
-              src: url('${fontUri}');
-            }
-            body, span {
-              font-family: 'UrbanistSemiBold';
-              font-size: ${fontSize}px;
-              color: ${color};
-            }
-          </style>
-          <span>${formula}</span>
+          <html>
+            <head>
+              <!-- Load Urbanist-Medium (weight 500) from Google Fonts -->
+              <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500&display=swap" rel="stylesheet">
+              <style>
+                body, span, mjx-container {
+                  font-family: 'Urbanist', sans-serif;
+                  font-weight: 500;
+                  font-size: ${fontSize}px;
+                  color: ${color};
+                  // margin: 0;
+                  // padding: 0;
+                  
+                }
+              </style>
+            </head>
+            <body>
+              <span>${normalizeLatex(formula)}</span>
+            </body>
+          </html>
         `}
-        // html={`<div style="font-size: 18px; text-align: left;">
-        //   ${normalizeLatex(formula)}
-        // </div>`}
         mathJaxOptions={{
           messageStyle: "none",
           extensions: ["tex2jax.js"],
@@ -58,7 +102,10 @@ export default function MathRenderer({ formula, style, selected, fontSize }) {
             ],
             processEscapes: true,
           },
-          "HTML-CSS": { availableFonts: ["TeX"] },
+          "HTML-CSS": {
+            availableFonts: [],
+            webFont: "none",
+          },
         }}
         style={{ backgroundColor: "transparent" }}
       />
@@ -68,7 +115,6 @@ export default function MathRenderer({ formula, style, selected, fontSize }) {
 
 const styles = StyleSheet.create({
   container: {
-    // minHeight: 1, // 👈 force visible area
     width: "100%",
     justifyContent: "center",
   },

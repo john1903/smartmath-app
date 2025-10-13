@@ -432,9 +432,17 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
 
               <View
                 style={{
-                  marginVertical: 20,
+                  marginVertical: answer?.feedback ? 0 : 20,
                 }}
               >
+                {answer?.feedback && (
+                  <MathRenderer
+                    formula={answer?.feedback}
+                    style={{ marginRight: 4 }}
+                    fontSize={14}
+                  />
+                )}
+
                 <Text
                   style={[
                     styles.commentStatus,
@@ -455,23 +463,24 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
               </View>
 
               <View style={styles.buttons}>
-                {answer?.feedbackStatus === "INCORRECT" ||
-                  (answer?.feedbackStatus === "FAILED" && (
-                    <CustomButton
-                      title={t("retry")}
-                      buttonStyle={[styles.btnStyle, styles.retryBtn]}
-                      textStyle={[
-                        styles.retryText,
-                        { includeFontPadding: false },
-                      ]}
-                      onPress={() => setAnswer(null)}
-                    />
-                  ))}
+                {(answer?.feedbackStatus === "INCORRECT" ||
+                  answer?.feedbackStatus === "FAILED") && (
+                  <CustomButton
+                    title={t("retry")}
+                    buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                    textStyle={[
+                      styles.retryText,
+                      { includeFontPadding: false },
+                    ]}
+                    onPress={() => setAnswer(null)}
+                  />
+                )}
 
                 <CustomButton
-                  title={t("next")}
+                  title={submitted ? t("next") : t("submit")}
                   buttonStyle={[styles.btnStyle, styles.submitBtn]}
                   textStyle={[styles.submitText, { includeFontPadding: false }]}
+                  disabled={!submitted}
                   onPress={() => onPress()}
                 />
               </View>
@@ -572,6 +581,8 @@ const styles = StyleSheet.create({
   commentStatus: {
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistMedium,
+    marginLeft: 8,
+    marginVertical: 10,
   },
 
   retryBtn: { backgroundColor: COLORS.black },

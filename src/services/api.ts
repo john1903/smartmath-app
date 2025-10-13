@@ -272,6 +272,6 @@ export const formHeader = {
 export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithInterceptor,
-  tagTypes: ["reports"],
+  tagTypes: ["reports", "submitAnswer"],
   endpoints: (builder) => ({}),
 });

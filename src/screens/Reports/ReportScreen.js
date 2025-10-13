@@ -8,7 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../theme/colors";
@@ -42,6 +42,8 @@ import GlobalModal from "../../components/GlobalModal";
 const ReportScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
+  const onEndReachedCalledDuringMomentum = useRef(true);
 
   const [getAllReports] = useLazyGetAllReportsQuery();
   const [getPrompts] = useLazyGetPromptsQuery();
@@ -148,6 +150,9 @@ const ReportScreen = ({ navigation }) => {
     } catch (err) {
       console.log("Error fetching reports", err);
     }
+    finally {
+      setRefreshing(false)
+    }
   };
 
   const fetchTokens = async () => {
@@ -160,6 +165,7 @@ const ReportScreen = ({ navigation }) => {
         setAppToken(available >= 0 ? available : 0);
       }
     } catch (err) {
+      setRefreshing(false)
       console.log("Error fetching tokens", err);
     }
   };
@@ -167,6 +173,7 @@ const ReportScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       (async () => {
+        dispatch(setLoading(true));
         await fetchReports(0, true);
         await fetchTokens();
       })();
@@ -320,8 +327,16 @@ const ReportScreen = ({ navigation }) => {
               tintColor={COLORS.primary}
             />
           }
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.3}
+          onEndReachedThreshold={0.1}
+          onMomentumScrollBegin={() => {
+            onEndReachedCalledDuringMomentum.current = false;
+          }}
+          onEndReached={() => {
+            if (!onEndReachedCalledDuringMomentum.current) {
+              loadMore();
+              onEndReachedCalledDuringMomentum.current = true;
+            }
+          }}
           ListFooterComponent={renderFooter}
           contentContainerStyle={styles.container}
         />

@@ -22,6 +22,8 @@ export default (build: any) =>
     ) {
       try {
         const res = await queryFulfilled;
+
+        console.log("report screen data ::::::: ", JSON.stringify(res));
         const newData = res?.data?.content || [];
         const currentData = getState()?.reports?.allReports || [];
 
