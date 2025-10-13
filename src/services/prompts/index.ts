@@ -18,7 +18,7 @@ export const PromptsApi = api.injectEndpoints({
       providesTags: [{ type: "reports", id: 1 }],
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }: any) {
         try {
-          dispatch(setLoading(true));
+          // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
           // console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));

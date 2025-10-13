@@ -1,18 +1,10 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import React, { useEffect, useState } from "react";
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
 import FONTSIZE from "../../../theme/fontsSize";
 import FONTS from "../../../theme/fonts";
 import COLORS from "../../../theme/colors";
-import { splitMathString } from "../../../utils/helpers";
 import MathRenderer from "../../../components/MathRenderer";
 import { useTranslation } from "react-i18next";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
@@ -37,7 +29,7 @@ const MultipleChoice = ({ question, onPress, answer }) => {
   useEffect(() => {
     startTimer();
 
-    // ✅ Preselect from backend answer if available
+    // ✅ Preselect backend answer if available
     if (answer?.answer?.length > 0) {
       setSelectedOptions(answer.answer);
       setSubmitted(true);
@@ -51,7 +43,7 @@ const MultipleChoice = ({ question, onPress, answer }) => {
   }, [answer]);
 
   const handleSelect = (id) => {
-    if (submitted) return; // disable selection after submit
+    if (submitted) return;
     if (selectedOptions.includes(id)) {
       setSelectedOptions(selectedOptions.filter((item) => item !== id));
     } else {
@@ -114,34 +106,18 @@ const MultipleChoice = ({ question, onPress, answer }) => {
             style={{ marginRight: 4 }}
             fontSize={20}
           />
-
-          {/* {splitMathString(question.description).map((part, idx) =>
-            part.startsWith("$") ? (
-              <MathRenderer
-                key={idx}
-                formula={part}
-                style={{ marginRight: 4 }}
-              />
-            ) : (
-              <Text key={idx} style={styles.question}>
-                {part}
-              </Text>
-            )
-          )} */}
         </View>
       </View>
 
       <View style={{ marginHorizontal: 30 }}>
         {Object.entries(question.options).map(([key, value], index) => {
-          let correct = false;
-          let incorrect = false;
-
-          if (submitted && isCorrect === false) {
-            incorrect = selectedOptions.includes(key);
-          }
+          // Determine correct/incorrect color state
+          let correct = null;
 
           if (submitted && isCorrect === true) {
-            correct = selectedOptions.includes(key);
+            correct = selectedOptions.includes(key) ? true : null;
+          } else if (submitted && isCorrect === false) {
+            correct = selectedOptions.includes(key) ? false : null;
           }
 
           return (
@@ -151,9 +127,7 @@ const MultipleChoice = ({ question, onPress, answer }) => {
               label={value}
               selected={selectedOptions.includes(key)}
               onPress={() => handleSelect(key)}
-              index={index}
               correct={correct}
-              incorrect={incorrect}
               disabled={submitted}
             />
           );
@@ -200,11 +174,6 @@ export default MultipleChoice;
 const styles = StyleSheet.create({
   carouselContainer: {
     marginBottom: 16,
-  },
-  carouselImage: {
-    width: 280,
-    height: 200,
-    borderRadius: 10,
   },
   question: {
     fontSize: FONTSIZE.size20,

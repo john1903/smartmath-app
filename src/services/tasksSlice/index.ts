@@ -71,7 +71,7 @@ export const TasksApi = api.injectEndpoints({
         };
       },
       transformResponse: (result) => result,
-      //   invalidatesTags: ['readUser'],
+      invalidatesTags: [{ type: "submitAnswer", id: 1 }],
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
@@ -98,12 +98,17 @@ export const TasksApi = api.injectEndpoints({
           method: "get",
         };
       },
+
+      providesTags: [{ type: "submitAnswer", id: 1 }],
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
           dispatch(setLoading(true));
           const res = await queryFulfilled;
 
-          //   console.log(" exercise res :::::::>>>>  ", JSON.stringify(res?.data));
+          console.log(
+            " exercise statusssssssssssssssssssssssssssssss res :::::::>>>>  ",
+            JSON.stringify(res?.data)
+          );
 
           dispatch(setLoading(false));
         } catch (error) {

@@ -79,7 +79,12 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
       <Animated.Text style={labelStyle}>{label}</Animated.Text>
 
       <View
-        style={[styles.inputWrapper, { borderColor: getBorderColor() }, style]}
+        style={[
+          styles.inputWrapper,
+          { borderColor: getBorderColor() },
+          secureTextEntry && styles.iconContainerPassword,
+          style,
+        ]}
       >
         <TextInput
           style={styles.input}
@@ -121,20 +126,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 25,
     // height: 45,
-    paddingHorizontal: 18,
+    paddingLeft: 18,
+  },
+  iconContainerPassword: {
+    paddingRight: 40,
   },
   input: {
     flex: 1,
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
-    paddingVertical: 0,
+    paddingVertical: 12,
     includeFontPadding: false,
-    height: 38,
+    // height: 38,
+    // backgroundColor: "red",
+    borderRadius: 25,
   },
   iconContainer: {
-    marginLeft: 8,
+    position: "absolute",
+    // marginLeft: 8,
     justifyContent: "center",
     alignItems: "center",
+    right: 20,
   },
 });
 
