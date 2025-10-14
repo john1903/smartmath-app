@@ -41,11 +41,7 @@ interface ExerciseResponse {
 
 interface TaskDetailProps {
   navigation: any;
-  route: {
-    params: {
-      exerciseId: number;
-    };
-  };
+  route: any;
 }
 
 const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
@@ -56,7 +52,11 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
   const [getExercise] = useLazyGetExerciseQuery();
 
   const gobackScreen = () => {
-    navigation.goBack();
+    // navigation.goBack();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "TasksMain" }],
+    });
   };
 
   const renderQuestion = (q: ExerciseResponse | null) => {

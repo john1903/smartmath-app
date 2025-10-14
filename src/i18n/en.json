@@ -244,6 +244,7 @@
   "tokenLimitExceeded": "Token limit exceeded",
   "greatProgressToUnlock": "Great progress! You've reached your token limit — recharge to unlock more challenges.",
   "buyMore": "Buy more",
-  "newTokensAvailableToPurchase": "New tokens available for purchase."
+  "newTokensAvailableToPurchase": "New tokens available for purchase.",
+  "no_date_selected": "No date selected"
 
 }
