@@ -150,6 +150,9 @@ const ReportScreen = ({ navigation }) => {
     } catch (err) {
       console.log("Error fetching reports", err);
     }
+    finally {
+      setRefreshing(false)
+    }
   };
 
   const fetchTokens = async () => {
@@ -162,6 +165,7 @@ const ReportScreen = ({ navigation }) => {
         setAppToken(available >= 0 ? available : 0);
       }
     } catch (err) {
+      setRefreshing(false)
       console.log("Error fetching tokens", err);
     }
   };
