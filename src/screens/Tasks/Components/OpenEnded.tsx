@@ -589,10 +589,10 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 textStyle={[styles.buttonText]}
                 onPress={() => {
                   setWaitingPopup(false);
-                  navigation.goBack();
+
                   setTimeout(() => {
                     navigation.navigate("HomeTab", { screen: "HomeMain" });
-                  }, 100);
+                  }, 1000);
                 }}
               />
               <CustomButton
