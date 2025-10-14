@@ -69,13 +69,13 @@
 
   "categories": {
     "all": "All tasks",
-    "correct":"Correct",
-    "pending": "Pending",
-    "inCorrect":"Not Correct",
-    "failed": "Failed",
-    "notEnoughTokens":"Not enough tokens",
-    "completed": "Completed",
-    "inComplete":"Not Complete",
+    "CORRECT":"Correct",
+    "PENDING": "Pending",
+    "INCORRECT":"Not Correct",
+    "FAILED": "Failed",
+    "NOT_ENOUGH_TOKENS":"Not enough tokens",
+    "COMPLETED": "Completed",
+    "INCOMPLETE":"Not Complete",
     "notCompleted": "Not Completed",
     "limitexceeded": "Limit Exceeded",
     "solve": "Solve"

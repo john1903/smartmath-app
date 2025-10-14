@@ -12,20 +12,36 @@ import { api, formHeader } from "../api";
 export const TasksApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllExercise: builder.query({
-      query: ({ page = 0, size = 10 }) => ({
-        url: `${ExerciseEndPoint}?page=${page}&size=${size}`,
-        method: "get",
-      }),
+      query: ({
+        page = 0,
+        size = 20,
+        query,
+        status,
+        difficultyLevel,
+        exerciseType,
+      }) => {
+        let params = `?page=${page}&size=${size}&sort=id`;
+
+        if (query) params += `&query=${encodeURIComponent(query)}`;
+        if (status && status !== "all") params += `&statusEqual=${status}`;
+        if (difficultyLevel)
+          params += `&difficultyLevelEqual=${difficultyLevel}`;
+        if (exerciseType) params += `&exerciseTypeEqual=${exerciseType}`;
+
+        console.log("params ::::::::: ", params);
+
+        return {
+          url: `${ExerciseEndPoint}${params}`,
+          method: "get",
+        };
+      },
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
-          // dispatch(setLoading(true));
           const res = await queryFulfilled;
           const newData = res?.data?.content || [];
 
-          // ✅ Get existing data
           const currentData = getState()?.tasks?.allExercise || [];
 
-          // ✅ Append if page > 0 else replace
           if (arg.page > 0) {
             dispatch(setAllExercise([...currentData, ...newData]));
           } else {
@@ -55,9 +71,11 @@ export const TasksApi = api.injectEndpoints({
 
           setTimeout(() => {
             dispatch(setLoading(false));
-          }, 2000);
+          }, 4000);
         } catch (error) {
-          dispatch(setLoading(false));
+          setTimeout(() => {
+            dispatch(setLoading(false));
+          }, 4000);
         }
       },
     }),

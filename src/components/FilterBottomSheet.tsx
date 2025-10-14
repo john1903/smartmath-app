@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import { Entypo } from "@expo/vector-icons";
@@ -18,25 +18,30 @@ interface FilterBottomSheetProps {
     difficultyLevel: string;
     exerciseType: string;
   }) => void;
+  selectedCategory?: string;
+
+  onCategoryChange?: (category: any) => void;
 }
 
 const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
   isVisible,
   onClose,
   onApply,
+  selectedCategory = "",
+  onCategoryChange,
 }) => {
   const { t } = useTranslation();
 
   const OPTIONS = {
     status: [
       "all",
-      "correct",
-      "pending",
-      "inCorrect",
-      "failed",
-      "notEnoughTokens",
-      "completed",
-      "inComplete",
+      "CORRECT",
+      "PENDING",
+      "INCORRECT",
+      "FAILED",
+      "NOT_ENOUGH_TOKENS",
+      "COMPLETED",
+      "INCOMPLETE",
     ],
     difficultyLevel: ["EASY", "MEDIUM", "HARD"],
     exerciseType: [
@@ -52,7 +57,19 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [selectedTaskType, setSelectedTaskType] = useState<string>("");
 
+  useEffect(() => {
+    if (isVisible && selectedCategory) {
+      setSelectedStatus(selectedCategory === "all" ? "all" : selectedCategory);
+    }
+  }, [isVisible, selectedCategory]);
+
   const handleApply = () => {
+    // Sync with parent
+    if (onCategoryChange) {
+      onCategoryChange(selectedStatus);
+    }
+
+    // Apply all filters
     onApply({
       status: selectedStatus,
       difficultyLevel: selectedDifficulty,
@@ -62,21 +79,30 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
   };
 
   const handleCancel = () => {
+    // Reset everything to "all"
+    setSelectedStatus("all");
+    setSelectedDifficulty("");
+    setSelectedTaskType("");
+
+    // Sync with parent (so top bar shows "All")
+    if (onCategoryChange) {
+      onCategoryChange("all");
+    }
+
+    // Apply reset filters to parent
     onApply({
-      status: "",
+      status: "all",
       difficultyLevel: "",
       exerciseType: "",
     });
-    setSelectedStatus("");
-    setSelectedDifficulty("");
-    setSelectedTaskType("");
+
     onClose();
   };
 
   return (
     <Modal
       isVisible={isVisible}
-      onBackdropPress={() => handleCancel()}
+      onBackdropPress={handleCancel}
       style={styles.modal}
     >
       <View style={styles.container}>
@@ -88,10 +114,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
         {/* Header */}
         <View style={styles.filterSection}>
           <Text style={styles.title}>{t("filter.title")}</Text>
-          <TouchableOpacity
-            onPress={() => handleCancel()}
-            style={styles.crossCircle}
-          >
+          <TouchableOpacity onPress={handleCancel} style={styles.crossCircle}>
             <Entypo name="cross" size={14} color="black" />
           </TouchableOpacity>
         </View>
@@ -163,7 +186,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
               fontFamily: FONTS.UrbanistSemiBold,
               includeFontPadding: false,
             }}
-            onPress={() => handleCancel()}
+            onPress={handleCancel}
           />
 
           <CustomButton
@@ -175,7 +198,7 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
               fontFamily: FONTS.UrbanistSemiBold,
               includeFontPadding: false,
             }}
-            onPress={() => handleApply()}
+            onPress={handleApply}
           />
         </View>
       </View>
