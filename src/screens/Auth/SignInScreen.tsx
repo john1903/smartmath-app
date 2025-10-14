@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   errorTextAbsolute: {
     position: "absolute",
     bottom: -8,
-    left: 20,
+    left: 22,
     fontSize: FONTSIZE.size12,
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,

@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 5,
+    // marginBottom: 3,
   },
   inputContainer: {
     marginTop: 0,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   errorText: {
     position: "absolute",
     bottom: -8,
-    left: 20,
+    left: 22,
     fontSize: FONTSIZE.size12,
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,

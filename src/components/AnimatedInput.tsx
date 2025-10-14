@@ -60,7 +60,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
     left: 18,
     top: animatedIsFocused.interpolate({
       inputRange: [0, 1],
-      outputRange: Platform.OS === "android" ? [10, -18] : [12, -18],
+      outputRange: Platform.OS === "android" ? [10, -20] : [12, -20],
     }),
     fontSize: FONTSIZE.size15,
     fontFamily: FONTS.UrbanistMedium,
