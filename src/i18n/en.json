@@ -69,13 +69,13 @@
 
   "categories": {
     "all": "All tasks",
-    "correct":"Correct",
-    "pending": "Pending",
-    "inCorrect":"Not Correct",
-    "failed": "Failed",
-    "notEnoughTokens":"Not enough tokens",
-    "completed": "Completed",
-    "inComplete":"Not Complete",
+    "CORRECT":"Correct",
+    "PENDING": "Pending",
+    "INCORRECT":"Not Correct",
+    "FAILED": "Failed",
+    "NOT_ENOUGH_TOKENS":"Not enough tokens",
+    "COMPLETED": "Completed",
+    "INCOMPLETE":"Not Complete",
     "notCompleted": "Not Completed",
     "limitexceeded": "Limit Exceeded",
     "solve": "Solve"
@@ -244,6 +244,16 @@
   "tokenLimitExceeded": "Token limit exceeded",
   "greatProgressToUnlock": "Great progress! You've reached your token limit — recharge to unlock more challenges.",
   "buyMore": "Buy more",
-  "newTokensAvailableToPurchase": "New tokens available for purchase."
+  "newTokensAvailableToPurchase": "New tokens available for purchase.",
+  "no_date_selected": "No date selected",
+  "selectFileFrom": "Select file from",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "document": "Document",
+  "cameraPermissionDenied": "Camera permission is required.",
+  "galleryPermissionDenied": "Gallery permission is required.",
+  "fileTooLarge": "File size exceeds 10MB.",
+  "fileUploadedSuccessfully": "File uploaded successfully!",
+  "uploadFailed": "Upload failed. Try again."
 
 }

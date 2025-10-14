@@ -240,5 +240,15 @@
   "tokenLimitExceeded": "Przekroczono limit tokenów",
   "greatProgressToUnlock": "Świetny postęp! Osiągnąłeś limit tokenów — doładuj, by odblokować więcej wyzwań.",
   "buyMore": "Kup więcej",
-  "newTokensAvailableToPurchase": "Nowe tokeny dostępne do zakupu."
+  "newTokensAvailableToPurchase": "Nowe tokeny dostępne do zakupu.",
+  "no_date_selected": "Nie wybrano daty",
+  "selectFileFrom": "Wybierz plik z",
+  "camera": "Aparat",
+  "gallery": "Galeria",
+  "document": "Dokument",
+  "cameraPermissionDenied": "Wymagane jest zezwolenie na korzystanie z aparatu.",
+  "galleryPermissionDenied": "Wymagane jest zezwolenie na dostęp do galerii.",
+  "fileTooLarge": "Rozmiar pliku przekracza 10 MB.",
+  "fileUploadedSuccessfully": "Plik został pomyślnie przesłany!",
+  "uploadFailed": "Przesyłanie nie powiodło się. Spróbuj ponownie."
 }

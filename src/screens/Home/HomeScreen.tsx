@@ -13,6 +13,8 @@
 // import { SafeAreaView } from "react-native-safe-area-context";
 // import { useTranslation } from "react-i18next";
 // import { useFocusEffect } from "@react-navigation/native";
+// import moment from "moment";
+// import { useDispatch, useSelector } from "react-redux";
 
 // import COLORS from "../../theme/colors";
 // import FONTSIZE from "../../theme/fontsSize";
@@ -28,13 +30,10 @@
 //   useLazyUserDetailQuery,
 // } from "../../services/homeSlice";
 // import { useLazyGetUserExerciseStatusQuery } from "../../services/tasksSlice";
-// import { useDispatch, useSelector } from "react-redux";
 // import { setLoading } from "../../store/loading";
 // import { setUser } from "../../store/auth";
-
 // import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 // import { RootStackParamList } from "../../navigation/types";
-// import moment from "moment";
 
 // interface HomeScreenProps {
 //   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -190,7 +189,6 @@
 //   const correct = userExerciseStatus?.correctAnswers ?? 0;
 //   const accuracyPercent =
 //     total > 0 ? ((correct / total) * 100).toFixed(1) : "0";
-//   const accuracyProgress = total > 0 ? correct / total : 0;
 
 //   const filteredQuestions =
 //     activeCategory === "all_exercises"
@@ -217,7 +215,7 @@
 //     try {
 //       await getAllRecommendedExercise({});
 //     } catch (err) {
-//       console.log("❌ Refresh error", err);
+//       console.log("Refresh error", err);
 //     } finally {
 //       setRefreshing(false);
 //     }
@@ -257,8 +255,9 @@
 //         <StatCard
 //           value={userExerciseStatus?.totalAnswers}
 //           onCalendarPress={() => {
-//             setFromDate(null);
-//             setToDate(null);
+//             // setFromDate(null);
+//             // setToDate(null);
+
 //             setCalendarVisible(true);
 //           }}
 //         />
@@ -266,7 +265,6 @@
 //         <ProgressCard
 //           title={t("accuracy")}
 //           percentage={parseFloat(accuracyPercent)}
-//           // progress={accuracyProgress}
 //           total={`${correct}/${total}`}
 //         />
 //       </View>
@@ -359,57 +357,97 @@
 //       </View>
 
 //       {/* Calendar Modal */}
-//       <Modal visible={calendarVisible} transparent animationType="slide">
-//         <View style={styles.modalBackdrop}>
-//           <View style={styles.modalContainer}>
-//             <Text style={styles.modalTitle}>{t("select_date_range")}</Text>
-//             <Text style={styles.modalFromToDate}>{`${moment(fromDate).format(
-//               "Do MMM YYYY"
-//             )} - ${moment(toDate).format("Do MMM YYYY")}`}</Text>
+//       {calendarVisible && (
+//         <Modal
+//           visible
+//           transparent
+//           animationType="fade"
+//           onRequestClose={() => setCalendarVisible(false)}
+//         >
+//           <View style={styles.modalBackdrop}>
+//             <View style={styles.modalContainer}>
+//               <Text style={styles.modalTitle}>{t("select_date_range")}</Text>
 
-//             <AnimatedDatePicker
-//               label="From Date"
-//               selectedDate={fromDate}
-//               onSelect={(date) => setFromDate(date)}
-//               maximumDate={toDate ?? undefined}
-//             />
+//               <Text style={styles.modalFromToDate}>
+//                 {fromDate &&
+//                   toDate &&
+//                   `${moment(fromDate).format("Do MMM YYYY")} - ${moment(
+//                     toDate
+//                   ).format("Do MMM YYYY")}`}
+//               </Text>
 
-//             <AnimatedDatePicker
-//               label="To Date"
-//               selectedDate={toDate}
-//               onSelect={(date) => setToDate(date)}
-//               minimumDate={fromDate ?? undefined}
-//             />
+//               {/* <AnimatedDatePicker
+//                 label="From Date"
+//                 selectedDate={fromDate}
+//                 onSelect={(date) => setFromDate(date)}
+//                 maximumDate={toDate ?? undefined}
+//               />
 
-//             <View
-//               style={{
-//                 flexDirection: "row",
-//                 justifyContent: "space-between",
-//                 gap: 10,
-//               }}
-//             >
-//               <TouchableOpacity
-//                 style={styles.cancelButton}
-//                 onPress={() => {
-//                   resetDefaultDates();
-//                   setCalendarVisible(false);
+//               <AnimatedDatePicker
+//                 label="To Date"
+//                 selectedDate={toDate}
+//                 onSelect={(date) => setToDate(date)}
+//                 minimumDate={fromDate ?? undefined}
+//               /> */}
+
+//               <AnimatedDatePicker
+//                 label="From Date"
+//                 selectedDate={fromDate}
+//                 onSelect={(date) => {
+//                   setFromDate(date);
+
+//                   // ✅ Ensure "To" date stays after "From" date
+//                   if (toDate && date > toDate) {
+//                     setToDate(null); // reset To if it's before From
+//                   }
 //                 }}
-//               >
-//                 <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
-//               </TouchableOpacity>
-//               <TouchableOpacity
-//                 style={styles.applyButton}
-//                 onPress={handleApplyFilter}
-//               >
-//                 <Text style={styles.applyButtonText}>{t("applyDate")}</Text>
-//               </TouchableOpacity>
+//                 maximumDate={toDate ?? new Date()} // no future, limit to "To" if available
+//               />
+
+//               <AnimatedDatePicker
+//                 label="To Date"
+//                 selectedDate={toDate}
+//                 onSelect={(date) => {
+//                   setToDate(date);
+
+//                   // ✅ Ensure "From" date stays before "To" date
+//                   if (fromDate && date < fromDate) {
+//                     setFromDate(null); // reset From if it's after To
+//                   }
+//                 }}
+//                 minimumDate={fromDate ?? undefined} // can't pick before "From"
+//                 maximumDate={new Date()} // can't pick future dates
+//               />
+
+//               <View style={styles.modalButtonsRow}>
+//                 <TouchableOpacity
+//                   style={styles.cancelButton}
+//                   onPress={() => {
+//                     setCalendarVisible(false);
+//                     dispatch(setLoading(true));
+//                     setTimeout(() => {
+//                       resetDefaultDates();
+//                     }, 1000);
+//                   }}
+//                 >
+//                   <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
+//                 </TouchableOpacity>
+
+//                 <TouchableOpacity
+//                   style={styles.applyButton}
+//                   onPress={handleApplyFilter}
+//                 >
+//                   <Text style={styles.applyButtonText}>{t("applyDate")}</Text>
+//                 </TouchableOpacity>
+//               </View>
 //             </View>
 //           </View>
-//         </View>
-//       </Modal>
+//         </Modal>
+//       )}
 //     </SafeAreaView>
 //   );
 // };
+
 // const styles = StyleSheet.create({
 //   safeContent: { flex: 1, backgroundColor: COLORS.background },
 //   header: {
@@ -432,15 +470,6 @@
 //   rightHeader: {
 //     flexDirection: "row",
 //     justifyContent: "flex-end",
-//     alignItems: "center",
-//   },
-//   notifyCircle: {
-//     width: 45,
-//     height: 45,
-//     borderRadius: 50,
-//     borderWidth: 1,
-//     borderColor: COLORS.secondary,
-//     justifyContent: "center",
 //     alignItems: "center",
 //   },
 //   avatar: {
@@ -478,7 +507,6 @@
 //     alignItems: "center",
 //     marginBottom: 20,
 //   },
-
 //   modalBackdrop: {
 //     flex: 1,
 //     justifyContent: "center",
@@ -490,17 +518,20 @@
 //     borderRadius: 12,
 //     padding: 20,
 //   },
-
 //   modalTitle: {
 //     fontSize: FONTSIZE.size24,
 //     fontFamily: FONTS.UrbanistMedium,
-//     // marginBottom: 20,
 //   },
 //   modalFromToDate: {
 //     fontSize: FONTSIZE.size12,
 //     fontFamily: FONTS.UrbanistMedium,
 //     color: COLORS.secondary,
 //     marginBottom: 20,
+//   },
+//   modalButtonsRow: {
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     gap: 10,
 //   },
 //   applyButton: {
 //     marginTop: 10,
@@ -514,7 +545,6 @@
 //     color: COLORS.white,
 //     fontFamily: FONTS.UrbanistMedium,
 //   },
-
 //   cancelButton: {
 //     marginTop: 10,
 //     padding: 12,
@@ -525,12 +555,12 @@
 //     borderColor: "#cccccc",
 //     width: "48%",
 //   },
-
 //   cancelButtonText: {
 //     color: COLORS.secondary,
 //     fontFamily: FONTS.UrbanistMedium,
 //   },
 // });
+
 // export default HomeScreen;
 
 import React, { useCallback, useState } from "react";
@@ -544,7 +574,6 @@ import {
   Modal,
   RefreshControl,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
@@ -628,35 +657,59 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   ];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
+  // /** ✅ Format date for API */
+  // const formatDateTime = (date: Date, type: "from" | "to"): string => {
+  //   const d = new Date(date);
+
+  //   if (type === "from") {
+  //     d.setHours(0, 0, 0, 0); // start of day
+  //   } else if (type === "to") {
+  //     // current time - 3 seconds
+  //     const now = new Date();
+  //     const threeSecondsAgo = new Date(now.getTime() - 3000);
+  //     d.setHours(
+  //       threeSecondsAgo.getHours(),
+  //       threeSecondsAgo.getMinutes(),
+  //       threeSecondsAgo.getSeconds(),
+  //       0
+  //     );
+  //   }
+
+  //   const pad = (n: number) => String(n).padStart(2, "0");
+  //   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+  //     d.getDate()
+  //   )}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  // };
+
   const formatDateTime = (date: Date, type: "from" | "to"): string => {
-    let d = new Date(date);
-    const now = new Date();
+    const d = new Date(date);
 
     if (type === "from") {
-      d = new Date(
-        Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0)
-      );
+      // Start of selected day in UTC
+      d.setUTCHours(0, 0, 0, 0);
     } else if (type === "to") {
-      if (
+      const now = new Date();
+      const isToday =
         d.getUTCFullYear() === now.getUTCFullYear() &&
         d.getUTCMonth() === now.getUTCMonth() &&
-        d.getUTCDate() === now.getUTCDate()
-      ) {
-        d = new Date(Date.now() - 5 * 60000);
-      } else {
-        d = new Date(
-          Date.UTC(
-            d.getUTCFullYear(),
-            d.getUTCMonth(),
-            d.getUTCDate(),
-            23,
-            59,
-            59
-          )
+        d.getUTCDate() === now.getUTCDate();
+
+      if (isToday) {
+        // If "To" date is today → current UTC time (minus 30s)
+        const adjustedNow = new Date(now.getTime() - 30 * 1000);
+        d.setUTCHours(
+          adjustedNow.getUTCHours(),
+          adjustedNow.getUTCMinutes(),
+          adjustedNow.getUTCSeconds(),
+          0
         );
+      } else {
+        // If "To" date is past → end of that day in UTC
+        d.setUTCHours(23, 59, 59, 0);
       }
     }
 
+    // Return ISO-like format (no timezone suffix)
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
       d.getUTCDate()
@@ -664,14 +717,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       d.getUTCSeconds()
     )}`;
   };
-
-  const fetchExerciseStatus = (from: string, to: string) => {
+  const fetchExerciseStatus = (from?: string, to?: string) => {
     dispatch(setLoading(true));
-    getUserExerciseStatus({ from, to })
+
+    const params: any = {};
+    if (from) params.from = from;
+    if (to) params.to = to;
+
+    getUserExerciseStatus(params)
       .then((res: any) => {
-        if (res?.data) {
-          setUserExerciseStatus(res.data);
-        }
+        if (res?.data) setUserExerciseStatus(res.data);
       })
       .finally(() => {
         dispatch(setLoading(false));
@@ -681,15 +736,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      const now = new Date();
-      const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
-      const to = new Date(now.getTime() - 5 * 60 * 1000);
-
-      setFromDate(from);
-      setToDate(to);
-
-      const formatForApi = (d: Date) => d.toISOString().slice(0, 19);
-      fetchExerciseStatus(formatForApi(from), formatForApi(to));
+      setFromDate(null);
+      setToDate(null);
+      fetchExerciseStatus();
 
       triggerUserDetail({})
         .unwrap()
@@ -703,13 +752,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 
   const resetDefaultDates = () => {
-    const now = new Date();
-    const from = new Date(Date.UTC(2025, 0, 1, 0, 0, 0));
-    const to = new Date(now.getTime() - 5 * 60 * 1000);
-    setFromDate(from);
-    setToDate(to);
-    const formatForApi = (d: Date) => d.toISOString().slice(0, 19);
-    fetchExerciseStatus(formatForApi(from), formatForApi(to));
+    setFromDate(null);
+    setToDate(null);
+    fetchExerciseStatus();
   };
 
   const handleApplyFilter = () => {
@@ -789,14 +834,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.cardsRow}>
         <StatCard
           value={userExerciseStatus?.totalAnswers}
-          onCalendarPress={() => {
-            // setFromDate(null);
-            // setToDate(null);
-
-            setCalendarVisible(true);
-          }}
+          onCalendarPress={() => setCalendarVisible(true)}
         />
-
         <ProgressCard
           title={t("accuracy")}
           percentage={parseFloat(accuracyPercent)}
@@ -821,7 +860,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      {/* Recommended Tasks */}
       <View style={styles.recommendedContainer}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -891,7 +929,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </ScrollView>
       </View>
 
-      {/* Calendar Modal */}
       {calendarVisible && (
         <Modal
           visible
@@ -904,39 +941,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Text style={styles.modalTitle}>{t("select_date_range")}</Text>
 
               <Text style={styles.modalFromToDate}>
-                {fromDate &&
-                  toDate &&
-                  `${moment(fromDate).format("Do MMM YYYY")} - ${moment(
-                    toDate
-                  ).format("Do MMM YYYY")}`}
+                {fromDate && toDate
+                  ? `${moment(fromDate).format("Do MMM YYYY")} - ${moment(
+                      toDate
+                    ).format("Do MMM YYYY")}`
+                  : t("no_date_selected")}
               </Text>
-
-              {/* <AnimatedDatePicker
-                label="From Date"
-                selectedDate={fromDate}
-                onSelect={(date) => setFromDate(date)}
-                maximumDate={toDate ?? undefined}
-              />
-
-              <AnimatedDatePicker
-                label="To Date"
-                selectedDate={toDate}
-                onSelect={(date) => setToDate(date)}
-                minimumDate={fromDate ?? undefined}
-              /> */}
 
               <AnimatedDatePicker
                 label="From Date"
                 selectedDate={fromDate}
                 onSelect={(date) => {
                   setFromDate(date);
-
-                  // ✅ Ensure "To" date stays after "From" date
-                  if (toDate && date > toDate) {
-                    setToDate(null); // reset To if it's before From
-                  }
+                  if (toDate && date > toDate) setToDate(null);
                 }}
-                maximumDate={toDate ?? new Date()} // no future, limit to "To" if available
+                maximumDate={toDate ?? new Date()}
               />
 
               <AnimatedDatePicker
@@ -944,14 +963,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 selectedDate={toDate}
                 onSelect={(date) => {
                   setToDate(date);
-
-                  // ✅ Ensure "From" date stays before "To" date
-                  if (fromDate && date < fromDate) {
-                    setFromDate(null); // reset From if it's after To
-                  }
+                  if (fromDate && date < fromDate) setFromDate(null);
                 }}
-                minimumDate={fromDate ?? undefined} // can't pick before "From"
-                maximumDate={new Date()} // can't pick future dates
+                minimumDate={fromDate ?? undefined}
+                maximumDate={new Date()}
               />
 
               <View style={styles.modalButtonsRow}>
@@ -959,9 +974,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   style={styles.cancelButton}
                   onPress={() => {
                     setCalendarVisible(false);
-                    setTimeout(() => {
-                      resetDefaultDates();
-                    }, 1000);
+                    resetDefaultDates();
                   }}
                 >
                   <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
@@ -1032,9 +1045,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  recommendedInnerContainer: {
-    padding: 20,
-  },
+  recommendedInnerContainer: { padding: 20 },
   recommendedHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

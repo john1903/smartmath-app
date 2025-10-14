@@ -1,24 +1,28 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
   StyleSheet,
-  Image,
   Modal,
   ActivityIndicator,
-  ScrollView,
   Dimensions,
+  Platform,
   Alert,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
-import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+
 import FONTSIZE from "../../../theme/fontsSize";
 import FONTS from "../../../theme/fonts";
+import COLORS from "../../../theme/colors";
+
 import { splitMathString } from "../../../utils/helpers";
 import MathRenderer from "../../../components/MathRenderer";
+import CustomButton from "../../../components/CustomButton";
+import ImageCarousel from "../../../components/ImageCarousel";
+import GlobalModal from "../../../components/GlobalModal";
 
 import CloudIcon from "../../../../assets/svgs/CloudIcon.svg";
 import UploadIcon from "../../../../assets/svgs/UploadIcon.svg";
@@ -27,128 +31,260 @@ import TokenWhiteIcon from "../../../../assets/svgs/TokenWhiteIcon.svg";
 import TokenBlackIcon from "../../../../assets/svgs/TokenBlackIcon.svg";
 
 import { Ionicons } from "@expo/vector-icons";
-import COLORS from "../../../theme/colors";
-import CustomButton from "../../../components/CustomButton";
+
 import {
   useDeleteFileMutation,
   useUpdateFileMutation,
 } from "../../../services/authSlice";
+import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
+import { useLazyGetPromptsQuery } from "../../../services/prompts";
 import { setLoading } from "../../../store/loading";
 import {
   showErrorToast,
   showInfoToast,
   showSuccessToast,
 } from "../../../utils/toast";
-import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
-import { useLazyGetPromptsQuery } from "../../../services/prompts";
-import ImageCarousel from "../../../components/ImageCarousel";
-import GlobalModal from "../../../components/GlobalModal";
+
+import * as ImagePicker from "expo-image-picker";
 
 const windowWidth = Dimensions.get("window").width;
-const OpenEnded = ({ question, onPress, navigation, answerData }) => {
-  // console.log(" question ssssssssssssssssss", JSON.stringify(question));
+
+interface FileItem {
+  id: string | number;
+  name: string;
+  uri: string;
+  size?: string;
+  type?: string;
+}
+
+interface OpenEndedProps {
+  question: any;
+  onPress: () => void;
+  navigation: any;
+  answerData?: any | null;
+}
+
+const OpenEnded: React.FC<OpenEndedProps> = ({
+  question,
+  onPress,
+  navigation,
+  answerData,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const [updateFile] = useUpdateFileMutation();
   const [deleteFile] = useDeleteFileMutation();
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
-
   const [getPrompts] = useLazyGetPromptsQuery();
 
   const [submitted, setSubmitted] = useState(false);
-
   const [waitingPopup, setWaitingPopup] = useState(false);
-  const [answer, setAnswer] = useState(answerData);
-
-  const [files, setFiles] = useState([]);
-  const [appToken, setAppToken] = useState();
-
+  const [answer, setAnswer] = useState(answerData || null);
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [appToken, setAppToken] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
 
+  // const pickFile = async () => {
+  //   try {
+  //     const result = await DocumentPicker.getDocumentAsync({
+  //       type: ["image/png", "image/jpeg", "application/pdf"],
+  //       copyToCacheDirectory: true,
+  //       multiple: false,
+  //     });
+
+  //     if (!result.canceled) {
+  //       const file = result.assets[0];
+  //       const sizeInBytes = file.size ?? 0; // if undefined, treat as 0
+  //       const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
+
+  //       if (fileSizeInMB > 10) {
+  //         showErrorToast(
+  //           "File size is more than 10MB. Please select a smaller file."
+  //         );
+  //         return;
+  //       }
+
+  //       const formData = new FormData();
+  //       formData.append("category", "ANSWER");
+  //       formData.append("file", {
+  //         uri: file.uri,
+  //         name: file.name,
+  //         type: file.mimeType!,
+  //       } as any);
+
+  //       dispatch(setLoading(true));
+  //       const uploadedFile = await updateFile({ data: formData }).unwrap();
+
+  //       if (uploadedFile?.id) {
+  //         const newFile: FileItem = {
+  //           id: uploadedFile.id,
+  //           name: file.name,
+  //           uri: file.uri,
+  //           type: file.mimeType,
+  //         };
+  //         setFiles((prev) => [...prev, newFile]);
+  //         dispatch(setLoading(false));
+  //       } else {
+  //         dispatch(setLoading(false));
+  //         showErrorToast("Upload succeeded but no file ID returned.");
+  //       }
+  //     }
+  //   } catch (err) {
+  //     dispatch(setLoading(false));
+  //     console.log("File picking/upload error:", err);
+  //   }
+  // };
+
   const pickFile = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["image/png", "image/jpeg", "application/pdf"],
-        copyToCacheDirectory: true,
-        multiple: false,
-      });
+    Alert.alert(
+      t("selectFileFrom"), // Title (you can localize this)
+      "",
+      [
+        {
+          text: t("camera"),
+          onPress: async () => {
+            try {
+              const permission =
+                await ImagePicker.requestCameraPermissionsAsync();
+              if (!permission.granted) {
+                showErrorToast(t("cameraPermissionDenied"));
+                return;
+              }
 
-      if (!result.canceled) {
-        const file = result.assets[0];
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 0.8,
+              });
 
-        // ✅ Check file size (in bytes → convert to MB)
-        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Camera error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("gallery"),
+          onPress: async () => {
+            try {
+              const permission =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+              if (!permission.granted) {
+                showErrorToast(t("galleryPermissionDenied"));
+                return;
+              }
 
-        console.log("file ::: ", file);
-        console.log("fileSizeInMB ::: ", fileSizeInMB);
-        if (fileSizeInMB > 10) {
-          showErrorToast(
-            "File size is more than 10MB. Please select a smaller file."
-          );
-          return; // stop further execution
-        }
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsMultipleSelection: false,
+                quality: 0.8,
+              });
 
-        // ✅ Prepare FormData for upload
-        const formData = new FormData();
-        formData.append("category", "ANSWER");
-        formData.append("file", {
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType,
-        });
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Gallery error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("document"),
+          onPress: async () => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ["image/png", "image/jpeg", "application/pdf"],
+                copyToCacheDirectory: true,
+                multiple: false,
+              });
 
-        // ✅ Upload file
-        dispatch(setLoading(true));
-        console.log("Uploading file...");
-        const uploadedFile = await updateFile({ data: formData }).unwrap();
-        console.log("Uploaded file :::::::::::: ", uploadedFile);
-
-        // ✅ Save file info if upload success
-        if (uploadedFile?.id) {
-          const newFile = {
-            id: uploadedFile.id,
-            name: file.name,
-            uri: file.uri,
-            // size: `${fileSizeInMB.toFixed(1)} MB`,
-            type: file.mimeType,
-          };
-          setFiles((prev) => [...prev, newFile]);
-          dispatch(setLoading(false));
-        } else {
-          dispatch(setLoading(false));
-          showErrorToast("Upload succeeded but no file ID returned.");
-        }
-      }
-    } catch (err) {
-      dispatch(setLoading(false));
-      // console.log("File picking/upload error ::::::::::::::: ", err);
-      // showErrorToast("Something went wrong!");
-    }
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Document error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("cancel"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
-  const removeFile = async (index) => {
+  const handleFileUpload = async (file: any) => {
     try {
-      const fileToRemove = files[index];
+      const sizeInBytes = file.fileSize || file.size || 0;
+      const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
 
-      if (!fileToRemove?.id) {
-        console.warn("No file id found for deletion");
+      if (fileSizeInMB > 10) {
+        showErrorToast(t("fileTooLarge"));
         return;
       }
 
+      const mimeType =
+        file.mimeType ||
+        file.type ||
+        (file.uri?.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
+
+      const formData = new FormData();
+      formData.append("category", "ANSWER");
+      formData.append("file", {
+        uri: Platform.OS === "ios" ? file.uri.replace("file://", "") : file.uri,
+        name: file.fileName || file.name || "upload.jpg",
+        type: mimeType,
+      } as any);
+
       dispatch(setLoading(true));
-      // Call delete API
+      const uploadedFile = await updateFile({ data: formData }).unwrap();
+
+      if (uploadedFile?.id) {
+        const newFile: FileItem = {
+          id: uploadedFile.id,
+          name: file.fileName || file.name,
+          uri: file.uri,
+          type: mimeType,
+        };
+        setFiles((prev) => [...prev, newFile]);
+        showSuccessToast(t("fileUploadedSuccessfully"));
+      } else {
+        showErrorToast(t("uploadFailed"));
+      }
+    } catch (err) {
+      console.log("Upload error:", err);
+      showErrorToast(t("somethingWentWrong"));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const removeFile = async (index: number) => {
+    try {
+      const fileToRemove = files[index];
+      if (!fileToRemove?.id) return;
+
+      dispatch(setLoading(true));
       await deleteFile({ id: fileToRemove.id }).unwrap();
 
-      // Update state after successful delete
       const updatedFiles = files.filter((_, i) => i !== index);
       setFiles(updatedFiles);
       dispatch(setLoading(false));
       showSuccessToast("File removed successfully!");
     } catch (err) {
       dispatch(setLoading(false));
-      console.log("File delete failed :::::::::::::", err);
+      console.log("File delete failed:", err);
       showErrorToast("Failed to remove file!");
     }
   };
@@ -168,23 +304,20 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
     try {
       dispatch(setLoading(true));
       const duration = stopTimer();
-
       const answerFileIds = files.map((f) => String(f.id));
 
-      let payload = {
+      const payload = {
         id: question?.id,
         data: {
           exerciseType: question?.exerciseType,
           completionTime: duration,
-          answerFileIds, // e.g. ["1903", "2003"]
+          answerFileIds,
         },
       };
 
       const response = await submitExerciseAnswer(payload).unwrap();
-
       dispatch(setLoading(false));
 
-      console.log("Submit response :::::::::::::", response);
       showSuccessToast(t("answerSubmittedSuccessfully"));
       if (response?.feedbackStatus === "PENDING") {
         setTimeout(() => setWaitingPopup(true), 1000);
@@ -192,23 +325,20 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
       setSubmitted(true);
     } catch (err) {
       dispatch(setLoading(false));
-      console.log("Submit failed :::::::::::::", err);
+      console.log("Submit failed:", err);
       showErrorToast(t("somethingWentWrong"));
     }
   };
 
   useEffect(() => {
-    startTimer(); // start when screen loads
+    startTimer();
 
     const fetchPrompts = async () => {
       try {
-        const res = await getPrompts().unwrap();
-
-        // console.log("res::::::::: ", res);
+        const res = await getPrompts({}).unwrap();
         if (res?.usage !== undefined && res?.limit !== undefined) {
           const available = res.limit - res.usage;
-          setAppToken(available >= 0 ? available : 0); // set state
-          // setAppToken( available ); // set state
+          setAppToken(available >= 0 ? available : 0);
         }
       } catch (error) {
         console.error("Error fetching prompts:", error);
@@ -218,16 +348,11 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
     fetchPrompts();
   }, []);
 
-  const handleCancel = () => {
-    setModalVisible(false);
-    console.log("User cancelled");
-  };
+  const handleCancel = () => setModalVisible(false);
 
   const handleConfirm = () => {
     setModalVisible(false);
-
     navigation.navigate("SettingsTab", { screen: "Tokens" });
-    console.log("User confirmed");
   };
 
   return (
@@ -236,11 +361,7 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
         <ImageCarousel illustrations={question.illustrations} />
       )}
 
-      <View
-        style={{
-          marginHorizontal: 30,
-        }}
-      >
+      <View style={{ marginHorizontal: 30 }}>
         <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           <MathRenderer
@@ -248,19 +369,6 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
             style={{ marginRight: 4 }}
             fontSize={20}
           />
-          {/* {splitMathString(question.description).map((part, idx) =>
-            part.startsWith("$") ? (
-              <MathRenderer
-                key={idx}
-                formula={part}
-                style={{ marginRight: 4 }}
-              />
-            ) : (
-              <Text key={idx} style={styles.question}>
-                {part}
-              </Text>
-            )
-          )} */}
         </View>
       </View>
 
@@ -279,18 +387,14 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                 styles.submitText,
                 { includeFontPadding: false, marginRight: 4 },
               ]}
-              contentStyle={{
-                flexDirection: "row-reverse",
-              }}
-              iconStyle={{
-                marginRight: 0,
-              }}
-              onPress={() => pickFile()}
+              contentStyle={{ flexDirection: "row-reverse" }}
+              iconStyle={{ marginRight: 0 }}
+              onPress={pickFile}
               svg={<UploadIcon />}
             />
           </View>
 
-          <View style={[styles.fileTile]}>
+          <View style={styles.fileTile}>
             {files.map((item, index) => (
               <View key={index} style={styles.fileItem}>
                 <View
@@ -310,7 +414,7 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                 </View>
                 <TouchableOpacity
                   onPress={() => removeFile(index)}
-                  style={[styles.crossIcon]}
+                  style={styles.crossIcon}
                 >
                   <Ionicons name="close" size={20} color={COLORS.black} />
                 </TouchableOpacity>
@@ -318,11 +422,7 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
             ))}
           </View>
 
-          <View
-            style={{
-              marginHorizontal: 30,
-            }}
-          >
+          <View style={{ marginHorizontal: 30 }}>
             {appToken > 0 ? (
               <View style={styles.whiteSheetFooter}>
                 <CustomButton
@@ -354,38 +454,29 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                   title={t("50TokenToSubmit")}
                   buttonStyle={[
                     styles.generateReportBtn,
-                    {
-                      backgroundColor: COLORS.D9Gray,
-                      borderWidth: 0,
-                    },
+                    { backgroundColor: COLORS.D9Gray, borderWidth: 0 },
                   ]}
                   textStyle={[
                     styles.generateReportBtnTitle,
-                    {
-                      color: COLORS.black,
-                    },
+                    { color: COLORS.black },
                   ]}
-                  onPress={() => handleSubmit()}
+                  onPress={handleSubmit}
                   svg={<TokenBlackIcon width={22} height={22} />}
                 />
                 <View
                   style={{
                     flexDirection: "row",
-                    // justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
                   <Text
-                    style={[
-                      styles.whiteSheetFooterText,
-                      {
-                        marginRight: 10,
-                      },
-                    ]}
+                    style={[styles.whiteSheetFooterText, { marginRight: 10 }]}
                   >
                     {appToken} {t("tokenAvailable")}
                   </Text>
-                  <TouchableOpacity onPress={() => console.log("Buy Tokens")}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("SettingsTab")}
+                  >
                     <Text
                       style={[
                         styles.whiteSheetFooterText,
@@ -406,21 +497,12 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
       ) : (
         <View>
           {answer?.feedbackStatus === "PENDING" ? (
-            <View
-              style={{
-                marginVertical: 20,
-              }}
-            >
+            <View style={{ marginVertical: 20 }}>
               <Text style={styles.commentHeading}>{t("systemComment")}</Text>
-
               <Text
                 style={[
                   styles.commentStatus,
-
-                  {
-                    marginTop: 30,
-                    color: "#FFD54F",
-                  },
+                  { marginTop: 30, color: "#FFD54F" },
                 ]}
               >
                 {t("exerciseInReview")}
@@ -432,9 +514,17 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
 
               <View
                 style={{
-                  marginVertical: 20,
+                  marginVertical: answer?.feedback ? 0 : 20,
                 }}
               >
+                {answer?.feedback && (
+                  <MathRenderer
+                    formula={answer?.feedback}
+                    style={{ marginRight: 4 }}
+                    fontSize={14}
+                  />
+                )}
+
                 <Text
                   style={[
                     styles.commentStatus,
@@ -455,24 +545,25 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
               </View>
 
               <View style={styles.buttons}>
-                {answer?.feedbackStatus === "INCORRECT" ||
-                  (answer?.feedbackStatus === "FAILED" && (
-                    <CustomButton
-                      title={t("retry")}
-                      buttonStyle={[styles.btnStyle, styles.retryBtn]}
-                      textStyle={[
-                        styles.retryText,
-                        { includeFontPadding: false },
-                      ]}
-                      onPress={() => setAnswer(null)}
-                    />
-                  ))}
+                {(answer?.feedbackStatus === "INCORRECT" ||
+                  answer?.feedbackStatus === "FAILED") && (
+                  <CustomButton
+                    title={t("retry")}
+                    buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                    textStyle={[
+                      styles.retryText,
+                      { includeFontPadding: false },
+                    ]}
+                    onPress={() => setAnswer(null)}
+                  />
+                )}
 
                 <CustomButton
-                  title={t("next")}
+                  title={submitted ? t("next") : t("submit")}
                   buttonStyle={[styles.btnStyle, styles.submitBtn]}
                   textStyle={[styles.submitText, { includeFontPadding: false }]}
-                  onPress={() => onPress()}
+                  disabled={!submitted}
+                  onPress={onPress}
                 />
               </View>
             </View>
@@ -484,18 +575,13 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
         transparent
         visible={waitingPopup}
         animationType="fade"
-        onRequestClose={() => setVisible(false)}
+        onRequestClose={() => setWaitingPopup(false)}
       >
         <View style={styles.overlay}>
           <View style={styles.loaderContainer}>
-            {/* Loader */}
             <ActivityIndicator size="large" color={COLORS.white} />
-
-            {/* Message */}
             <Text style={styles.title}>{t("yourAnswerhasBeenSubmitted")}</Text>
             <Text style={styles.subtitle}>{t("feedbackInFewMins")}</Text>
-
-            {/* Buttons */}
             <View style={styles.buttonRow}>
               <CustomButton
                 title={t("goToHome")}
@@ -504,31 +590,17 @@ const OpenEnded = ({ question, onPress, navigation, answerData }) => {
                 onPress={() => {
                   setWaitingPopup(false);
 
-                  navigation.goBack();
-
                   setTimeout(() => {
                     navigation.navigate("HomeTab", { screen: "HomeMain" });
-                  }, 100);
+                  }, 1000);
                 }}
               />
-
               <CustomButton
                 title={t("backToTasks")}
-                buttonStyle={[
-                  styles.button,
-                  {
-                    backgroundColor: COLORS.white,
-                  },
-                ]}
-                textStyle={[
-                  styles.buttonText,
-                  {
-                    color: COLORS.black,
-                  },
-                ]}
+                buttonStyle={[styles.button, { backgroundColor: COLORS.white }]}
+                textStyle={[styles.buttonText, { color: COLORS.black }]}
                 onPress={() => {
                   setWaitingPopup(false);
-
                   setTimeout(() => {
                     navigation.navigate("TasksMain");
                   }, 1000);
@@ -572,6 +644,8 @@ const styles = StyleSheet.create({
   commentStatus: {
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistMedium,
+    marginLeft: 8,
+    marginVertical: 10,
   },
 
   retryBtn: { backgroundColor: COLORS.black },

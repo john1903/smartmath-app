@@ -27,6 +27,7 @@ interface SearchBarProps {
   showFilter?: boolean;
   style?: ViewStyle;
   placeholder?: string;
+  showDot?: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -35,6 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   showFilter = true,
   style = {},
   placeholder = "Search",
+  showDot,
 }) => {
   const { token } = useSelector((state: RootState) => state?.auth);
   const [searchText, setSearchText] = useState<string>("");
@@ -77,7 +79,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           onPress={() => onFilter?.()}
         >
           <FilterIcon width={20} height={20} />
-          {/* <Ionicons name="options-outline" size={22} color="#555" /> */}
+          {showDot && <View style={styles.dot} />}
         </TouchableOpacity>
       )}
     </View>
@@ -114,4 +116,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 8,
   } as ViewStyle,
+
+  dot: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 10,
+    height: 10,
+    borderRadius: 50,
+    backgroundColor: COLORS.primary, // or red if you want more visibility
+  },
 });

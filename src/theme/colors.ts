@@ -1,4 +1,21 @@
-const COLORS = {
+export interface ThemeColors {
+  primary: string;
+  secondary: string;
+  background: string;
+  white: string;
+  black: string;
+  danger: string;
+  borderColor: string;
+  borderColor2: string;
+  D9Gray: string;
+  lightBlue: string;
+  green: string;
+  F5Gray: string;
+  transparent?: string;
+}
+
+// Default COLORS constant
+const COLORS: ThemeColors = {
   primary: "#2475FC",
   secondary: "#999999",
   background: "#F6F6F6",
@@ -13,9 +30,11 @@ const COLORS = {
   F5Gray: "#F5F5F5",
   transparent: "transparent",
 };
+
 export default COLORS;
 
-const lightColors = {
+// Light theme colors
+const lightColors: ThemeColors = {
   primary: "#2475FC",
   secondary: "#999999",
   background: "#F6F6F6",
@@ -30,7 +49,8 @@ const lightColors = {
   F5Gray: "#F5F5F5",
 };
 
-const darkColors = {
+// Dark theme colors
+const darkColors: ThemeColors = {
   primary: "#2475FC",
   secondary: "#AAAAAA",
   background: "#000000",
@@ -46,3 +66,6 @@ const darkColors = {
 };
 
 export { lightColors, darkColors };
+
+// Optional type for all color keys
+export type ColorKeys = keyof ThemeColors;

@@ -1,11 +1,10 @@
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
 import FONTSIZE from "../../../theme/fontsSize";
 import FONTS from "../../../theme/fonts";
 import COLORS from "../../../theme/colors";
-import { splitMathString } from "../../../utils/helpers";
 import MathRenderer from "../../../components/MathRenderer";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -13,66 +12,86 @@ import { startTimer, stopTimer } from "../../../utils/timeTracker";
 import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 import { setLoading } from "../../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../../utils/toast";
-import { Dimensions } from "react-native";
 import ImageCarousel from "../../../components/ImageCarousel";
+
+interface Answer {
+  answer: string;
+  feedbackStatus: "CORRECT" | "INCORRECT" | "PENDING";
+  solution?: string;
+}
+
+interface SingleChoiceProps {
+  question: any;
+  onPress: () => void;
+  answer?: any | null;
+}
 
 const windowWidth = Dimensions.get("window").width;
 
-const SingleChoice = ({ question, onPress, answer }) => {
+const SingleChoice: React.FC<SingleChoiceProps> = ({
+  question,
+  onPress,
+  answer,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [locked, setLocked] = useState(false);
 
-  const [submitExerciseAnswer, { isLoading }] =
-    useSubmitExerciseAnswerMutation();
+  const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
 
-  // Handle when user selects option
-  const handleSelect = (id) => {
+  const handleSelect = (id: string) => {
     if (!locked) {
       setSelectedOption((prev) => (prev === id ? null : id));
     }
   };
 
-  // Submit handler
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (submitted) {
       setSubmitted(false);
       onPress();
-    } else {
-      if (selectedOption) {
-        dispatch(setLoading(true));
-        const duration = stopTimer();
+      return;
+    }
 
-        let payload = {
-          id: question?.id,
-          data: {
-            exerciseType: question?.exerciseType,
-            completionTime: duration,
-            answer: selectedOption,
-          },
-        };
+    if (selectedOption) {
+      dispatch(setLoading(true));
+      const duration = stopTimer();
 
-        submitExerciseAnswer(payload).then((res) => {
-          const feedback = res?.data?.feedbackStatus;
-          if (feedback === "INCORRECT") {
-            setIsCorrect(false);
-            showErrorToast(t("yourAnswerIsWrong"));
-          } else if (feedback === "CORRECT") {
-            setIsCorrect(true);
-            showSuccessToast(t("yourAnswerIsCorrect"));
-          }
-          setSubmitted(true);
-          setLocked(true);
-        });
+      const payload = {
+        id: question.id,
+        data: {
+          exerciseType: question.exerciseType,
+          completionTime: duration,
+          answer: selectedOption,
+        },
+      };
+
+      try {
+        const res = await submitExerciseAnswer(payload).unwrap();
+        const feedback = res?.feedbackStatus as Answer["feedbackStatus"];
+
+        if (feedback === "INCORRECT") {
+          setIsCorrect(false);
+          showErrorToast(t("yourAnswerIsWrong"));
+        } else if (feedback === "CORRECT") {
+          setIsCorrect(true);
+          showSuccessToast(t("yourAnswerIsCorrect"));
+        }
+
+        setSubmitted(true);
+        setLocked(true);
+      } catch (error) {
+        console.error("Submit error:", error);
+        showErrorToast(t("somethingWentWrong"));
+      } finally {
+        dispatch(setLoading(false));
       }
     }
   };
 
-  // Pre-fill state if answer object is provided
   useEffect(() => {
     if (answer) {
       if (answer.feedbackStatus === "CORRECT") {
@@ -106,41 +125,27 @@ const SingleChoice = ({ question, onPress, answer }) => {
       )}
 
       <View style={{ marginHorizontal: 30 }}>
-        <Text style={styles.question}>Question 1:</Text>
+        <Text style={styles.question}>{t("question1")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           <MathRenderer
             formula={question.description}
             style={{ marginRight: 4 }}
             fontSize={20}
           />
-
-          {/* {splitMathString(question.description).map((part, idx) =>
-            part.startsWith("$") ? (
-              <MathRenderer
-                key={idx}
-                formula={part}
-                style={{ marginRight: 4 }}
-              />
-            ) : (
-              <Text key={idx} style={styles.question}>
-                {part}
-              </Text>
-            )
-          )} */}
         </View>
       </View>
 
       <View style={{ marginHorizontal: 20 }}>
-        {Object.entries(question.options).map(([key, value], indx) => {
-          let optionCorrectness = null;
+        {Object.entries(question.options).map(([key, value]) => {
+          let optionCorrectness: boolean | null = null;
+
           if (submitted) {
             if (isCorrect && selectedOption === key) {
               optionCorrectness = true;
             } else if (!isCorrect && selectedOption === key) {
               optionCorrectness = false;
             } else if (!isCorrect && answer?.solution === key) {
-              // highlight correct one after wrong answer
-              optionCorrectness = true;
+              optionCorrectness = true; // highlight correct one
             }
           }
 

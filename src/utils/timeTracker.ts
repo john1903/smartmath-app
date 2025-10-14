@@ -1,19 +1,11 @@
-// utils/timeTracker.js
+let startTime: number | null = null;
 
-let startTime = null;
-
-/**
- * Start the timer
- */
-export const startTimer = () => {
+export const startTimer = (): void => {
   startTime = Date.now();
 };
 
-/**
- * Stop the timer and return ISO-8601 duration (PTxMxS)
- */
-export const stopTimer = () => {
-  if (!startTime) return "PT0S"; // fallback if not started
+export const stopTimer = (): string => {
+  if (!startTime) return "PT0S";
 
   const endTime = Date.now();
   const elapsedMs = endTime - startTime;
@@ -22,11 +14,7 @@ export const stopTimer = () => {
   return convertToISO8601(elapsedSec);
 };
 
-/**
- * Convert seconds to ISO-8601 duration
- * e.g. 135 → "PT2M15S"
- */
-const convertToISO8601 = (totalSeconds) => {
+const convertToISO8601 = (totalSeconds: number): string => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 

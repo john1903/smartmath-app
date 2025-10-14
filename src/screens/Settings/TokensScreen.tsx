@@ -66,10 +66,10 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
       const res = await getPrompts({}).unwrap();
       setData(res);
 
-      showSuccessToast(
-        t("congratulations"),
-        t("requestMessages.successfully_retrived_token_usage")
-      );
+      // showSuccessToast(
+      //   t("congratulations"),
+      //   t("requestMessages.successfully_retrived_token_usage")
+      // );
 
       // Example plans (replace with API response if available)
       setPlans([

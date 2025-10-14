@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
-} from "react-native";
 import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
 import { splitMathString } from "../../../utils/helpers";
@@ -24,28 +17,31 @@ import ImageCarousel from "../../../components/ImageCarousel";
 
 const windowWidth = Dimensions.get("window").width;
 
-const Matching = ({ question, onPress, answer }) => {
+interface MatchingProps {
+  question: any;
+  onPress?: () => void;
+  answer?: any;
+}
+
+const Matching: React.FC<MatchingProps> = ({ question, onPress, answer }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [selectedFirst, setSelectedFirst] = useState(null);
-  const [selectedSecond, setSelectedSecond] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [selectedFirst, setSelectedFirst] = useState<string | null>(null);
+  const [selectedSecond, setSelectedSecond] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
 
-  // === PRE-FILL from API if present ===
   useEffect(() => {
-    if (answer && answer.answer && Object.keys(answer.answer).length > 0) {
-      // API returns: answer: { "C": 1 }  -> convert second to string key "1"
+    if (answer?.answer && Object.keys(answer.answer).length > 0) {
       const [firstKey, secondVal] = Object.entries(answer.answer)[0];
       setSelectedFirst(firstKey);
-      setSelectedSecond(String(secondVal)); // ensure it matches option keys
+      setSelectedSecond(String(secondVal));
       setSubmitted(true);
       setIsCorrect(answer.feedbackStatus === "CORRECT");
     } else {
-      // start timer only for fresh attempt
       startTimer();
     }
   }, [answer]);
@@ -57,18 +53,18 @@ const Matching = ({ question, onPress, answer }) => {
       data: {
         exerciseType: question?.exerciseType,
         completionTime: duration,
-        answer: { [selectedFirst]: selectedSecond },
+        answer: { [selectedFirst as string]: selectedSecond },
       },
     };
 
     dispatch(setLoading(true));
     submitExerciseAnswer(payload)
-      .then((res) => {
-        // mark feedback and show toast
-        if (res?.data?.feedbackStatus === "INCORRECT") {
+      .then((res: any) => {
+        const feedback = res?.data?.feedbackStatus;
+        if (feedback === "INCORRECT") {
           setIsCorrect(false);
           showErrorToast(t("yourAnswerIsWrong"));
-        } else {
+        } else if (feedback === "CORRECT") {
           setIsCorrect(true);
           showSuccessToast(t("yourAnswerIsCorrect"));
         }
@@ -88,17 +84,16 @@ const Matching = ({ question, onPress, answer }) => {
     startTimer();
   };
 
-  // returns `true`/`false`/null for OptionButton's `correct` prop:
-  // OptionButton highlights selected && correct===true green
-  // selected && correct===false -> red
-  const getCorrectProp = (type, key) => {
+  const getCorrectProp = (
+    type: "first" | "second",
+    key: string
+  ): boolean | null => {
     if (!submitted) return null;
     const isSelected =
       (type === "first" && selectedFirst === key) ||
       (type === "second" && selectedSecond === key);
     if (!isSelected) return null;
-    // if submitted and user selected that option, set correct prop according to isCorrect
-    return isCorrect === true ? true : false;
+    return isCorrect === true;
   };
 
   return (
@@ -115,19 +110,6 @@ const Matching = ({ question, onPress, answer }) => {
             style={{ marginRight: 4 }}
             fontSize={20}
           />
-          {/* {splitMathString(question.description).map((part, idx) =>
-            part.startsWith("$") ? (
-              <MathRenderer
-                key={idx}
-                formula={part}
-                style={{ marginRight: 4 }}
-              />
-            ) : (
-              <Text key={idx} style={styles.question}>
-                {part}
-              </Text>
-            )
-          )} */}
         </View>
       </View>
 
@@ -139,7 +121,7 @@ const Matching = ({ question, onPress, answer }) => {
             label={label}
             selected={selectedFirst === key}
             onPress={() => !submitted && setSelectedFirst(key)}
-            correct={getCorrectProp("first", key)} // null | true | false
+            correct={getCorrectProp("first", key)}
             disabled={submitted}
           />
         ))}
@@ -153,7 +135,7 @@ const Matching = ({ question, onPress, answer }) => {
             label={label}
             selected={selectedSecond === key}
             onPress={() => !submitted && setSelectedSecond(key)}
-            correct={getCorrectProp("second", key)} // null | true | false
+            correct={getCorrectProp("second", key)}
             disabled={submitted}
           />
         ))}

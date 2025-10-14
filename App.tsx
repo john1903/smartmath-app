@@ -19,12 +19,13 @@ import { ToastConfigComponent } from "./src/utils/toast";
 
 const LANGUAGE_KEY = "appLanguage";
 
-export default function App() {
-  const [loadingLang, setLoadingLang] = useState(true);
+enableScreens();
 
-  // ✅ Load saved language from AsyncStorage before showing UI
+export default function App() {
+  const [loadingLang, setLoadingLang] = useState<boolean>(true);
+
   useEffect(() => {
-    const initLanguage = async () => {
+    const initLanguage = async (): Promise<void> => {
       try {
         const savedLang = await AsyncStorage.getItem(LANGUAGE_KEY);
         if (savedLang) {
@@ -39,7 +40,6 @@ export default function App() {
     initLanguage();
   }, []);
 
-  // ✅ Load fonts
   const [fontsLoaded] = useFonts({
     [FONTS.UrbanistBold]: require("./assets/fonts/Urbanist-Bold.ttf"),
     [FONTS.UrbanistSemiBold]: require("./assets/fonts/Urbanist-SemiBold.ttf"),
@@ -49,7 +49,6 @@ export default function App() {
     [FONTS.UrbanistLight]: require("./assets/fonts/Urbanist-Light.ttf"),
   });
 
-  // ✅ Show loader until both fonts + language are ready
   if (!fontsLoaded || loadingLang) {
     return (
       <View style={styles.container}>
@@ -66,16 +65,16 @@ export default function App() {
             <ThemeProvider>
               <RootNavigator />
               <ToastConfigComponent />
+              <StatusBar style="auto" />
             </ThemeProvider>
           </NavigationContainer>
         </I18nextProvider>
       </PersistGate>
       <GlobalLoader />
+      <Toast />
     </Provider>
   );
 }
-
-enableScreens();
 
 const styles = StyleSheet.create({
   container: {

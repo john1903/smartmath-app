@@ -1,67 +1,71 @@
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Image,
-  ScrollView,
   Dimensions,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+
 import OptionButton from "../../../components/OptionButton";
 import CustomButton from "../../../components/CustomButton";
 import FONTSIZE from "../../../theme/fontsSize";
 import FONTS from "../../../theme/fonts";
 import COLORS from "../../../theme/colors";
-import { splitMathString } from "../../../utils/helpers";
 import MathRenderer from "../../../components/MathRenderer";
-import { useTranslation } from "react-i18next";
-import { startTimer, stopTimer } from "../../../utils/timeTracker";
-import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
-import { setLoading } from "../../../store/loading";
-import { useDispatch } from "react-redux";
-import { showErrorToast, showSuccessToast } from "../../../utils/toast";
 import ImageCarousel from "../../../components/ImageCarousel";
+
+import { startTimer, stopTimer } from "../../../utils/timeTracker";
+import { showErrorToast, showSuccessToast } from "../../../utils/toast";
+import { setLoading } from "../../../store/loading";
+import { useSubmitExerciseAnswerMutation } from "../../../services/tasksSlice";
 
 const windowWidth = Dimensions.get("window").width;
 
-const MultipleChoice = ({ question, onPress, answer }) => {
+interface MultipleChoiceProps {
+  question: any;
+  onPress: () => void;
+  answer?: any;
+}
+
+const MultipleChoice: React.FC<MultipleChoiceProps> = ({
+  question,
+  onPress,
+  answer,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const [submitExerciseAnswer] = useSubmitExerciseAnswerMutation();
 
   useEffect(() => {
     startTimer();
 
-    // ✅ Preselect from backend answer if available
-    if (answer?.answer?.length > 0) {
+    if (answer?.answer?.length) {
       setSelectedOptions(answer.answer);
       setSubmitted(true);
 
-      if (answer.feedbackStatus === "CORRECT") {
-        setIsCorrect(true);
-      } else if (answer.feedbackStatus === "INCORRECT") {
-        setIsCorrect(false);
-      }
+      if (answer.feedbackStatus === "CORRECT") setIsCorrect(true);
+      else if (answer.feedbackStatus === "INCORRECT") setIsCorrect(false);
     }
   }, [answer]);
 
-  const handleSelect = (id) => {
-    if (submitted) return; // disable selection after submit
-    if (selectedOptions.includes(id)) {
-      setSelectedOptions(selectedOptions.filter((item) => item !== id));
-    } else {
-      setSelectedOptions([...selectedOptions, id]);
-    }
+  const handleSelect = (id: string) => {
+    if (submitted) return;
+    setSelectedOptions((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (submitted) {
-      // Go to next question
       setSubmitted(false);
       setSelectedOptions([]);
       setIsCorrect(null);
@@ -83,9 +87,9 @@ const MultipleChoice = ({ question, onPress, answer }) => {
         },
       };
 
-      submitExerciseAnswer(payload).then((res) => {
-        dispatch(setLoading(false));
-        const feedback = res?.data?.feedbackStatus;
+      try {
+        const res = await submitExerciseAnswer(payload).unwrap();
+        const feedback = res?.feedbackStatus;
 
         if (feedback === "INCORRECT") {
           setIsCorrect(false);
@@ -96,7 +100,11 @@ const MultipleChoice = ({ question, onPress, answer }) => {
         }
 
         setSubmitted(true);
-      });
+      } catch (error) {
+        showErrorToast(t("somethingWentWrong"));
+      } finally {
+        dispatch(setLoading(false));
+      }
     }
   };
 
@@ -114,34 +122,17 @@ const MultipleChoice = ({ question, onPress, answer }) => {
             style={{ marginRight: 4 }}
             fontSize={20}
           />
-
-          {/* {splitMathString(question.description).map((part, idx) =>
-            part.startsWith("$") ? (
-              <MathRenderer
-                key={idx}
-                formula={part}
-                style={{ marginRight: 4 }}
-              />
-            ) : (
-              <Text key={idx} style={styles.question}>
-                {part}
-              </Text>
-            )
-          )} */}
         </View>
       </View>
 
       <View style={{ marginHorizontal: 30 }}>
-        {Object.entries(question.options).map(([key, value], index) => {
-          let correct = false;
-          let incorrect = false;
-
-          if (submitted && isCorrect === false) {
-            incorrect = selectedOptions.includes(key);
-          }
+        {Object.entries(question.options).map(([key, value]) => {
+          let correct: boolean | null = null;
 
           if (submitted && isCorrect === true) {
-            correct = selectedOptions.includes(key);
+            correct = selectedOptions.includes(key) ? true : null;
+          } else if (submitted && isCorrect === false) {
+            correct = selectedOptions.includes(key) ? false : null;
           }
 
           return (
@@ -151,9 +142,7 @@ const MultipleChoice = ({ question, onPress, answer }) => {
               label={value}
               selected={selectedOptions.includes(key)}
               onPress={() => handleSelect(key)}
-              index={index}
               correct={correct}
-              incorrect={incorrect}
               disabled={submitted}
             />
           );
@@ -197,14 +186,22 @@ const MultipleChoice = ({ question, onPress, answer }) => {
 
 export default MultipleChoice;
 
-const styles = StyleSheet.create({
+interface Style {
+  carouselContainer: ViewStyle;
+  question: TextStyle;
+  btnStyle: ViewStyle;
+  submitBtn: ViewStyle;
+  submitBtnDisabled: ViewStyle;
+  submitText: TextStyle;
+  submitTextDisabled: TextStyle;
+  buttons: ViewStyle;
+  retryBtn: ViewStyle;
+  retryText: TextStyle;
+}
+
+const styles = StyleSheet.create<Style>({
   carouselContainer: {
     marginBottom: 16,
-  },
-  carouselImage: {
-    width: 280,
-    height: 200,
-    borderRadius: 10,
   },
   question: {
     fontSize: FONTSIZE.size20,
