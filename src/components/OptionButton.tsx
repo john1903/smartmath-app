@@ -13,7 +13,7 @@ import MathRenderer from "./MathRenderer";
 
 interface OptionButtonProps {
   optionKey: string;
-  label: string;
+  label: any;
   selected: boolean;
   onPress?: (event: GestureResponderEvent) => void;
   correct?: boolean | null;
@@ -71,9 +71,16 @@ const OptionButton: React.FC<OptionButtonProps> = ({
         </View>
 
         {/* Math label */}
-        <MathRenderer
+        {/* <MathRenderer
           formula={label}
           style={[styles.label, selected && styles.selectedLabel]}
+          selected={selected}
+          fontSize={14}
+        /> */}
+
+        <MathRenderer
+          formula={label}
+          style={[styles.label, selected ? styles.selectedLabel : undefined]}
           selected={selected}
           fontSize={14}
         />
