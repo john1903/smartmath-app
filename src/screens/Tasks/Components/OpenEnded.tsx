@@ -7,6 +7,8 @@ import {
   Modal,
   ActivityIndicator,
   Dimensions,
+  Platform,
+  Alert,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { useTranslation } from "react-i18next";
@@ -43,6 +45,8 @@ import {
   showSuccessToast,
 } from "../../../utils/toast";
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
+
+import * as ImagePicker from "expo-image-picker";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -82,54 +86,187 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
   const [appToken, setAppToken] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
 
+  // const pickFile = async () => {
+  //   try {
+  //     const result = await DocumentPicker.getDocumentAsync({
+  //       type: ["image/png", "image/jpeg", "application/pdf"],
+  //       copyToCacheDirectory: true,
+  //       multiple: false,
+  //     });
+
+  //     if (!result.canceled) {
+  //       const file = result.assets[0];
+  //       const sizeInBytes = file.size ?? 0; // if undefined, treat as 0
+  //       const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
+
+  //       if (fileSizeInMB > 10) {
+  //         showErrorToast(
+  //           "File size is more than 10MB. Please select a smaller file."
+  //         );
+  //         return;
+  //       }
+
+  //       const formData = new FormData();
+  //       formData.append("category", "ANSWER");
+  //       formData.append("file", {
+  //         uri: file.uri,
+  //         name: file.name,
+  //         type: file.mimeType!,
+  //       } as any);
+
+  //       dispatch(setLoading(true));
+  //       const uploadedFile = await updateFile({ data: formData }).unwrap();
+
+  //       if (uploadedFile?.id) {
+  //         const newFile: FileItem = {
+  //           id: uploadedFile.id,
+  //           name: file.name,
+  //           uri: file.uri,
+  //           type: file.mimeType,
+  //         };
+  //         setFiles((prev) => [...prev, newFile]);
+  //         dispatch(setLoading(false));
+  //       } else {
+  //         dispatch(setLoading(false));
+  //         showErrorToast("Upload succeeded but no file ID returned.");
+  //       }
+  //     }
+  //   } catch (err) {
+  //     dispatch(setLoading(false));
+  //     console.log("File picking/upload error:", err);
+  //   }
+  // };
+
   const pickFile = async () => {
+    Alert.alert(
+      t("selectFileFrom"), // Title (you can localize this)
+      "",
+      [
+        {
+          text: t("camera"),
+          onPress: async () => {
+            try {
+              const permission =
+                await ImagePicker.requestCameraPermissionsAsync();
+              if (!permission.granted) {
+                showErrorToast(t("cameraPermissionDenied"));
+                return;
+              }
+
+              const result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 0.8,
+              });
+
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Camera error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("gallery"),
+          onPress: async () => {
+            try {
+              const permission =
+                await ImagePicker.requestMediaLibraryPermissionsAsync();
+              if (!permission.granted) {
+                showErrorToast(t("galleryPermissionDenied"));
+                return;
+              }
+
+              const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsMultipleSelection: false,
+                quality: 0.8,
+              });
+
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Gallery error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("document"),
+          onPress: async () => {
+            try {
+              const result = await DocumentPicker.getDocumentAsync({
+                type: ["image/png", "image/jpeg", "application/pdf"],
+                copyToCacheDirectory: true,
+                multiple: false,
+              });
+
+              if (!result.canceled && result.assets?.length) {
+                const file = result.assets[0];
+                await handleFileUpload(file);
+              }
+            } catch (err) {
+              console.log("Document error:", err);
+              showErrorToast(t("somethingWentWrong"));
+            }
+          },
+        },
+        {
+          text: t("cancel"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handleFileUpload = async (file: any) => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: ["image/png", "image/jpeg", "application/pdf"],
-        copyToCacheDirectory: true,
-        multiple: false,
-      });
+      const sizeInBytes = file.fileSize || file.size || 0;
+      const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
 
-      if (!result.canceled) {
-        const file = result.assets[0];
-        const sizeInBytes = file.size ?? 0; // if undefined, treat as 0
-        const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
+      if (fileSizeInMB > 10) {
+        showErrorToast(t("fileTooLarge"));
+        return;
+      }
 
-        if (fileSizeInMB > 10) {
-          showErrorToast(
-            "File size is more than 10MB. Please select a smaller file."
-          );
-          return;
-        }
+      const mimeType =
+        file.mimeType ||
+        file.type ||
+        (file.uri?.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
 
-        const formData = new FormData();
-        formData.append("category", "ANSWER");
-        formData.append("file", {
+      const formData = new FormData();
+      formData.append("category", "ANSWER");
+      formData.append("file", {
+        uri: Platform.OS === "ios" ? file.uri.replace("file://", "") : file.uri,
+        name: file.fileName || file.name || "upload.jpg",
+        type: mimeType,
+      } as any);
+
+      dispatch(setLoading(true));
+      const uploadedFile = await updateFile({ data: formData }).unwrap();
+
+      if (uploadedFile?.id) {
+        const newFile: FileItem = {
+          id: uploadedFile.id,
+          name: file.fileName || file.name,
           uri: file.uri,
-          name: file.name,
-          type: file.mimeType!,
-        } as any);
-
-        dispatch(setLoading(true));
-        const uploadedFile = await updateFile({ data: formData }).unwrap();
-
-        if (uploadedFile?.id) {
-          const newFile: FileItem = {
-            id: uploadedFile.id,
-            name: file.name,
-            uri: file.uri,
-            type: file.mimeType,
-          };
-          setFiles((prev) => [...prev, newFile]);
-          dispatch(setLoading(false));
-        } else {
-          dispatch(setLoading(false));
-          showErrorToast("Upload succeeded but no file ID returned.");
-        }
+          type: mimeType,
+        };
+        setFiles((prev) => [...prev, newFile]);
+        showSuccessToast(t("fileUploadedSuccessfully"));
+      } else {
+        showErrorToast(t("uploadFailed"));
       }
     } catch (err) {
+      console.log("Upload error:", err);
+      showErrorToast(t("somethingWentWrong"));
+    } finally {
       dispatch(setLoading(false));
-      console.log("File picking/upload error:", err);
     }
   };
 
