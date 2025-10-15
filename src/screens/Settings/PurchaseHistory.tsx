@@ -1,44 +1,3 @@
-// import { View, Text, ScrollView, StyleSheet } from "react-native";
-// import React from "react";
-// import CustomHeader from "../../components/CustomHeader";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import COLORS from "../../theme/colors";
-// import { useTranslation } from "react-i18next";
-
-// const PurchaseHistory = ({ navigation }: any) => {
-//   const { t } = useTranslation();
-//   return (
-//     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-//       {/* Header */}
-//       <View style={styles.header}>
-//         <CustomHeader
-//           title={t("purchaseHistory")}
-//           onPress={() => navigation.goBack()}
-//         />
-//       </View>
-
-//       <ScrollView contentContainerStyle={styles.container}></ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default PurchaseHistory;
-
-// // ✅ Styles
-// const styles = StyleSheet.create({
-//   safeContent: { flex: 1, backgroundColor: COLORS.background },
-//   header: {
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//     marginHorizontal: 20,
-//     marginVertical: 20,
-//   },
-//   container: {
-//     paddingHorizontal: 20,
-//   },
-// });
-
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -54,11 +13,13 @@ import COLORS from "../../theme/colors";
 import FONTS from "../../theme/fonts";
 import FONTSIZE from "../../theme/fontsSize";
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../store/loading";
 
 const PurchaseHistory = ({ navigation }: any) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  // Sample purchase data (will be replaced with API data later)
   const [purchases, setPurchases] = useState([
     { id: "#00190", date: "2025-10-07", amount: 5.0 },
     { id: "#00191", date: "2025-10-07", amount: 5.0 },
@@ -76,16 +37,16 @@ const PurchaseHistory = ({ navigation }: any) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // Simulate API fetch
+    dispatch(setLoading(true));
     setTimeout(() => {
-      // You can update the data here once API is integrated
+      dispatch(setLoading(false));
+
       setRefreshing(false);
-    }, 1500);
+    }, 1000);
   }, []);
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-      {/* Header */}
       <View style={styles.header}>
         <CustomHeader
           title={t("purchaseHistory")}
@@ -93,7 +54,6 @@ const PurchaseHistory = ({ navigation }: any) => {
         />
       </View>
 
-      {/* Content */}
       <ScrollView
         contentContainerStyle={styles.container}
         refreshControl={

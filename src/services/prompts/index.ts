@@ -23,7 +23,9 @@ export const PromptsApi = api.injectEndpoints({
 
           // console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));
 
-          dispatch(setLoading(false));
+          setTimeout(() => {
+            dispatch(setLoading(false));
+          }, 1500);
         } catch (e: any) {
           dispatch(setLoading(false));
           if (e?.meta?.response?.status === 401) {

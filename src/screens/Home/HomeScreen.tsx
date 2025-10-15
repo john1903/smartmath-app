@@ -730,7 +730,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       })
       .finally(() => {
         dispatch(setLoading(false));
-        setCalendarVisible(false);
       });
   };
 
@@ -761,7 +760,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     if (fromDate && toDate) {
       const from = formatDateTime(fromDate, "from");
       const to = formatDateTime(toDate, "to");
-      fetchExerciseStatus(from, to);
+      setCalendarVisible(false);
+
+      setTimeout(() => {
+        fetchExerciseStatus(from, to);
+      }, 1000);
     }
   };
 
@@ -974,7 +977,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   style={styles.cancelButton}
                   onPress={() => {
                     setCalendarVisible(false);
-                    resetDefaultDates();
+                    setTimeout(() => {
+                      resetDefaultDates();
+                    }, 1000);
                   }}
                 >
                   <Text style={styles.cancelButtonText}>{t("cancel")}</Text>
@@ -1077,6 +1082,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
+    marginBottom: 10,
   },
   applyButton: {
     marginTop: 10,
