@@ -124,69 +124,71 @@ const SingleChoice: React.FC<SingleChoiceProps> = ({
         <ImageCarousel illustrations={question.illustrations} />
       )}
 
-      <View style={{ marginHorizontal: 30 }}>
-        <Text style={styles.question}>{t("question1")}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <MathRenderer
-            formula={question.description}
-            style={{ marginRight: 4 }}
-            fontSize={20}
-          />
+      <View style={{ marginHorizontal: 25 }}>
+        <View>
+          <Text style={styles.question}>{t("question1")}</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <MathRenderer
+              formula={question.description}
+              // style={{ marginRight: 4 }}
+              fontSize={20}
+            />
+          </View>
         </View>
-      </View>
 
-      <View style={{ marginHorizontal: 20 }}>
-        {Object.entries(question.options).map(([key, value]) => {
-          let optionCorrectness: boolean | null = null;
+        <View>
+          {Object.entries(question.options).map(([key, value]) => {
+            let optionCorrectness: boolean | null = null;
 
-          if (submitted) {
-            if (isCorrect && selectedOption === key) {
-              optionCorrectness = true;
-            } else if (!isCorrect && selectedOption === key) {
-              optionCorrectness = false;
-            } else if (!isCorrect && answer?.solution === key) {
-              optionCorrectness = true; // highlight correct one
+            if (submitted) {
+              if (isCorrect && selectedOption === key) {
+                optionCorrectness = true;
+              } else if (!isCorrect && selectedOption === key) {
+                optionCorrectness = false;
+              } else if (!isCorrect && answer?.solution === key) {
+                optionCorrectness = true; // highlight correct one
+              }
             }
-          }
 
-          return (
-            <OptionButton
-              key={key}
-              optionKey={key}
-              label={value}
-              selected={selectedOption === key}
-              onPress={() => handleSelect(key)}
-              correct={optionCorrectness}
-              disabled={locked}
-            />
-          );
-        })}
+            return (
+              <OptionButton
+                key={key}
+                optionKey={key}
+                label={value}
+                selected={selectedOption === key}
+                onPress={() => handleSelect(key)}
+                correct={optionCorrectness}
+                disabled={locked}
+              />
+            );
+          })}
 
-        <View style={styles.buttons}>
-          {submitted && isCorrect === false && (
+          <View style={styles.buttons}>
+            {submitted && isCorrect === false && (
+              <CustomButton
+                title={t("retry")}
+                buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                textStyle={[styles.retryText, { includeFontPadding: false }]}
+                onPress={handleRetry}
+              />
+            )}
+
             <CustomButton
-              title={t("retry")}
-              buttonStyle={[styles.btnStyle, styles.retryBtn]}
-              textStyle={[styles.retryText, { includeFontPadding: false }]}
-              onPress={handleRetry}
+              title={submitted ? t("next") : t("submit")}
+              buttonStyle={[
+                styles.btnStyle,
+                styles.submitBtn,
+                !selectedOption && !submitted && styles.submitBtnDisabled,
+              ]}
+              textStyle={[
+                styles.submitText,
+                !selectedOption && !submitted && styles.submitTextDisabled,
+                { includeFontPadding: false },
+              ]}
+              disabled={!selectedOption && !submitted}
+              onPress={handleSubmit}
             />
-          )}
-
-          <CustomButton
-            title={submitted ? t("next") : t("submit")}
-            buttonStyle={[
-              styles.btnStyle,
-              styles.submitBtn,
-              !selectedOption && !submitted && styles.submitBtnDisabled,
-            ]}
-            textStyle={[
-              styles.submitText,
-              !selectedOption && !submitted && styles.submitTextDisabled,
-              { includeFontPadding: false },
-            ]}
-            disabled={!selectedOption && !submitted}
-            onPress={handleSubmit}
-          />
+          </View>
         </View>
       </View>
     </View>

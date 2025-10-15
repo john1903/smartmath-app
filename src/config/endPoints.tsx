@@ -14,3 +14,4 @@ export const userExerciseStatusEndPoint = "users/me/exercises/answers/stats";
 export const GetReportEndPoint = "users/me/reports";
 
 export const GetPromptsEndPoint = "users/me/prompts/usage";
+export const GetCategoriesEndPoint = "categories";

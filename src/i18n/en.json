@@ -67,7 +67,7 @@
     "noData": "No questions found"
   },
 
-  "categories": {
+  "exerciseStatus": {
     "all": "All tasks",
     "CORRECT":"Correct",
     "PENDING": "Pending",

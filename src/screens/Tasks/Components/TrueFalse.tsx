@@ -95,7 +95,6 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
     }
   };
 
-  // Retry handler
   const handleRetry = () => {
     setSubmitted(false);
     setAnswers({});
@@ -110,142 +109,150 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
       {question.illustrations && question.illustrations.length > 0 && (
         <ImageCarousel illustrations={question.illustrations} />
       )}
-
-      {/* Question Text */}
-      <View style={{ marginHorizontal: 30 }}>
-        <Text style={styles.question}>Question 1: {question?.text ?? ""}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <MathRenderer
-            formula={question.description}
-            style={{ marginRight: 4 }}
-            fontSize={20}
-          />
+      <View style={{ marginHorizontal: 25 }}>
+        <View>
+          <Text style={styles.question}>
+            Question 1: {question?.text ?? ""}
+          </Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <MathRenderer
+              formula={question.description}
+              // style={{ marginRight: 4 }}
+              fontSize={20}
+            />
+          </View>
         </View>
-      </View>
 
-      {/* True/False Statements */}
-      <View style={{ marginHorizontal: 30 }}>
-        {Object.entries(question?.statements || {}).map(
-          ([key, statement], index) => {
-            const letter = getLetter(index);
-            return (
-              <View key={key} style={{ marginVertical: 10, marginBottom: 50 }}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={styles.optionLetter}>{`${letter})`}</Text>
-                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                    <MathRenderer
-                      formula={statement}
-                      style={{ marginRight: 4 }}
-                      fontSize={14}
+        <View>
+          {Object.entries(question?.statements || {}).map(
+            ([key, statement], index) => {
+              const letter = getLetter(index);
+              return (
+                <View
+                  key={key}
+                  style={{ marginVertical: 10, marginBottom: 50 }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={styles.optionLetter}>{`${letter})`}</Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                      <MathRenderer
+                        formula={statement}
+                        // style={{ marginRight: 4 }}
+                        fontSize={14}
+                      />
+                    </View>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 20,
+                      marginTop: 5,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <CustomButton
+                      title={t("true")}
+                      buttonStyle={[
+                        styles.btnStyle,
+                        styles.tfBtn,
+                        {
+                          backgroundColor: submitted
+                            ? answers[key] === true
+                              ? isCorrect
+                                ? COLORS.green
+                                : COLORS.danger
+                              : COLORS.white
+                            : answers[key] === true
+                            ? COLORS.primary
+                            : COLORS.white,
+                          borderColor:
+                            answers[key] === true
+                              ? submitted
+                                ? isCorrect
+                                  ? COLORS.green
+                                  : COLORS.danger
+                                : COLORS.primary
+                              : COLORS.borderColor2,
+                        },
+                      ]}
+                      textStyle={[
+                        styles.tfText,
+                        {
+                          color:
+                            answers[key] === true ? COLORS.white : COLORS.black,
+                        },
+                      ]}
+                      onPress={() => handleSelect(key, true)}
+                    />
+
+                    <CustomButton
+                      title={t("false")}
+                      buttonStyle={[
+                        styles.btnStyle,
+                        styles.tfBtn,
+                        {
+                          backgroundColor: submitted
+                            ? answers[key] === false
+                              ? isCorrect
+                                ? COLORS.green
+                                : COLORS.danger
+                              : COLORS.white
+                            : answers[key] === false
+                            ? COLORS.primary
+                            : COLORS.white,
+                          borderColor:
+                            answers[key] === false
+                              ? submitted
+                                ? isCorrect
+                                  ? COLORS.green
+                                  : COLORS.danger
+                                : COLORS.primary
+                              : COLORS.borderColor2,
+                        },
+                      ]}
+                      textStyle={[
+                        styles.tfText,
+                        {
+                          color:
+                            answers[key] === false
+                              ? COLORS.white
+                              : COLORS.black,
+                        },
+                      ]}
+                      onPress={() => handleSelect(key, false)}
                     />
                   </View>
                 </View>
+              );
+            }
+          )}
+          <View style={styles.buttons}>
+            {submitted && isCorrect === false && (
+              <CustomButton
+                title={t("retry")}
+                buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                textStyle={styles.retryText}
+                onPress={handleRetry}
+              />
+            )}
 
-                {/* True / False Buttons */}
-                <View style={{ flexDirection: "row", gap: 10, marginTop: 5 }}>
-                  {/* TRUE */}
-                  <CustomButton
-                    title={t("true")}
-                    buttonStyle={[
-                      styles.btnStyle,
-                      styles.tfBtn,
-                      {
-                        backgroundColor: submitted
-                          ? answers[key] === true
-                            ? isCorrect
-                              ? COLORS.green
-                              : COLORS.danger
-                            : COLORS.white
-                          : answers[key] === true
-                          ? COLORS.primary
-                          : COLORS.white,
-                        borderColor:
-                          answers[key] === true
-                            ? submitted
-                              ? isCorrect
-                                ? COLORS.green
-                                : COLORS.danger
-                              : COLORS.primary
-                            : COLORS.borderColor2,
-                      },
-                    ]}
-                    textStyle={[
-                      styles.tfText,
-                      {
-                        color:
-                          answers[key] === true ? COLORS.white : COLORS.black,
-                      },
-                    ]}
-                    onPress={() => handleSelect(key, true)}
-                  />
-
-                  {/* FALSE */}
-                  <CustomButton
-                    title={t("false")}
-                    buttonStyle={[
-                      styles.btnStyle,
-                      styles.tfBtn,
-                      {
-                        backgroundColor: submitted
-                          ? answers[key] === false
-                            ? isCorrect
-                              ? COLORS.green
-                              : COLORS.danger
-                            : COLORS.white
-                          : answers[key] === false
-                          ? COLORS.primary
-                          : COLORS.white,
-                        borderColor:
-                          answers[key] === false
-                            ? submitted
-                              ? isCorrect
-                                ? COLORS.green
-                                : COLORS.danger
-                              : COLORS.primary
-                            : COLORS.borderColor2,
-                      },
-                    ]}
-                    textStyle={[
-                      styles.tfText,
-                      {
-                        color:
-                          answers[key] === false ? COLORS.white : COLORS.black,
-                      },
-                    ]}
-                    onPress={() => handleSelect(key, false)}
-                  />
-                </View>
-              </View>
-            );
-          }
-        )}
-      </View>
-
-      {/* Buttons */}
-      <View style={styles.buttons}>
-        {submitted && isCorrect === false && (
-          <CustomButton
-            title={t("retry")}
-            buttonStyle={[styles.btnStyle, styles.retryBtn]}
-            textStyle={styles.retryText}
-            onPress={handleRetry}
-          />
-        )}
-
-        <CustomButton
-          title={submitted ? t("next") : t("submit")}
-          buttonStyle={[
-            styles.btnStyle,
-            styles.submitBtn,
-            !allAnswered && !submitted && styles.submitBtnDisabled,
-          ]}
-          textStyle={[
-            styles.submitText,
-            !allAnswered && !submitted && styles.submitTextDisabled,
-          ]}
-          disabled={!allAnswered && !submitted}
-          onPress={handleSubmit}
-        />
+            <CustomButton
+              title={submitted ? t("next") : t("submit")}
+              buttonStyle={[
+                styles.btnStyle,
+                styles.submitBtn,
+                !allAnswered && !submitted && styles.submitBtnDisabled,
+              ]}
+              textStyle={[
+                styles.submitText,
+                !allAnswered && !submitted && styles.submitTextDisabled,
+              ]}
+              disabled={!allAnswered && !submitted}
+              onPress={handleSubmit}
+            />
+          </View>
+        </View>
       </View>
     </View>
   );
