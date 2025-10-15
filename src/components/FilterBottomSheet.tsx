@@ -9,40 +9,33 @@ import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
 import CategoryButton from "./CategoryButton";
 import CustomButton from "./CustomButton";
+import { useSelector } from "react-redux";
 
 interface FilterBottomSheetProps {
   isVisible: boolean;
   onClose: () => void;
   onApply: (filters: {
-    status: string;
-    difficultyLevel: string;
-    exerciseType: string;
+    difficultyLevel?: string;
+    exerciseType?: string;
+    categoryId?: number;
   }) => void;
-  selectedCategory?: string;
-
-  onCategoryChange?: (category: any) => void;
 }
 
 const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
   isVisible,
   onClose,
   onApply,
-  selectedCategory = "",
-  onCategoryChange,
 }) => {
   const { t } = useTranslation();
 
+  const { allCategories } = useSelector((state: any) => state?.categories);
+
+  // console.log(
+  //   " categories res filter open :::::::>>>>  ",
+  //   JSON.stringify(allCategories && allCategories)
+  // );
+
   const OPTIONS = {
-    status: [
-      "all",
-      "CORRECT",
-      "PENDING",
-      "INCORRECT",
-      "FAILED",
-      "NOT_ENOUGH_TOKENS",
-      "COMPLETED",
-      "INCOMPLETE",
-    ],
     difficultyLevel: ["EASY", "MEDIUM", "HARD"],
     exerciseType: [
       "MULTIPLE_CHOICE",
@@ -53,25 +46,14 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
     ],
   };
 
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<number>(0);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
   const [selectedTaskType, setSelectedTaskType] = useState<string>("");
 
-  useEffect(() => {
-    if (isVisible && selectedCategory) {
-      setSelectedStatus(selectedCategory === "all" ? "all" : selectedCategory);
-    }
-  }, [isVisible, selectedCategory]);
-
   const handleApply = () => {
-    // Sync with parent
-    if (onCategoryChange) {
-      onCategoryChange(selectedStatus);
-    }
-
     // Apply all filters
     onApply({
-      status: selectedStatus,
+      categoryId: selectedCategory,
       difficultyLevel: selectedDifficulty,
       exerciseType: selectedTaskType,
     });
@@ -80,18 +62,13 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
 
   const handleCancel = () => {
     // Reset everything to "all"
-    setSelectedStatus("all");
     setSelectedDifficulty("");
     setSelectedTaskType("");
-
-    // Sync with parent (so top bar shows "All")
-    if (onCategoryChange) {
-      onCategoryChange("all");
-    }
+    setSelectedCategory(0);
 
     // Apply reset filters to parent
     onApply({
-      status: "all",
+      categoryId: 0,
       difficultyLevel: "",
       exerciseType: "",
     });
@@ -119,16 +96,17 @@ const FilterBottomSheet: React.FC<FilterBottomSheetProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Status */}
         <Text style={styles.sectionTitle}>{t("filter.status")}</Text>
         <View style={styles.row}>
-          {OPTIONS.status.map((item) => (
+          {allCategories.map((item: any) => (
             <CategoryButton
-              key={item}
-              label={t(`categories.${item}`)}
-              active={item === selectedStatus}
+              key={item?.id}
+              label={item?.name}
+              active={item?.id === selectedCategory}
               onPress={() =>
-                setSelectedStatus(item === selectedStatus ? "" : item)
+                setSelectedCategory(
+                  item?.id === selectedCategory ? "" : item?.id
+                )
               }
               textStyle={{ fontSize: FONTSIZE.size12 }}
             />

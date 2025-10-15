@@ -19,6 +19,7 @@ export const TasksApi = api.injectEndpoints({
         status,
         difficultyLevel,
         exerciseType,
+        categoryId,
       }) => {
         let params = `?page=${page}&size=${size}&sort=id`;
 
@@ -27,6 +28,7 @@ export const TasksApi = api.injectEndpoints({
         if (difficultyLevel)
           params += `&difficultyLevelEqual=${difficultyLevel}`;
         if (exerciseType) params += `&exerciseTypeEqual=${exerciseType}`;
+        if (categoryId) params += `&categoryIdEqual=${categoryId}`;
 
         console.log("params ::::::::: ", params);
 

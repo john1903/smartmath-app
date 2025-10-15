@@ -20,6 +20,7 @@ import home from "./home";
 import lang from "./lang";
 import tasks from "./tasks";
 import reports from "./reports";
+import categories from "./categories";
 
 // ✅ Combine all reducers
 const rootReducer = combineReducers({
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   lang,
   tasks,
   reports,
+  categories,
   [api.reducerPath]: api.reducer, // RTK Query slice (not persisted)
 });
 

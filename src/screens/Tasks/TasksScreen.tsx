@@ -24,8 +24,9 @@ import SearchBar from "../../components/SearchBar";
 import FilterBottomSheet from "../../components/FilterBottomSheet";
 import { useLazyGetAllExerciseQuery } from "../../services/tasksSlice";
 import { setLoading } from "../../store/loading";
+import { useLazyGetCategoriesQuery } from "../../services/categoriesSlice";
 
-const CATEGORY_KEYS = [
+const STATUS_KEYS = [
   "all",
   "CORRECT",
   "PENDING",
@@ -37,12 +38,13 @@ const CATEGORY_KEYS = [
 ] as const;
 
 const PAGE_SIZE = 20;
-type CategoryKey = (typeof CATEGORY_KEYS)[number];
+type StatusKey = (typeof STATUS_KEYS)[number];
 
 interface FilterValues {
   status?: string;
   difficultyLevel?: string;
   exerciseType?: string;
+  categoryId?: number;
 }
 
 const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -50,7 +52,7 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const dispatch = useDispatch();
   const { allExercise } = useSelector((state: any) => state?.tasks);
 
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>("all");
+  const [activeStatus, setActiveStatus] = useState<StatusKey>("all");
   const [searchText, setSearchText] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [filters, setFilters] = useState<FilterValues>({});
@@ -59,27 +61,30 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const [getAllExercise, { isFetching }] = useLazyGetAllExerciseQuery();
+  const [getCategories] = useLazyGetCategoriesQuery();
 
   const exercises = (allExercise || []).map((item: any) => ({
     id: item.exercise?.id,
     title: item.exercise?.title || "",
     difficultyLevel: item.exercise?.difficultyLevel || "",
+    categoryId: item.exercise?.categoryId || 0,
     maxPoints: item.exercise?.maxPoints,
     exerciseType: item.exercise?.exerciseType || "",
     status: item.status || null,
     answer: item.answer,
   }));
 
-  const mapCategoryToStatus = (category: string) =>
-    CATEGORY_KEYS.includes(category as CategoryKey) && category !== "all"
-      ? category
+  const mapStatus = (exerciseStatus: string) =>
+    STATUS_KEYS.includes(exerciseStatus as StatusKey) &&
+    exerciseStatus !== "all"
+      ? exerciseStatus
       : "";
 
   const fetchExercises = async (
     pageNum = 0,
     isRefresh = false,
     customFilters = filters,
-    customCategory = activeCategory,
+    customStatus = activeStatus,
     search = searchText
   ) => {
     try {
@@ -87,12 +92,10 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         page: pageNum,
         size: PAGE_SIZE,
         query: search.trim(),
-        status:
-          customCategory === "all"
-            ? ""
-            : mapCategoryToStatus(customCategory) || customFilters.status || "",
+        status: customStatus === "all" ? "" : mapStatus(customStatus) || "",
         difficultyLevel: customFilters.difficultyLevel || "",
         exerciseType: customFilters.exerciseType || "",
+        categoryId: customFilters.categoryId || 0,
       }).unwrap();
 
       if (!res?.content?.length) setHasMore(false);
@@ -109,6 +112,7 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       setPage(0);
       setHasMore(true);
       fetchExercises(0);
+      getCategories({});
     }, [dispatch])
   );
 
@@ -117,7 +121,8 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     setPage(0);
     setHasMore(true);
     fetchExercises(0, true);
-  }, [filters, searchText, activeCategory]);
+    getCategories({});
+  }, [filters, searchText, activeStatus]);
 
   const loadMore = async () => {
     if (!isFetching && hasMore) {
@@ -128,33 +133,25 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   };
 
   const handleApplyFilters = (
-    newFilters: FilterValues & { category?: CategoryKey }
+    newFilters: FilterValues & { exerciseStatus?: StatusKey }
   ) => {
     setPage(0);
     setHasMore(true);
     setIsFilterVisible(false);
 
-    // ✅ If user picked category inside filter, sync with activeCategory
-    if (newFilters.category) {
-      setActiveCategory(newFilters.category);
-    }
-
-    // ✅ Update filters in one go
     setFilters({
-      status:
-        newFilters.category && newFilters.category !== "all"
-          ? newFilters.category
-          : newFilters.status || "",
-      difficultyLevel: newFilters.difficultyLevel || "",
-      exerciseType: newFilters.exerciseType || "",
+      status: newFilters?.status || "",
+      difficultyLevel: newFilters?.difficultyLevel || "",
+      exerciseType: newFilters?.exerciseType || "",
+      categoryId: newFilters?.categoryId || 0,
     });
   };
 
-  const handleCategoryChange = (catKey: CategoryKey) => {
-    setActiveCategory(catKey);
+  const handleStatusChange = (statusKey: StatusKey) => {
+    setActiveStatus(statusKey);
     setPage(0);
     setHasMore(true);
-    fetchExercises(0, false, filters, catKey);
+    fetchExercises(0, false, filters, statusKey);
   };
 
   const handleSearchChange = useCallback((text: string) => {
@@ -164,10 +161,10 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
     const delay = setTimeout(() => {
       // ✅ Always handle “all” correctly
-      fetchExercises(0, false, filters, activeCategory, searchText);
+      fetchExercises(0, false, filters, activeStatus, searchText);
     }, 400);
     return () => clearTimeout(delay);
-  }, [searchText, activeCategory, filters]);
+  }, [searchText, activeStatus, filters]);
 
   // const renderFooter = () =>
   //   isFetching ? (
@@ -191,7 +188,9 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         onFilter={() => setIsFilterVisible(true)}
         placeholder={t("search")}
         showDot={Boolean(
-          filters?.status || filters?.difficultyLevel || filters?.exerciseType
+          filters?.categoryId ||
+            filters?.difficultyLevel ||
+            filters?.exerciseType
         )}
       />
 
@@ -199,14 +198,14 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categories}
+          contentContainerStyle={styles.statusBar}
         >
-          {CATEGORY_KEYS.map((catKey) => (
+          {STATUS_KEYS.map((statusKey) => (
             <CategoryButton
-              key={catKey}
-              label={t(`categories.${catKey}`)}
-              active={catKey === activeCategory}
-              onPress={() => handleCategoryChange(catKey)}
+              key={statusKey}
+              label={t(`exerciseStatus.${statusKey}`)}
+              active={statusKey === activeStatus}
+              onPress={() => handleStatusChange(statusKey)}
             />
           ))}
         </ScrollView>
@@ -252,8 +251,6 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         isVisible={isFilterVisible}
         onClose={() => setIsFilterVisible(false)}
         onApply={handleApplyFilters}
-        selectedCategory={activeCategory}
-        onCategoryChange={(newCategory) => setActiveCategory(newCategory)}
       />
     </SafeAreaView>
   );
@@ -270,7 +267,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 20,
   },
-  categories: {
+  statusBar: {
     flexDirection: "row",
     paddingHorizontal: 20,
     marginVertical: 20,

@@ -47,6 +47,7 @@ import {
 import { startTimer, stopTimer } from "../../../utils/timeTracker";
 
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -86,60 +87,27 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
   const [appToken, setAppToken] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // const pickFile = async () => {
-  //   try {
-  //     const result = await DocumentPicker.getDocumentAsync({
-  //       type: ["image/png", "image/jpeg", "application/pdf"],
-  //       copyToCacheDirectory: true,
-  //       multiple: false,
-  //     });
-
-  //     if (!result.canceled) {
-  //       const file = result.assets[0];
-  //       const sizeInBytes = file.size ?? 0; // if undefined, treat as 0
-  //       const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
-
-  //       if (fileSizeInMB > 10) {
-  //         showErrorToast(
-  //           "File size is more than 10MB. Please select a smaller file."
-  //         );
-  //         return;
-  //       }
-
-  //       const formData = new FormData();
-  //       formData.append("category", "ANSWER");
-  //       formData.append("file", {
-  //         uri: file.uri,
-  //         name: file.name,
-  //         type: file.mimeType!,
-  //       } as any);
-
-  //       dispatch(setLoading(true));
-  //       const uploadedFile = await updateFile({ data: formData }).unwrap();
-
-  //       if (uploadedFile?.id) {
-  //         const newFile: FileItem = {
-  //           id: uploadedFile.id,
-  //           name: file.name,
-  //           uri: file.uri,
-  //           type: file.mimeType,
-  //         };
-  //         setFiles((prev) => [...prev, newFile]);
-  //         dispatch(setLoading(false));
-  //       } else {
-  //         dispatch(setLoading(false));
-  //         showErrorToast("Upload succeeded but no file ID returned.");
-  //       }
-  //     }
-  //   } catch (err) {
-  //     dispatch(setLoading(false));
-  //     console.log("File picking/upload error:", err);
-  //   }
-  // };
+  console.log("file:::::::::::::::: ", files);
+  const compressImage = async (uri: string) => {
+    try {
+      const compressed = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 1080 } }], // resize for smaller file
+        {
+          compress: 0.5, // 0 → max compression, 1 → no compression
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+      return compressed;
+    } catch (error) {
+      console.log("Compression error:", error);
+      return { uri }; // fallback to original
+    }
+  };
 
   const pickFile = async () => {
     Alert.alert(
-      t("selectFileFrom"), // Title (you can localize this)
+      t("selectFileFrom"),
       "",
       [
         {
@@ -155,11 +123,15 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
 
               const result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                quality: 0.8,
+                quality: 1,
               });
 
               if (!result.canceled && result.assets?.length) {
-                const file = result.assets[0];
+                let file = result.assets[0];
+
+                const compressed = await compressImage(file.uri);
+                file = { ...file, uri: compressed.uri };
+
                 await handleFileUpload(file);
               }
             } catch (err) {
@@ -182,11 +154,15 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
               const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsMultipleSelection: false,
-                quality: 0.8,
+                quality: 1,
               });
 
               if (!result.canceled && result.assets?.length) {
-                const file = result.assets[0];
+                let file = result.assets[0];
+
+                const compressed = await compressImage(file.uri);
+                file = { ...file, uri: compressed.uri };
+
                 await handleFileUpload(file);
               }
             } catch (err) {
@@ -206,7 +182,21 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
               });
 
               if (!result.canceled && result.assets?.length) {
-                const file = result.assets[0];
+                let file = result.assets[0];
+
+                // 🧠 Compress if it’s an image, skip if it’s a PDF
+                const mimeType =
+                  file.mimeType ||
+                  file.type ||
+                  (file.uri?.endsWith(".pdf")
+                    ? "application/pdf"
+                    : "image/jpeg");
+
+                if (mimeType.startsWith("image/")) {
+                  const compressed = await compressImage(file.uri);
+                  file = { ...file, uri: compressed.uri };
+                }
+
                 await handleFileUpload(file);
               }
             } catch (err) {
@@ -223,9 +213,14 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
       { cancelable: true }
     );
   };
-
   const handleFileUpload = async (file: any) => {
     try {
+      dispatch(setLoading(true));
+      const mimeType =
+        file.mimeType ||
+        file.type ||
+        (file.uri?.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
+
       const sizeInBytes = file.fileSize || file.size || 0;
       const fileSizeInMB = Number((sizeInBytes / (1024 * 1024)).toFixed(2));
 
@@ -233,11 +228,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
         showErrorToast(t("fileTooLarge"));
         return;
       }
-
-      const mimeType =
-        file.mimeType ||
-        file.type ||
-        (file.uri?.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
 
       const formData = new FormData();
       formData.append("category", "ANSWER");
@@ -247,7 +237,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
         type: mimeType,
       } as any);
 
-      dispatch(setLoading(true));
       const uploadedFile = await updateFile({ data: formData }).unwrap();
 
       if (uploadedFile?.id) {
@@ -256,6 +245,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
           name: file.fileName || file.name,
           uri: file.uri,
           type: mimeType,
+          size: fileSizeInMB,
         };
         setFiles((prev) => [...prev, newFile]);
         showSuccessToast(t("fileUploadedSuccessfully"));
@@ -360,216 +350,227 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
       {question.illustrations && question.illustrations.length > 0 && (
         <ImageCarousel illustrations={question.illustrations} />
       )}
-
-      <View style={{ marginHorizontal: 30 }}>
-        <Text style={styles.question}>{t("question1")}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <MathRenderer
-            formula={question.description}
-            style={{ marginRight: 4 }}
-            fontSize={20}
-          />
-        </View>
-      </View>
-
-      {!answer ? (
+      <View style={{ marginHorizontal: 25 }}>
         <View>
-          <View style={styles.container}>
-            <CloudIcon />
-            <Text style={styles.uploadText}>{t("selectFileToUpload")}</Text>
-            <Text style={styles.supported}>{t("sypportedFormate")}</Text>
-            <Text style={styles.supported}>{t("maxSize")}</Text>
-
-            <CustomButton
-              title={t("selectFile")}
-              buttonStyle={[styles.btnStyle, styles.submitBtn]}
-              textStyle={[
-                styles.submitText,
-                { includeFontPadding: false, marginRight: 4 },
-              ]}
-              contentStyle={{ flexDirection: "row-reverse" }}
-              iconStyle={{ marginRight: 0 }}
-              onPress={pickFile}
-              svg={<UploadIcon />}
-            />
+          <Text style={styles.question}>{t("question1")}</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <MathRenderer formula={question.description} fontSize={20} />
           </View>
 
-          <View style={styles.fileTile}>
-            {files.map((item, index) => (
-              <View key={index} style={styles.fileItem}>
-                <View
-                  style={{
-                    backgroundColor: COLORS.primary,
-                    borderRadius: 100,
-                    padding: 5,
-                  }}
-                >
-                  <GalleryIcon width={35} height={35} />
-                </View>
-                <View style={{ flex: 1, marginLeft: 8 }}>
-                  <Text style={styles.fileName}>{t("solutionOfQuestion")}</Text>
-                  <Text style={styles.fileInfo}>
-                    {item.type?.split("/")[1]?.toUpperCase()} • {item.size}
+          {!answer ? (
+            <View>
+              <View style={styles.container}>
+                <CloudIcon />
+                <Text style={styles.uploadText}>{t("selectFileToUpload")}</Text>
+                <Text style={styles.supported}>{t("sypportedFormate")}</Text>
+                <Text style={styles.supported}>{t("maxSize")}</Text>
+
+                <CustomButton
+                  title={t("selectFile")}
+                  buttonStyle={[styles.btnStyle, styles.submitBtn]}
+                  textStyle={[
+                    styles.submitText,
+                    { includeFontPadding: false, marginRight: 4 },
+                  ]}
+                  contentStyle={{ flexDirection: "row-reverse" }}
+                  iconStyle={{ marginRight: 0 }}
+                  onPress={pickFile}
+                  svg={<UploadIcon />}
+                />
+              </View>
+
+              <View style={styles.fileTile}>
+                {files.map((item, index) => (
+                  <View key={index} style={styles.fileItem}>
+                    <View
+                      style={{
+                        backgroundColor: COLORS.primary,
+                        borderRadius: 100,
+                        padding: 5,
+                      }}
+                    >
+                      <GalleryIcon width={35} height={35} />
+                    </View>
+                    <View style={{ flex: 1, marginLeft: 8 }}>
+                      <Text style={styles.fileName}>
+                        {t("solutionOfQuestion")}
+                      </Text>
+                      <Text style={styles.fileInfo}>
+                        {item.type?.split("/")[1]?.toUpperCase()} •{" "}
+                        {item.size?.toFixed(2)}mb
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => removeFile(index)}
+                      style={styles.crossIcon}
+                    >
+                      <Ionicons name="close" size={20} color={COLORS.black} />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+
+              <View style={{ marginHorizontal: 30 }}>
+                {appToken > 0 ? (
+                  <View style={styles.whiteSheetFooter}>
+                    <CustomButton
+                      title={t("50TokenToSubmit")}
+                      buttonStyle={[
+                        styles.generateReportBtn,
+                        files.length === 0 && {
+                          backgroundColor: COLORS.D9Gray,
+                          borderWidth: 0,
+                        },
+                      ]}
+                      textStyle={[
+                        styles.generateReportBtnTitle,
+                        files.length === 0 && { color: COLORS.black },
+                      ]}
+                      onPress={handleSubmit}
+                      svg={
+                        files.length === 0 ? (
+                          <TokenBlackIcon width={22} height={22} />
+                        ) : (
+                          <TokenWhiteIcon width={22} height={22} />
+                        )
+                      }
+                      disabled={submitted}
+                    />
+                  </View>
+                ) : (
+                  <View style={styles.whiteSheetFooter}>
+                    <CustomButton
+                      title={t("50TokenToSubmit")}
+                      buttonStyle={[
+                        styles.generateReportBtn,
+                        { backgroundColor: COLORS.D9Gray, borderWidth: 0 },
+                      ]}
+                      textStyle={[
+                        styles.generateReportBtnTitle,
+                        { color: COLORS.black },
+                      ]}
+                      onPress={handleSubmit}
+                      svg={<TokenBlackIcon width={22} height={22} />}
+                    />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.whiteSheetFooterText,
+                          { marginRight: 10 },
+                        ]}
+                      >
+                        {appToken} {t("tokenAvailable")}
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("SettingsTab")}
+                      >
+                        <Text
+                          style={[
+                            styles.whiteSheetFooterText,
+                            {
+                              color: COLORS.primary,
+                              fontFamily: FONTS.UrbanistSemiBold,
+                            },
+                          ]}
+                        >
+                          {t("buyTokens")}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+            </View>
+          ) : (
+            <View>
+              {answer?.feedbackStatus === "PENDING" ? (
+                <View style={{ marginVertical: 20 }}>
+                  <Text style={styles.commentHeading}>
+                    {t("systemComment")}
                   </Text>
-                </View>
-                <TouchableOpacity
-                  onPress={() => removeFile(index)}
-                  style={styles.crossIcon}
-                >
-                  <Ionicons name="close" size={20} color={COLORS.black} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-
-          <View style={{ marginHorizontal: 30 }}>
-            {appToken > 0 ? (
-              <View style={styles.whiteSheetFooter}>
-                <CustomButton
-                  title={t("50TokenToSubmit")}
-                  buttonStyle={[
-                    styles.generateReportBtn,
-                    files.length === 0 && {
-                      backgroundColor: COLORS.D9Gray,
-                      borderWidth: 0,
-                    },
-                  ]}
-                  textStyle={[
-                    styles.generateReportBtnTitle,
-                    files.length === 0 && { color: COLORS.black },
-                  ]}
-                  onPress={handleSubmit}
-                  svg={
-                    files.length === 0 ? (
-                      <TokenBlackIcon width={22} height={22} />
-                    ) : (
-                      <TokenWhiteIcon width={22} height={22} />
-                    )
-                  }
-                />
-              </View>
-            ) : (
-              <View style={styles.whiteSheetFooter}>
-                <CustomButton
-                  title={t("50TokenToSubmit")}
-                  buttonStyle={[
-                    styles.generateReportBtn,
-                    { backgroundColor: COLORS.D9Gray, borderWidth: 0 },
-                  ]}
-                  textStyle={[
-                    styles.generateReportBtnTitle,
-                    { color: COLORS.black },
-                  ]}
-                  onPress={handleSubmit}
-                  svg={<TokenBlackIcon width={22} height={22} />}
-                />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
                   <Text
-                    style={[styles.whiteSheetFooterText, { marginRight: 10 }]}
+                    style={[
+                      styles.commentStatus,
+                      { marginTop: 30, color: "#FFD54F" },
+                    ]}
                   >
-                    {appToken} {t("tokenAvailable")}
+                    {t("exerciseInReview")}
                   </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("SettingsTab")}
+                </View>
+              ) : (
+                <View style={styles.answerContainer}>
+                  <Text style={styles.commentHeading}>
+                    {t("systemComment")}
+                  </Text>
+
+                  <View
+                    style={{
+                      marginVertical: answer?.feedback ? 0 : 20,
+                    }}
                   >
+                    {answer?.feedback && (
+                      <MathRenderer
+                        formula={answer?.feedback}
+                        // style={{ marginRight: 4 }}
+                        fontSize={14}
+                      />
+                    )}
+
                     <Text
                       style={[
-                        styles.whiteSheetFooterText,
+                        styles.commentStatus,
                         {
-                          color: COLORS.primary,
-                          fontFamily: FONTS.UrbanistSemiBold,
+                          color:
+                            answer?.feedbackStatus === "INCORRECT" ||
+                            answer?.feedbackStatus === "FAILED"
+                              ? COLORS.danger
+                              : COLORS.green,
                         },
                       ]}
                     >
-                      {t("buyTokens")}
+                      {answer?.feedbackStatus === "INCORRECT" ||
+                      answer?.feedbackStatus === "FAILED"
+                        ? t("exerciseWrong")
+                        : t("exerciseCorrectly")}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.buttons}>
+                    {(answer?.feedbackStatus === "INCORRECT" ||
+                      answer?.feedbackStatus === "FAILED") && (
+                      <CustomButton
+                        title={t("retry")}
+                        buttonStyle={[styles.btnStyle, styles.retryBtn]}
+                        textStyle={[
+                          styles.retryText,
+                          { includeFontPadding: false },
+                        ]}
+                        onPress={() => setAnswer(null)}
+                      />
+                    )}
+
+                    <CustomButton
+                      title={submitted ? t("next") : t("submit")}
+                      buttonStyle={[styles.btnStyle, styles.submitBtn]}
+                      textStyle={[
+                        styles.submitText,
+                        { includeFontPadding: false },
+                      ]}
+                      disabled={!submitted}
+                      onPress={onPress}
+                    />
+                  </View>
                 </View>
-              </View>
-            )}
-          </View>
-        </View>
-      ) : (
-        <View>
-          {answer?.feedbackStatus === "PENDING" ? (
-            <View style={{ marginVertical: 20 }}>
-              <Text style={styles.commentHeading}>{t("systemComment")}</Text>
-              <Text
-                style={[
-                  styles.commentStatus,
-                  { marginTop: 30, color: "#FFD54F" },
-                ]}
-              >
-                {t("exerciseInReview")}
-              </Text>
-            </View>
-          ) : (
-            <View style={styles.answerContainer}>
-              <Text style={styles.commentHeading}>{t("systemComment")}</Text>
-
-              <View
-                style={{
-                  marginVertical: answer?.feedback ? 0 : 20,
-                }}
-              >
-                {answer?.feedback && (
-                  <MathRenderer
-                    formula={answer?.feedback}
-                    style={{ marginRight: 4 }}
-                    fontSize={14}
-                  />
-                )}
-
-                <Text
-                  style={[
-                    styles.commentStatus,
-                    {
-                      color:
-                        answer?.feedbackStatus === "INCORRECT" ||
-                        answer?.feedbackStatus === "FAILED"
-                          ? COLORS.danger
-                          : COLORS.green,
-                    },
-                  ]}
-                >
-                  {answer?.feedbackStatus === "INCORRECT" ||
-                  answer?.feedbackStatus === "FAILED"
-                    ? t("exerciseWrong")
-                    : t("exerciseCorrectly")}
-                </Text>
-              </View>
-
-              <View style={styles.buttons}>
-                {(answer?.feedbackStatus === "INCORRECT" ||
-                  answer?.feedbackStatus === "FAILED") && (
-                  <CustomButton
-                    title={t("retry")}
-                    buttonStyle={[styles.btnStyle, styles.retryBtn]}
-                    textStyle={[
-                      styles.retryText,
-                      { includeFontPadding: false },
-                    ]}
-                    onPress={() => setAnswer(null)}
-                  />
-                )}
-
-                <CustomButton
-                  title={submitted ? t("next") : t("submit")}
-                  buttonStyle={[styles.btnStyle, styles.submitBtn]}
-                  textStyle={[styles.submitText, { includeFontPadding: false }]}
-                  disabled={!submitted}
-                  onPress={onPress}
-                />
-              </View>
+              )}
             </View>
           )}
         </View>
-      )}
+      </View>
 
       <Modal
         transparent
@@ -601,9 +602,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 textStyle={[styles.buttonText, { color: COLORS.black }]}
                 onPress={() => {
                   setWaitingPopup(false);
-                  setTimeout(() => {
-                    navigation.navigate("TasksMain");
-                  }, 1000);
+                  // setTimeout(() => {
+                  //   navigation.navigate("TasksMain");
+                  // }, 1000);
                 }}
               />
             </View>
@@ -629,7 +630,6 @@ export default OpenEnded;
 const styles = StyleSheet.create({
   answerContainer: {
     marginTop: 20,
-    marginHorizontal: 30,
   },
   commentHeading: {
     fontSize: FONTSIZE.size24,
@@ -681,6 +681,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginHorizontal: 20,
     alignItems: "center",
+    marginTop: 20,
   },
 
   uploadText: {

@@ -23,6 +23,7 @@ import TokenTileGrid from "../../components/TokenTileGrid";
 import CustomButton from "../../components/CustomButton";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { useFocusEffect } from "@react-navigation/native";
+import { setLoading } from "../../store/loading";
 
 interface TokensScreenProps {
   navigation: { goBack: () => void };
@@ -46,7 +47,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
   const [getPrompts] = useLazyGetPromptsQuery();
 
   const [data, setData] = useState<PromptUsageResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +62,8 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
   // 🔹 Fetch data
   const fetchPrompts = useCallback(async () => {
     try {
-      setLoading(true);
+      dispatch(setLoading(true));
+      setIsLoading(true);
       setError(null);
       const res = await getPrompts({}).unwrap();
       setData(res);
@@ -83,7 +85,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
     } catch (err) {
       setError("Failed to fetch data");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
       setRefreshing(false);
     }
   }, [getPrompts]);
@@ -141,7 +143,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
             <Text style={styles.title}>{t("tokenUsage")}</Text>
           </View>
 
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator size="small" color={COLORS.primary} />
           ) : error ? (
             <Text style={styles.errorText}>{error}</Text>

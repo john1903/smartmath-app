@@ -102,80 +102,82 @@ const Matching: React.FC<MatchingProps> = ({ question, onPress, answer }) => {
         <ImageCarousel illustrations={question.illustrations} />
       )}
 
-      <View style={{ marginHorizontal: 30 }}>
-        <Text style={styles.question}>{t("question1")}</Text>
-        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <MathRenderer
-            formula={question.description}
-            style={{ marginRight: 4 }}
-            fontSize={20}
+      <View style={{ marginHorizontal: 25 }}>
+        <View>
+          <Text style={styles.question}>{t("question1")}</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            <MathRenderer
+              formula={question.description}
+              // style={{ marginRight: 4 }}
+              fontSize={20}
+            />
+          </View>
+        </View>
+
+        <View>
+          {Object.entries(question.optionsRowFirst).map(([key, label]) => (
+            <OptionButton
+              key={key}
+              optionKey={key}
+              label={label}
+              selected={selectedFirst === key}
+              onPress={() => !submitted && setSelectedFirst(key)}
+              correct={getCorrectProp("first", key)}
+              disabled={submitted}
+            />
+          ))}
+
+          <View style={styles.gap} />
+
+          {Object.entries(question.optionsRowSecond).map(([key, label]) => (
+            <OptionButton
+              key={key}
+              optionKey={key}
+              label={label}
+              selected={selectedSecond === key}
+              onPress={() => !submitted && setSelectedSecond(key)}
+              correct={getCorrectProp("second", key)}
+              disabled={submitted}
+            />
+          ))}
+        </View>
+
+        <View style={styles.buttons}>
+          {submitted && isCorrect === false && (
+            <CustomButton
+              title={t("retry")}
+              buttonStyle={[styles.btnStyle, styles.retryBtn]}
+              textStyle={styles.retryText}
+              onPress={handleRetry}
+            />
+          )}
+
+          <CustomButton
+            title={submitted ? t("next") : t("submit")}
+            buttonStyle={[
+              styles.btnStyle,
+              submitted ? styles.nextBtn : styles.submitBtn,
+              (!selectedFirst || !selectedSecond) &&
+                !submitted &&
+                styles.submitBtnDisabled,
+            ]}
+            textStyle={[
+              styles.submitText,
+              submitted ? styles.nextText : null,
+              (!selectedFirst || !selectedSecond) &&
+                !submitted &&
+                styles.submitTextDisabled,
+            ]}
+            disabled={!submitted && (!selectedFirst || !selectedSecond)}
+            onPress={() => {
+              if (submitted) {
+                onPress?.();
+              } else {
+                handleSubmit();
+              }
+            }}
           />
         </View>
-      </View>
-
-      <View style={{ marginHorizontal: 20 }}>
-        {Object.entries(question.optionsRowFirst).map(([key, label]) => (
-          <OptionButton
-            key={key}
-            optionKey={key}
-            label={label}
-            selected={selectedFirst === key}
-            onPress={() => !submitted && setSelectedFirst(key)}
-            correct={getCorrectProp("first", key)}
-            disabled={submitted}
-          />
-        ))}
-
-        <View style={styles.gap} />
-
-        {Object.entries(question.optionsRowSecond).map(([key, label]) => (
-          <OptionButton
-            key={key}
-            optionKey={key}
-            label={label}
-            selected={selectedSecond === key}
-            onPress={() => !submitted && setSelectedSecond(key)}
-            correct={getCorrectProp("second", key)}
-            disabled={submitted}
-          />
-        ))}
-      </View>
-
-      <View style={styles.buttons}>
-        {submitted && isCorrect === false && (
-          <CustomButton
-            title={t("retry")}
-            buttonStyle={[styles.btnStyle, styles.retryBtn]}
-            textStyle={styles.retryText}
-            onPress={handleRetry}
-          />
-        )}
-
-        <CustomButton
-          title={submitted ? t("next") : t("submit")}
-          buttonStyle={[
-            styles.btnStyle,
-            submitted ? styles.nextBtn : styles.submitBtn,
-            (!selectedFirst || !selectedSecond) &&
-              !submitted &&
-              styles.submitBtnDisabled,
-          ]}
-          textStyle={[
-            styles.submitText,
-            submitted ? styles.nextText : null,
-            (!selectedFirst || !selectedSecond) &&
-              !submitted &&
-              styles.submitTextDisabled,
-          ]}
-          disabled={!submitted && (!selectedFirst || !selectedSecond)}
-          onPress={() => {
-            if (submitted) {
-              onPress?.();
-            } else {
-              handleSubmit();
-            }
-          }}
-        />
       </View>
     </View>
   );
@@ -184,8 +186,6 @@ const Matching: React.FC<MatchingProps> = ({ question, onPress, answer }) => {
 export default Matching;
 
 const styles = StyleSheet.create({
-  carouselContainer: { marginBottom: 16 },
-  carouselImage: { width: 280, height: 200, borderRadius: 10 },
   question: {
     fontSize: FONTSIZE.size20,
     fontFamily: FONTS.UrbanistSemiBold,
