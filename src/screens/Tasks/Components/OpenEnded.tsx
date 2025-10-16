@@ -132,7 +132,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
-                await handleFileUpload(file);
+                 setTimeout(async() => { 
+ await handleFileUpload(file);
+       }, 1000);
               }
             } catch (err) {
               console.log("Camera error:", err);
@@ -163,7 +165,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
-                await handleFileUpload(file);
+                    setTimeout(async() => { 
+ await handleFileUpload(file);
+       }, 1000);
               }
             } catch (err) {
               console.log("Gallery error:", err);
@@ -197,7 +201,11 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                   file = { ...file, uri: compressed.uri };
                 }
 
-                await handleFileUpload(file);
+      setTimeout(async() => { 
+ await handleFileUpload(file);
+       }, 1000);
+
+               
               }
             } catch (err) {
               console.log("Document error:", err);
@@ -216,6 +224,8 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
   const handleFileUpload = async (file: any) => {
     try {
       dispatch(setLoading(true));
+        
+    
       const mimeType =
         file.mimeType ||
         file.type ||
