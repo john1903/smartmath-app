@@ -31,8 +31,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState<string>("hani4u13@gmail.com");
-  const [password, setPassword] = useState<string>("12345678");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
 
   const validate = (): boolean => {
