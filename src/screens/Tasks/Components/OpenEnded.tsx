@@ -376,6 +376,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                   iconStyle={{ marginRight: 0 }}
                   onPress={pickFile}
                   svg={<UploadIcon />}
+                  disabled={submitted}
                 />
               </View>
 
@@ -403,6 +404,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                     <TouchableOpacity
                       onPress={() => removeFile(index)}
                       style={styles.crossIcon}
+                      disabled={submitted}
                     >
                       <Ionicons name="close" size={20} color={COLORS.black} />
                     </TouchableOpacity>
@@ -602,9 +604,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 textStyle={[styles.buttonText, { color: COLORS.black }]}
                 onPress={() => {
                   setWaitingPopup(false);
-                  // setTimeout(() => {
-                  //   navigation.navigate("TasksMain");
-                  // }, 1000);
                 }}
               />
             </View>
