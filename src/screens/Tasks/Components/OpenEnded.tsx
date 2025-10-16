@@ -750,7 +750,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   generateReportBtn: {
-    width: "60%",
+    width: "70%",
     alignItems: "center",
     backgroundColor: COLORS.black,
     borderColor: COLORS.black,
