@@ -156,7 +156,7 @@
   "selectDateFrom": "Select Date From",
   "selectDateTo": "Select Date To",
 
-  "50TokenToGenerateReport": "50 Token to generate report",
+  "50TokenToGenerateReport": "50 Tokens to generate report",
   "buyTokens": "Buy Tokens",
   "noReportsFound": "No reports found",
   "pleaseSelectBothFromAndToDates": "Please select both From and To dates.",
@@ -173,7 +173,7 @@
   "maxSize": "(10mb max)",
   "selectFile": "Select File",
   "solutionOfQuestion": "Solution Of Question",
-  "50TokenToSubmit":"50 Token to Submit",
+  "50TokenToSubmit":"50 Tokens to Submit",
 
   "tokenAvailable": "Token available",
   "goToHome": "Go to Home",
