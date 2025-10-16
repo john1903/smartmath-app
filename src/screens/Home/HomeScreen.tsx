@@ -979,7 +979,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                     setCalendarVisible(false);
                     setTimeout(() => {
                       resetDefaultDates();
-                    }, 1000);
+                    }, 500);
                   }}
                 >
                   <Text style={styles.cancelButtonText}>{t("cancel")}</Text>

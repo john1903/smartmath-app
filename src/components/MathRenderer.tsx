@@ -39,6 +39,8 @@ const MathRenderer: React.FC<MathRendererProps> = ({
                   font-weight: 500;
                   font-size: ${fontSize}px;
                   color: ${color};
+                  padding: 0;
+                  margin: 0;
                 }
               </style>
             </head>
