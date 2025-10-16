@@ -92,8 +92,10 @@
     "title": "Filter By:",
     "status": "Exercise Status",
     "difficulty": "Difficulty",
-    "taskType": "Task Type"
+    "taskType": "Task Type",
+    "categories": "Exercise Categories"
   },
+  "no_categories_found": "No categories found",
 
   "difficulty": {
     "hard": "Hard",

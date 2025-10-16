@@ -109,10 +109,21 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       dispatch(setLoading(true));
+
+      setFilters({});
+      setActiveStatus("all");
+      setSearchText("");
       setPage(0);
       setHasMore(true);
+
       fetchExercises(0);
       getCategories({});
+
+      return () => {
+        setFilters({});
+        setActiveStatus("all");
+        setSearchText("");
+      };
     }, [dispatch])
   );
 
@@ -160,19 +171,10 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      // ✅ Always handle “all” correctly
       fetchExercises(0, false, filters, activeStatus, searchText);
     }, 400);
     return () => clearTimeout(delay);
   }, [searchText, activeStatus, filters]);
-
-  // const renderFooter = () =>
-  //   isFetching ? (
-  //     <ActivityIndicator
-  //       style={{ marginVertical: 15 }}
-  //       color={COLORS.primary}
-  //     />
-  //   ) : null;
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
@@ -229,7 +231,6 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           )}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
-          // ListFooterComponent={renderFooter}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -251,6 +252,7 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         isVisible={isFilterVisible}
         onClose={() => setIsFilterVisible(false)}
         onApply={handleApplyFilters}
+        currentFilters={filters}
       />
     </SafeAreaView>
   );

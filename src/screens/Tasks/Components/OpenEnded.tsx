@@ -132,9 +132,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
-                 setTimeout(async() => { 
- await handleFileUpload(file);
-       }, 1000);
+                setTimeout(async () => {
+                  await handleFileUpload(file);
+                }, 1000);
               }
             } catch (err) {
               console.log("Camera error:", err);
@@ -165,9 +165,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
-                    setTimeout(async() => { 
- await handleFileUpload(file);
-       }, 1000);
+                setTimeout(async () => {
+                  await handleFileUpload(file);
+                }, 1000);
               }
             } catch (err) {
               console.log("Gallery error:", err);
@@ -201,11 +201,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                   file = { ...file, uri: compressed.uri };
                 }
 
-      setTimeout(async() => { 
- await handleFileUpload(file);
-       }, 1000);
-
-               
+                setTimeout(async () => {
+                  await handleFileUpload(file);
+                }, 1000);
               }
             } catch (err) {
               console.log("Document error:", err);
@@ -224,8 +222,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
   const handleFileUpload = async (file: any) => {
     try {
       dispatch(setLoading(true));
-        
-    
+
       const mimeType =
         file.mimeType ||
         file.type ||
@@ -422,7 +419,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 ))}
               </View>
 
-              <View style={{ marginHorizontal: 30 }}>
+              <View style={{ marginHorizontal: 20 }}>
                 {appToken > 0 ? (
                   <View style={styles.whiteSheetFooter}>
                     <CustomButton
@@ -644,6 +641,7 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size24,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.primary,
+    marginBottom: 15,
   },
   answerFeedback: {
     fontSize: FONTSIZE.size14,
@@ -688,7 +686,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 1.5,
     borderRadius: 20,
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
     alignItems: "center",
     marginTop: 20,
   },
