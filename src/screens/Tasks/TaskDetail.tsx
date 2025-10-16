@@ -1,119 +1,130 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
 import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomHeader from "../../components/CustomHeader";
-import COLORS from "../../theme/colors";
-import OptionButton from "../../components/OptionButton";
-import FONTSIZE from "../../theme/fontsSize";
-import FONTS from "../../theme/fonts";
-import CustomButton from "../../components/CustomButton";
 import { useTranslation } from "react-i18next";
 
-import TokenWhiteIcon from "../../../assets/svgs/TokenWhiteIcon.svg";
-import TokenBlackIcon from "../../../assets/svgs/TokenBlackIcon.svg";
+import CustomHeader from "../../components/CustomHeader";
+import COLORS from "../../theme/colors";
+import FONTSIZE from "../../theme/fontsSize";
+import FONTS from "../../theme/fonts";
 import { useLazyGetExerciseQuery } from "../../services/tasksSlice";
-import MathRenderer from "../../components/MathRenderer";
-import { splitMathString } from "../../utils/helpers";
+
 import MultipleChoice from "./Components/MultipleChoice";
 import TrueFalse from "./Components/TrueFalse";
 import SingleChoice from "./Components/SingleChoice";
 import OpenEnded from "./Components/OpenEnded";
 import Matching from "./Components/Matching";
 
-const TaskDetail = ({ navigation, route }) => {
-  const { t } = useTranslation();
-  const [appToken, setAppToken] = useState(10);
+interface ExerciseData {
+  id?: number;
+  title?: string;
+  description?: string;
+  difficultyLevel?: string;
+  maxPoints?: number;
+  exerciseType?:
+    | "MULTIPLE_CHOICE"
+    | "TRUE_FALSE"
+    | "SINGLE_CHOICE"
+    | "OPEN_ENDED"
+    | "MATCHING";
+  illustrations?: { id: number; uri: string }[];
+}
 
-  const [question, setQuestion] = useState(null);
+interface ExerciseResponse {
+  exercise: ExerciseData;
+  answer?: {
+    feedbackStatus?: string;
+    answerText?: string;
+    [key: string]: any;
+  };
+}
+
+interface TaskDetailProps {
+  navigation: any;
+  route: any;
+}
+
+const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
+  const { t } = useTranslation();
+  const [appToken] = useState<number>(10);
+  const [question, setQuestion] = useState<ExerciseResponse | null>(null);
 
   const [getExercise] = useLazyGetExerciseQuery();
 
   const gobackScreen = () => {
-    navigation.goBack();
+    // navigation.goBack();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "TasksMain" }],
+    });
   };
 
-  const renderQuestion = (q) => {
-    // console.log("qqqqqqqqqqqqqq", JSON.stringify(q?.exercise));
-    if (!q) return null;
+  const renderQuestion = (q: ExerciseResponse | null) => {
+    if (!q?.exercise) return null;
 
-    switch (q?.exercise?.exerciseType) {
+    switch (q.exercise.exerciseType) {
       case "MULTIPLE_CHOICE":
         return (
           <MultipleChoice
-            question={q?.exercise}
+            question={q.exercise}
             onPress={gobackScreen}
-            answer={q?.answer}
+            answer={q.answer}
           />
         );
-
       case "TRUE_FALSE":
         return (
           <TrueFalse
-            question={q?.exercise}
+            question={q.exercise}
             onPress={gobackScreen}
-            answer={q?.answer}
+            answer={q.answer}
           />
         );
       case "SINGLE_CHOICE":
         return (
           <SingleChoice
-            question={q?.exercise}
+            question={q.exercise}
             onPress={gobackScreen}
-            answer={q?.answer}
+            answer={q.answer}
           />
         );
       case "OPEN_ENDED":
         return (
           <OpenEnded
-            question={q?.exercise}
+            question={q.exercise}
             onPress={gobackScreen}
             navigation={navigation}
-            answerData={q?.answer}
+            answerData={q.answer}
           />
         );
       case "MATCHING":
         return (
           <Matching
-            question={q?.exercise}
+            question={q.exercise}
             onPress={gobackScreen}
-            answer={q?.answer}
+            answer={q.answer}
           />
         );
-
       default:
         return null;
     }
   };
 
   useEffect(() => {
-    getExercise({
-      id: route?.params?.exerciseId,
-    }).then((res) => {
-      if (res) {
-        setQuestion(res?.data);
-      }
-      console.log(
-        "single question response ::::::::::: ",
-        JSON.stringify(res?.data)
-      );
-    });
-  }, []);
+    if (!route?.params?.exerciseId) return;
+    getExercise({ id: route.params.exerciseId })
+      .then((res: any) => {
+        if (res?.data) {
+          setQuestion(res.data);
+        }
+        console.log("Exercise response:", JSON.stringify(res?.data, null, 2));
+      })
+      .catch((err: any) => console.error("Fetch error", err));
+  }, [route?.params?.exerciseId]);
 
   return (
     <SafeAreaView style={styles.safeContent} edges={["top", "left", "right"]}>
-      {/* Header */}
       <View style={styles.header}>
-        <CustomHeader
-          title={t("taskDetail")}
-          onPress={() => navigation.goBack()}
-        />
+        <CustomHeader title={t("taskDetail")} onPress={gobackScreen} />
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>

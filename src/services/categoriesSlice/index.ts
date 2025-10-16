@@ -1,27 +1,30 @@
-import { GetPromptsEndPoint } from "../../config/endPoints";
+import { GetCategoriesEndPoint } from "../../config/endPoints";
 import i18n from "../../i18n/i18n";
+import { setAllCategories } from "../../store/categories";
 
 import { setLoading } from "../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 
 import { api } from "../api";
 
-export const PromptsApi = api.injectEndpoints({
+export const CategoriesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPrompts: builder.query({
+    getCategories: builder.query({
       query: (payload) => {
+        let params = `?page=0&size=500&sort=asc`;
         return {
-          url: GetPromptsEndPoint,
+          url: `${GetCategoriesEndPoint}${params}`,
           method: "get",
         };
       },
-      providesTags: [{ type: "reports", id: 1 }],
+
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }: any) {
         try {
-          // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
-          // console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));
+          // console.log(" categories res :::::::>>>>  ", JSON.stringify(res));
+
+          dispatch(setAllCategories(res?.data?.content));
 
           setTimeout(() => {
             dispatch(setLoading(false));
@@ -32,11 +35,6 @@ export const PromptsApi = api.injectEndpoints({
             showErrorToast(
               i18n.t("sorry"),
               i18n.t("requestMessages.unauthorized")
-            );
-          } else if (e?.meta?.response?.status === 404) {
-            showErrorToast(
-              i18n.t("sorry"),
-              i18n.t("requestMessages.token_usage_data_not_found")
             );
           } else {
             showErrorToast(
@@ -51,4 +49,4 @@ export const PromptsApi = api.injectEndpoints({
   overrideExisting: true,
 });
 
-export const { useLazyGetPromptsQuery } = PromptsApi;
+export const { useLazyGetCategoriesQuery } = CategoriesApi;

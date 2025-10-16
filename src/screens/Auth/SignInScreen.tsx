@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  GestureResponderEvent,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomBackground from "../../components/CustomBackground";
 import AnimatedInput from "../../components/AnimatedInput";
@@ -37,8 +31,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("hani4u13@gmail.com");
+  const [password, setPassword] = useState<string>("12345678");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
 
   const validate = (): boolean => {
@@ -276,7 +270,7 @@ const styles = StyleSheet.create({
   errorTextAbsolute: {
     position: "absolute",
     bottom: -8,
-    left: 20,
+    left: 22,
     fontSize: FONTSIZE.size12,
     color: COLORS.danger,
     fontFamily: FONTS.UrbanistRegular,

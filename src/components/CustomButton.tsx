@@ -1,30 +1,54 @@
-// // components/CustomButton.js
-// import React from "react";
-// import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+// import React, { ReactNode } from "react";
+// import {
+//   TouchableOpacity,
+//   Text,
+//   StyleSheet,
+//   View,
+//   TouchableOpacityProps,
+//   TextStyle,
+//   ViewStyle,
+// } from "react-native";
 // import { Ionicons } from "@expo/vector-icons";
 // import COLORS from "../theme/colors";
 
-// const CustomButton = ({
+// type IconProps = {
+//   name: React.ComponentProps<typeof Ionicons>["name"];
+//   size?: number;
+//   color?: string;
+//   style?: any;
+// };
+
+// interface CustomButtonProps extends TouchableOpacityProps {
+//   title?: string;
+//   onPress?: () => void;
+//   buttonStyle?: ViewStyle | ViewStyle[]; // ✅ Allow arrays of styles
+//   textStyle?: TextStyle | TextStyle[]; // ✅ Allow arrays of styles
+//   icon?: IconProps | null;
+//   svg?: ReactNode;
+//   disabled?: boolean;
+//   contentStyle?: ViewStyle | ViewStyle[];
+//   iconStyle?: ViewStyle | ViewStyle[];
+// }
+
+// const CustomButton: React.FC<CustomButtonProps> = ({
 //   title = "Button",
 //   onPress,
-//   buttonStyle = {}, // custom styles for button
-//   textStyle = {}, // custom styles for text
-//   icon = null, // { name: "add", size: 20, color: "#fff", style: {} }
-//   svg = null, // pass React element: <MySvg width={20} height={20} />
+//   buttonStyle = {},
+//   textStyle = {},
+//   icon = null,
+//   svg = null,
 //   disabled = false,
 //   contentStyle = {},
 //   iconStyle = {},
+//   ...rest
 // }) => {
 //   return (
 //     <TouchableOpacity
-//       style={[
-//         styles.button,
-//         buttonStyle, // merge custom styles
-//         disabled && { opacity: 0.6 },
-//       ]}
+//       style={[styles.button, buttonStyle, disabled && { opacity: 0.6 }]}
 //       activeOpacity={0.7}
 //       onPress={onPress}
 //       disabled={disabled}
+//       {...rest}
 //     >
 //       <View style={[styles.content, contentStyle]}>
 //         {icon && (
@@ -82,6 +106,7 @@ import {
   TouchableOpacityProps,
   TextStyle,
   ViewStyle,
+  StyleProp, // ✅ Import this
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../theme/colors";
@@ -96,25 +121,25 @@ type IconProps = {
 interface CustomButtonProps extends TouchableOpacityProps {
   title?: string;
   onPress?: () => void;
-  buttonStyle?: ViewStyle | ViewStyle[]; // ✅ Allow arrays of styles
-  textStyle?: TextStyle | TextStyle[]; // ✅ Allow arrays of styles
+  buttonStyle?: StyleProp<ViewStyle>; // ✅ changed
+  textStyle?: StyleProp<TextStyle>; // ✅ changed
   icon?: IconProps | null;
   svg?: ReactNode;
   disabled?: boolean;
-  contentStyle?: ViewStyle | ViewStyle[];
-  iconStyle?: ViewStyle | ViewStyle[];
+  contentStyle?: StyleProp<ViewStyle>; // ✅ changed
+  iconStyle?: StyleProp<ViewStyle>; // ✅ changed
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
   title = "Button",
   onPress,
-  buttonStyle = {},
-  textStyle = {},
+  buttonStyle,
+  textStyle,
   icon = null,
   svg = null,
   disabled = false,
-  contentStyle = {},
-  iconStyle = {},
+  contentStyle,
+  iconStyle,
   ...rest
 }) => {
   return (

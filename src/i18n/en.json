@@ -49,8 +49,6 @@
   "solve": "Solve",
   "tasks_solve": "Tasks Solve",
   "correct_answers": "Correct Answers",
-  
-
   "status": {
     "solve": "Solve",
     "CORRECT":"Correct",
@@ -61,46 +59,42 @@
     "COMPLETED": "Completed",
     "INCOMPLETE":"Not Complete"
   },
-
   "tasks": {
     "title": "Tasks",
     "noData": "No questions found"
   },
-
-  "categories": {
+  "exerciseStatus": {
     "all": "All tasks",
-    "correct":"Correct",
-    "pending": "Pending",
-    "inCorrect":"Not Correct",
-    "failed": "Failed",
-    "notEnoughTokens":"Not enough tokens",
-    "completed": "Completed",
-    "inComplete":"Not Complete",
+    "CORRECT":"Correct",
+    "PENDING": "Pending",
+    "INCORRECT":"Not Correct",
+    "FAILED": "Failed",
+    "NOT_ENOUGH_TOKENS":"Not enough tokens",
+    "COMPLETED": "Completed",
+    "INCOMPLETE":"Not Complete",
     "notCompleted": "Not Completed",
     "limitexceeded": "Limit Exceeded",
     "solve": "Solve"
   },
-
   "questions": {
     "q1": "What is the sum of 130+125+191?",
     "q2": "What is the subtract of 130-125-191?",
     "q3": "What is the subtract of 130-125+191?",
     "q4": "What is the multiply of 130*125*191?"
   },
-
   "filter": {
     "title": "Filter By:",
     "status": "Exercise Status",
     "difficulty": "Difficulty",
-    "taskType": "Task Type"
+    "taskType": "Task Type",
+    "categories": "Exercise Categories"
   },
-
+  "no_categories_found": "No categories found",
   "difficulty": {
     "hard": "Hard",
     "medium": "Medium",
     "easy": "Easy"
   },
-
   "taskType": {
     "multiple_choice": "MCQs",
     "true_false": "True/False",
@@ -108,12 +102,10 @@
     "open_ended": "Open Ended",
     "single_choice": "Single Choice"
   },
-
   "actions": {
     "cancel": "Cancel",
     "apply": "Apply Filter"
   },
-
   "tabs": {
     "home": "Home",
     "tasks": "Tasks",
@@ -139,32 +131,24 @@
   "total": "Total",
   "buyToken": "Buy Token",
   "save": "Save",
-
   "report": "Report",
-
   "retry": "Retry",
   "currentPassword": "Current Password",
   "newPassword": "New Password",
   "rePassword": "Repeat Password",
-
   "currentPasswordRequired": "Current password is required",
   "passwordLengthError": "Password must be at least 8 characters",
   "passwordMismatch": "Passwords do not match",
-
   "waitForaWhile": "Wait for a while...",
-
   "selectDateFrom": "Select Date From",
   "selectDateTo": "Select Date To",
-
-  "50TokenToGenerateReport": "50 Token to generate report",
+  "50TokenToGenerateReport": "50 Tokens to generate report",
   "buyTokens": "Buy Tokens",
   "noReportsFound": "No reports found",
   "pleaseSelectBothFromAndToDates": "Please select both From and To dates.",
   "notEnoughTokens": "Not enough tokens available. You need at least 50 tokens to generate report.",
-
   "pleaseUploadOneFile": "Please upload at least one answer file before submitting.",
   "notEnoughTokenstoSubmit": "Not enough tokens available. You need at least 50 tokens to submit.",
-
   "answerSubmittedSuccessfully": "Answer submitted successfully!",
   "somethingWentWrong": "Something went wrong!",
   "question1": "Question 1:",
@@ -173,29 +157,22 @@
   "maxSize": "(10mb max)",
   "selectFile": "Select File",
   "solutionOfQuestion": "Solution Of Question",
-  "50TokenToSubmit":"50 Token to Submit",
-
+  "50TokenToSubmit":"50 Tokens to Submit",
   "tokenAvailable": "Token available",
   "goToHome": "Go to Home",
   "yourAnswerhasBeenSubmitted": "Your answer has been submitted",
   "feedbackInFewMins": "You'll get feedback in few minutes!",
   "backToTasks": "Back to Tasks",
   "taskDetail": "Task Detail",
-
   "submit": "Submit",
-
   "yourAnswerIsWrong": "Your answer is wrong!",
   "yourAnswerIsCorrect": "Your answer is correct!",
   "true": "True",
   "false": "False",
-
   "select_date_range": "Select Date",
-
   "apply": "Apply",
   "cancel": "Cancel",
-
   "noRecommendedTaskFound": "No recommended tasks found",
-
   "validation":{
     "first_name_required": "First name is required",
     "last_name_required": "Last name is required",
@@ -205,7 +182,6 @@
     "password_min_length": "Password must be at least 8 characters",
     "invalid_email_or_phone": "Email or Phone Number is invalid"
   },
-
   "requestMessages":{
     "user_created_successfully": "User created successfully!",
     "invalid_request_data": "Invalid request data",
@@ -220,14 +196,11 @@
     "user_update_successfully":"User updated successfully!",
     "successfully_retrived_token_usage": "Successfully retrieved token usage",
     "token_usage_data_not_found":"Token usage data not found for the user"
-    
   },
-
   "download": "Download",
   "generationStarted": "Report generation is in Progress",
   "NOT_ENOUGH_TOKENS":"Not enough tokens",
   "systemComment": "System Comment",
-
   "exerciseCorrectly": "Exercise done correctly",
   "exerciseWrong": "Exercise done Wrong",
   "exerciseInReview": "Exercise is in Review",
@@ -240,10 +213,18 @@
   "successFullyPurchasedToken": "Successfully purchased Token",
   "yourPurchases": "Your Purchases",
   "buyNow": "Buy Now",
-
   "tokenLimitExceeded": "Token limit exceeded",
   "greatProgressToUnlock": "Great progress! You've reached your token limit — recharge to unlock more challenges.",
   "buyMore": "Buy more",
-  "newTokensAvailableToPurchase": "New tokens available for purchase."
-
+  "newTokensAvailableToPurchase": "New tokens available for purchase.",
+  "no_date_selected": "No date selected",
+  "selectFileFrom": "Select file from",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "document": "Document",
+  "cameraPermissionDenied": "Camera permission is required.",
+  "galleryPermissionDenied": "Gallery permission is required.",
+  "fileTooLarge": "File size exceeds 10MB.",
+  "fileUploadedSuccessfully": "File uploaded successfully!",
+  "uploadFailed": "Upload failed. Try again."
 }

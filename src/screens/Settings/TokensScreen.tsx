@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ActivityIndicator,
   RefreshControl,
-  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Progress from "react-native-progress";
@@ -23,6 +22,7 @@ import TokenTileGrid from "../../components/TokenTileGrid";
 import CustomButton from "../../components/CustomButton";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
 import { useFocusEffect } from "@react-navigation/native";
+import { setLoading } from "../../store/loading";
 
 interface TokensScreenProps {
   navigation: { goBack: () => void };
@@ -46,7 +46,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
   const [getPrompts] = useLazyGetPromptsQuery();
 
   const [data, setData] = useState<PromptUsageResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,20 +58,15 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
   const progress = Math.min(usage / limit, 1);
   const limitExceeded = usage >= limit;
 
-  // 🔹 Fetch data
   const fetchPrompts = useCallback(async () => {
     try {
-      setLoading(true);
+      dispatch(setLoading(true));
+      setIsLoading(true);
       setError(null);
+
       const res = await getPrompts({}).unwrap();
       setData(res);
 
-      // showSuccessToast(
-      //   t("congratulations"),
-      //   t("requestMessages.successfully_retrived_token_usage")
-      // );
-
-      // Example plans (replace with API response if available)
       setPlans([
         { id: 1, price: "$4.99", tokens: "100 Tokens" },
         { id: 2, price: "$9.99", tokens: "500 Tokens" },
@@ -83,14 +78,19 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
     } catch (err) {
       setError("Failed to fetch data");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
+      dispatch(setLoading(false));
+    }
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      await fetchPrompts();
+    } finally {
       setRefreshing(false);
     }
-  }, [getPrompts]);
-
-  // useEffect(() => {
-  //   fetchPrompts();
-  // }, [fetchPrompts]);
+  }, [fetchPrompts]);
 
   useFocusEffect(
     useCallback(() => {
@@ -100,19 +100,12 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
     }, [fetchPrompts])
   );
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchPrompts();
-  }, [fetchPrompts]);
-
   const handleBuyToken = () => {
     if (selectedPlan) {
       console.log("Selected Plan:", selectedPlan);
-
       showSuccessToast(t("congratulations"), t("successFullyPurchasedToken"));
-      // You can trigger navigation or purchase API here
     } else {
-      console.log("no Selected Plan is there :");
+      console.log("No selected plan");
       showErrorToast(t("sorry"), t("pleaseSelectPlan"));
     }
   };
@@ -125,6 +118,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
 
       <ScrollView
         contentContainerStyle={styles.container}
+        alwaysBounceVertical={true}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -134,14 +128,13 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
           />
         }
       >
-        {/* Token Usage Section */}
         <View style={styles.tokenContainer}>
           <View style={styles.tokenHeader}>
             <TokenIcon width={22} height={22} />
             <Text style={styles.title}>{t("tokenUsage")}</Text>
           </View>
 
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator size="small" color={COLORS.primary} />
           ) : error ? (
             <Text style={styles.errorText}>{error}</Text>
@@ -174,14 +167,11 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
           )}
         </View>
 
-        {/* 🔹 Token Tile Grid */}
         <TokenTileGrid
           plans={plans}
           selectedId={selectedPlan?.id ?? null}
           onSelect={(plan) => setSelectedPlan(plan)}
         />
-
-        {/* 🔹 Buy Button */}
 
         <View style={styles.bottomButton}>
           <CustomButton
@@ -196,6 +186,8 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
             onPress={handleBuyToken}
           />
         </View>
+
+        <View style={{ height: 60 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -210,6 +202,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   container: {
+    flexGrow: 1, // ✅ important for iOS scroll
     paddingHorizontal: 20,
     paddingBottom: 40,
   },
@@ -251,7 +244,6 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size13,
     fontFamily: FONTS.UrbanistMedium,
   },
-
   bottomButton: {
     justifyContent: "center",
     alignItems: "center",
