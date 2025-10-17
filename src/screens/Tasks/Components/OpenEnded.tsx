@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
   commentStatus: {
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistMedium,
-    marginLeft: 8,
+    // marginLeft: 8,
     marginVertical: 10,
   },
 
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   },
 
   fileTile: {
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
     marginTop: 15,
   },
 
