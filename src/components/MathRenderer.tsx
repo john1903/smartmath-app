@@ -5,10 +5,13 @@ import {
   ViewStyle,
   StyleProp,
   TextStyle,
+  Alert,
 } from "react-native";
 import MathJax from "react-native-mathjax";
 import { normalizeLatex } from "../utils/helpers";
 import COLORS from "../theme/colors";
+import { setLoading } from "../store/loading";
+import { useDispatch } from "react-redux";
 
 interface MathRendererProps {
   formula: any;
@@ -24,6 +27,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
   fontSize = 16,
 }) => {
   const color = selected ? COLORS.white : COLORS.black;
+  const dispatch = useDispatch();
 
   return (
     <View style={[styles.container, style]}>
@@ -70,6 +74,12 @@ const MathRenderer: React.FC<MathRendererProps> = ({
           },
         }}
         style={{ backgroundColor: "transparent" }}
+        onLoadStart={() => dispatch(setLoading(true))}
+        onLoadEnd={() =>
+          setTimeout(() => {
+            dispatch(setLoading(false));
+          }, 1000)
+        }
       />
     </View>
   );

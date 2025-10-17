@@ -66,14 +66,14 @@ export const TasksApi = api.injectEndpoints({
       },
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
-          dispatch(setLoading(true));
+          // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
           console.log("exercise question :::::: ", JSON.stringify(res?.data));
 
-          setTimeout(() => {
-            dispatch(setLoading(false));
-          }, 4000);
+          // setTimeout(() => {
+          //   dispatch(setLoading(false));
+          // }, 4000);
         } catch (error) {
           setTimeout(() => {
             dispatch(setLoading(false));

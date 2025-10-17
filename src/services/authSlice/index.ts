@@ -4,7 +4,6 @@ import {
   userLoginEndPoint,
   userRegisterEndPoint,
 } from "../../config/endPoints";
-import { persistor, store } from "../../store";
 
 import { setRefreshToken, setToken, setUser } from "../../store/auth";
 import { setLoading } from "../../store/loading";
@@ -115,11 +114,16 @@ export const AuthApi = api.injectEndpoints({
     }),
 
     updateUser: builder.mutation({
-      query: ({ data }: any) => ({
-        url: "/users/me",
-        method: "PATCH",
-        body: data,
-      }),
+      query: ({ data }: any) => {
+        console.log("data for update user :::: ", JSON.stringify(data));
+        return {
+          url: "/users/me",
+          method: "PATCH",
+          body: data,
+          // formData: true,
+        };
+      },
+
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { meta, data }: any = await queryFulfilled; // meta has response info
@@ -128,10 +132,12 @@ export const AuthApi = api.injectEndpoints({
           console.log("user data ::: ", JSON.stringify(data));
 
           if (status === 204) {
-            showSuccessToast(
-              i18n.t("congratulations"),
-              i18n.t("requestMessages.user_update_successfully")
-            );
+            setTimeout(() => {
+              showSuccessToast(
+                i18n.t("congratulations"),
+                i18n.t("requestMessages.user_update_successfully")
+              );
+            }, 1000);
           }
         } catch (err: any) {
           console.log("Update user error ::::::::::: ", err);
@@ -162,12 +168,10 @@ export const AuthApi = api.injectEndpoints({
             JSON.stringify(data)
           );
 
-          dispatch(setLoading(false));
-          // dispatch(setUser(data?.));
-          showSuccessToast(
-            i18n.t("congratulations"),
-            i18n.t("requestMessages.file_update_successfully")
-          );
+          // showSuccessToast(
+          //   i18n.t("congratulations"),
+          //   i18n.t("requestMessages.file_update_successfully")
+          // );
         } catch (e: any) {
           console.log(
             "update user file response error :::::::::::: ",
