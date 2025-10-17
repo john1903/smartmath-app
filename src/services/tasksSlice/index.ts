@@ -128,7 +128,7 @@ export const TasksApi = api.injectEndpoints({
       providesTags: [{ type: "submitAnswer", id: 1 }],
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
-          dispatch(setLoading(true));
+          // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
           console.log(
