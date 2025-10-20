@@ -14,6 +14,8 @@ import TrueFalse from "./Components/TrueFalse";
 import SingleChoice from "./Components/SingleChoice";
 import OpenEnded from "./Components/OpenEnded";
 import Matching from "./Components/Matching";
+import { setLoading } from "../../store/loading";
+import { useDispatch } from "react-redux";
 
 interface ExerciseData {
   id?: number;
@@ -45,6 +47,7 @@ interface TaskDetailProps {
 }
 
 const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [appToken] = useState<number>(10);
   const [question, setQuestion] = useState<ExerciseResponse | null>(null);
@@ -116,6 +119,10 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
         if (res?.data) {
           setQuestion(res.data);
         }
+        // setTimeout(() => {
+        //   dispatch(setLoading(false));
+        // }, 1000);
+
         console.log("Exercise response:", JSON.stringify(res?.data, null, 2));
       })
       .catch((err: any) => console.error("Fetch error", err));

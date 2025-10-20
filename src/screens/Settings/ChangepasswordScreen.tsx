@@ -18,6 +18,7 @@ import CustomButton from "../../components/CustomButton";
 import { useUpdateUserMutation } from "../../services/authSlice";
 import { setLoading } from "../../store/loading";
 import { useDispatch } from "react-redux";
+import { UpdateUserPayload } from "../../models/Auth";
 
 const ChangepasswordScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -62,7 +63,7 @@ const ChangepasswordScreen = ({ navigation }: any) => {
       dispatch(setLoading(true));
 
       try {
-        let obj = {
+        let obj: UpdateUserPayload = {
           data: {
             password: newPassword,
           },

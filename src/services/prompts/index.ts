@@ -1,5 +1,6 @@
 import { GetPromptsEndPoint } from "../../config/endPoints";
 import i18n from "../../i18n/i18n";
+import { GetPromptsResponse } from "../../models/Prompts";
 
 import { setLoading } from "../../store/loading";
 import { showErrorToast, showSuccessToast } from "../../utils/toast";
@@ -8,8 +9,8 @@ import { api } from "../api";
 
 export const PromptsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPrompts: builder.query({
-      query: (payload) => {
+    getPrompts: builder.query<GetPromptsResponse, void>({
+      query: () => {
         return {
           url: GetPromptsEndPoint,
           method: "get",
@@ -18,10 +19,7 @@ export const PromptsApi = api.injectEndpoints({
       providesTags: [{ type: "reports", id: 1 }],
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }: any) {
         try {
-          // dispatch(setLoading(true));
           const res = await queryFulfilled;
-
-          // console.log(" prompts res :::::::>>>>  ", JSON.stringify(res));
 
           setTimeout(() => {
             dispatch(setLoading(false));

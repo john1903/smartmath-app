@@ -151,7 +151,7 @@
   "notEnoughTokenstoSubmit": "Not enough tokens available. You need at least 50 tokens to submit.",
   "answerSubmittedSuccessfully": "Answer submitted successfully!",
   "somethingWentWrong": "Something went wrong!",
-  "question1": "Question 1:",
+  "question1": "Question:",
   "selectFileToUpload": "Select File to Upload",
   "sypportedFormate": "Supported Format: Jpeg, PNG & PDF",
   "maxSize": "(10mb max)",
@@ -226,5 +226,11 @@
   "galleryPermissionDenied": "Gallery permission is required.",
   "fileTooLarge": "File size exceeds 10MB.",
   "fileUploadedSuccessfully": "File uploaded successfully!",
-  "uploadFailed": "Upload failed. Try again."
+  "uploadFailed": "Upload failed. Try again.",
+  "cameraPermissionRequired": "Camera permission is required!",
+  "galleryPermissionRequired": "Gallery permission is required!",
+  "profileUpdateSuccessfully": "Profile updated successfully!",
+  "fileUploadError": "File uploaded but no file ID returned",
+  "selectImage": "Select Image",
+  "chooseAnOption": "Choose an option"
 }

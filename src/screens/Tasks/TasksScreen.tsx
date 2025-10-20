@@ -25,6 +25,7 @@ import FilterBottomSheet from "../../components/FilterBottomSheet";
 import { useLazyGetAllExerciseQuery } from "../../services/tasksSlice";
 import { setLoading } from "../../store/loading";
 import { useLazyGetCategoriesQuery } from "../../services/categoriesSlice";
+import { ExerciseItem } from "../../models/Exercises";
 
 const STATUS_KEYS = [
   "all",
@@ -50,7 +51,9 @@ interface FilterValues {
 const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { allExercise } = useSelector((state: any) => state?.tasks);
+  const { allExercise }: { allExercise: ExerciseItem[] } = useSelector(
+    (state: any) => state?.tasks
+  );
 
   const [activeStatus, setActiveStatus] = useState<StatusKey>("all");
   const [searchText, setSearchText] = useState("");
@@ -117,7 +120,7 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       setHasMore(true);
 
       fetchExercises(0);
-      getCategories({});
+      getCategories();
 
       return () => {
         setFilters({});
@@ -132,7 +135,7 @@ const TasksScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     setPage(0);
     setHasMore(true);
     fetchExercises(0, true);
-    getCategories({});
+    getCategories();
   }, [filters, searchText, activeStatus]);
 
   const loadMore = async () => {

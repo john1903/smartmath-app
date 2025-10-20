@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { setLoading } from "../../store/loading";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
+import { LoginRequest } from "../../models/Auth";
 
 interface SignInScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -31,8 +32,8 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState<string>("hani4u13@gmail.com");
-  const [password, setPassword] = useState<string>("12345678");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
 
   const validate = (): boolean => {
@@ -63,9 +64,14 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   };
 
   const loginFunc = async (): Promise<void> => {
+    const payload: LoginRequest = {
+      username: email,
+      password,
+    };
+
     if (!validate()) return;
     dispatch(setLoading(true));
-    await loginUser({ data: { username: email, password } });
+    await loginUser({ data: payload });
   };
 
   return (

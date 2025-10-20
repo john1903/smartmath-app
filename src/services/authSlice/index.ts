@@ -4,7 +4,15 @@ import {
   userLoginEndPoint,
   userRegisterEndPoint,
 } from "../../config/endPoints";
-import { persistor, store } from "../../store";
+import {
+  LoginRequest,
+  LoginResponse,
+  RegisterUserPayload,
+  RegisterUserResponse,
+  UpdateUserPayload,
+  UpdateUserResponse,
+} from "../../models/Auth";
+import { UploadFilePayload, UploadFileResponse } from "../../models/File";
 
 import { setRefreshToken, setToken, setUser } from "../../store/auth";
 import { setLoading } from "../../store/loading";
@@ -15,15 +23,15 @@ import i18n from "i18next";
 
 export const AuthApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    registerUser: builder.mutation({
-      query: ({ data }: any) => {
+    registerUser: builder.mutation<RegisterUserResponse, RegisterUserPayload>({
+      query: ({ data }) => {
         return {
           url: userRegisterEndPoint,
           method: "post",
           body: data,
         };
       },
-      transformResponse: (result) => result,
+      transformResponse: (result: RegisterUserResponse) => result,
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
@@ -65,15 +73,18 @@ export const AuthApi = api.injectEndpoints({
         }
       },
     }),
-    loginUser: builder.mutation({
-      query: ({ data }: any) => {
+    loginUser: builder.mutation<
+      LoginResponse,
+      { data: LoginRequest; navigation?: any }
+    >({
+      query: ({ data }) => {
         return {
           url: userLoginEndPoint,
           method: "post",
           body: data,
         };
       },
-      transformResponse: (result) => result,
+      transformResponse: (result: LoginResponse) => result,
       //   invalidatesTags: ['readUser'],
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
@@ -114,12 +125,16 @@ export const AuthApi = api.injectEndpoints({
       },
     }),
 
-    updateUser: builder.mutation({
-      query: ({ data }: any) => ({
-        url: "/users/me",
-        method: "PATCH",
-        body: data,
-      }),
+    updateUser: builder.mutation<UpdateUserResponse, UpdateUserPayload>({
+      query: ({ data }) => {
+        console.log("data for update user :::: ", JSON.stringify(data));
+        return {
+          url: "/users/me",
+          method: "PATCH",
+          body: data,
+        };
+      },
+
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
           const { meta, data }: any = await queryFulfilled; // meta has response info
@@ -128,10 +143,12 @@ export const AuthApi = api.injectEndpoints({
           console.log("user data ::: ", JSON.stringify(data));
 
           if (status === 204) {
-            showSuccessToast(
-              i18n.t("congratulations"),
-              i18n.t("requestMessages.user_update_successfully")
-            );
+            setTimeout(() => {
+              showSuccessToast(
+                i18n.t("congratulations"),
+                i18n.t("requestMessages.user_update_successfully")
+              );
+            }, 1000);
           }
         } catch (err: any) {
           console.log("Update user error ::::::::::: ", err);
@@ -141,8 +158,8 @@ export const AuthApi = api.injectEndpoints({
         }
       },
     }),
-    updateFile: builder.mutation({
-      query: ({ data }: any) => {
+    updateFile: builder.mutation<UploadFileResponse, UploadFilePayload>({
+      query: ({ data }) => {
         return {
           url: userFileEndPoint,
           method: "post",
@@ -150,23 +167,15 @@ export const AuthApi = api.injectEndpoints({
           formData: true,
         };
       },
-      transformResponse: (result) => result,
+      transformResponse: (result: UploadFileResponse) => result,
       //   invalidatesTags: ['readUser'],
       async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
         try {
           const { data } = await queryFulfilled;
-          const { navigation } = args;
 
           console.log(
             "user update file response :::::::::::: ",
             JSON.stringify(data)
-          );
-
-          dispatch(setLoading(false));
-          // dispatch(setUser(data?.));
-          showSuccessToast(
-            i18n.t("congratulations"),
-            i18n.t("requestMessages.file_update_successfully")
           );
         } catch (e: any) {
           console.log(

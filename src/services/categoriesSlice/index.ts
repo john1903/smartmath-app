@@ -1,5 +1,6 @@
 import { GetCategoriesEndPoint } from "../../config/endPoints";
 import i18n from "../../i18n/i18n";
+import { GetCategoriesResponse } from "../../models/Categories";
 import { setAllCategories } from "../../store/categories";
 
 import { setLoading } from "../../store/loading";
@@ -9,8 +10,8 @@ import { api } from "../api";
 
 export const CategoriesApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getCategories: builder.query({
-      query: (payload) => {
+    getCategories: builder.query<GetCategoriesResponse, void>({
+      query: () => {
         let params = `?page=0&size=500&sort=asc`;
         return {
           url: `${GetCategoriesEndPoint}${params}`,

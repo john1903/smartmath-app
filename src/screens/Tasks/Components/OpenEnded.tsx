@@ -122,7 +122,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
               }
 
               const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 quality: 1,
               });
 
@@ -332,7 +331,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
 
     const fetchPrompts = async () => {
       try {
-        const res = await getPrompts({}).unwrap();
+        const res = await getPrompts().unwrap();
         if (res?.usage !== undefined && res?.limit !== undefined) {
           const available = res.limit - res.usage;
           setAppToken(available >= 0 ? available : 0);
@@ -611,6 +610,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 textStyle={[styles.buttonText, { color: COLORS.black }]}
                 onPress={() => {
                   setWaitingPopup(false);
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 1000);
                 }}
               />
             </View>
@@ -651,7 +653,7 @@ const styles = StyleSheet.create({
   commentStatus: {
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistMedium,
-    marginLeft: 8,
+    // marginLeft: 8,
     marginVertical: 10,
   },
 
@@ -722,7 +724,7 @@ const styles = StyleSheet.create({
   },
 
   fileTile: {
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
     marginTop: 15,
   },
 
