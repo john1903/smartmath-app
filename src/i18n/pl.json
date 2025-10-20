@@ -151,7 +151,7 @@
   "notEnoughTokenstoSubmit": "Brak wystarczającej liczby tokenów. Potrzebujesz co najmniej 50 tokenów, aby przesłać.",
   "answerSubmittedSuccessfully": "Odpowiedź została pomyślnie wysłana!",
   "somethingWentWrong": "Coś poszło nie tak!",
-  "question1": "Pytanie 1:",
+  "question1": "Pytanie:",
   "selectFileToUpload": "Wybierz plik do przesłania",
   "sypportedFormate": "Obsługiwane formaty: JPEG, PNG i PDF",
   "maxSize": "(maks. 10 MB)",

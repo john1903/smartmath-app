@@ -109,7 +109,12 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
       {question.illustrations && question.illustrations.length > 0 && (
         <ImageCarousel illustrations={question.illustrations} />
       )}
-      <View style={{ marginHorizontal: 25 }}>
+      <View
+        style={{
+          width: "85%",
+          alignSelf: "center",
+        }}
+      >
         <View>
           <Text style={styles.question}>
             Question 1: {question?.text ?? ""}
@@ -123,7 +128,14 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
           </View>
         </View>
 
-        <View>
+        <View
+          style={{
+            width: "90%",
+            justifyContent: "center",
+            alignSelf: "center",
+            marginTop: 20,
+          }}
+        >
           {Object.entries(question?.statements || {}).map(
             ([key, statement], index) => {
               const letter = getLetter(index);
@@ -132,21 +144,19 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
                   key={key}
                   style={{ marginVertical: 10, marginBottom: 50 }}
                 >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text style={styles.optionLetter}>{`${letter})`}</Text>
+                  <View style={{ width: "100%", alignItems: "flex-start" }}>
                     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                      <MathRenderer
-                        formula={statement}
-                        // style={{ marginRight: 4 }}
-                        fontSize={14}
-                      />
+                      <Text style={[styles.optionLetter]}>{`${letter})`}</Text>
+                      <View style={{ flexBasis: "80%" }}>
+                        <MathRenderer formula={statement} fontSize={14} />
+                      </View>
                     </View>
                   </View>
 
                   <View
                     style={{
                       flexDirection: "row",
-                      gap: 20,
+                      gap: 10,
                       marginTop: 5,
                       justifyContent: "center",
                     }}
@@ -227,31 +237,32 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
               );
             }
           )}
-          <View style={styles.buttons}>
-            {submitted && isCorrect === false && (
-              <CustomButton
-                title={t("retry")}
-                buttonStyle={[styles.btnStyle, styles.retryBtn]}
-                textStyle={styles.retryText}
-                onPress={handleRetry}
-              />
-            )}
+        </View>
 
+        <View style={styles.buttons}>
+          {submitted && isCorrect === false && (
             <CustomButton
-              title={submitted ? t("next") : t("submit")}
-              buttonStyle={[
-                styles.btnStyle,
-                styles.submitBtn,
-                !allAnswered && !submitted && styles.submitBtnDisabled,
-              ]}
-              textStyle={[
-                styles.submitText,
-                !allAnswered && !submitted && styles.submitTextDisabled,
-              ]}
-              disabled={!allAnswered && !submitted}
-              onPress={handleSubmit}
+              title={t("retry")}
+              buttonStyle={[styles.btnStyle, styles.retryBtn]}
+              textStyle={styles.retryText}
+              onPress={handleRetry}
             />
-          </View>
+          )}
+
+          <CustomButton
+            title={submitted ? t("next") : t("submit")}
+            buttonStyle={[
+              styles.btnStyle,
+              styles.submitBtn,
+              !allAnswered && !submitted && styles.submitBtnDisabled,
+            ]}
+            textStyle={[
+              styles.submitText,
+              !allAnswered && !submitted && styles.submitTextDisabled,
+            ]}
+            disabled={!allAnswered && !submitted}
+            onPress={handleSubmit}
+          />
         </View>
       </View>
     </View>
@@ -273,9 +284,10 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size16,
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.black,
+    marginRight: 5,
   },
   btnStyle: {
-    width: "45%",
+    width: "48%",
     paddingVertical: 14,
     borderRadius: 100,
     marginTop: 20,
@@ -297,7 +309,11 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistMedium,
   },
-  buttons: { flexDirection: "row", gap: 20, justifyContent: "center" },
+  buttons: {
+    flexDirection: "row",
+    gap: 10,
+    justifyContent: "center",
+  },
   retryBtn: { backgroundColor: COLORS.black },
   retryText: {
     fontSize: FONTSIZE.size14,
