@@ -12,6 +12,7 @@ import {
 } from "../services/authSlice";
 import { showErrorToast, showSuccessToast } from "../utils/toast";
 import { useTranslation } from "react-i18next";
+import { UploadFilePayload } from "../models/File";
 
 interface ProfileImagePickerProps {
   size?: number;
@@ -76,8 +77,9 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
         type: "image/jpeg",
       } as any);
 
+      const payload: UploadFilePayload = { data: formData };
       console.log("Uploading compressed image...");
-      const uploadedFile = await updateFile({ data: formData }).unwrap();
+      const uploadedFile = await updateFile(payload).unwrap();
 
       if (uploadedFile?.id) {
         const updatePayload = { data: { avatarFileId: uploadedFile.id } };

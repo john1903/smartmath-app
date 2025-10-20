@@ -2,6 +2,11 @@ import {
   recommendedExerciseEndPoint,
   userDetailEndPoint,
 } from "../../config/endPoints";
+import {
+  mapRecommendedExerciseResponse,
+  RecommendedExerciseModel,
+} from "../../models/RecommendedExercise";
+import { mapUserDetailResponse, UserModel } from "../../models/User";
 import { setUser } from "../../store/auth";
 import { setAllRecommendedExercise } from "../../store/home";
 import { setLoading } from "../../store/loading";
@@ -10,47 +15,42 @@ import { api, formHeader } from "../api";
 
 export const HomeApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    userDetail: builder.query({
-      query: (payload) => {
+    userDetail: builder.query<UserModel, void>({
+      query: () => {
         return {
           url: userDetailEndPoint,
           method: "get",
         };
       },
+      transformResponse: (response: any) => mapUserDetailResponse(response),
       async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
         try {
           dispatch(setLoading(true));
-          const res = await queryFulfilled;
-
-          // console.log("user res :::::::>>>>  ", JSON.stringify(res?.data));
-          dispatch(setUser(res?.data));
-          dispatch(setLoading(false));
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data));
         } catch (error) {
-          // console.log("user res :::::::>>>>  ", JSON.stringify(error));
-
+          console.log("user detail error :::::::>>>>", error);
+        } finally {
           dispatch(setLoading(false));
         }
       },
     }),
-    getAllRecommendedExercise: builder.query({
-      query: (payload) => {
+    getAllRecommendedExercise: builder.query<RecommendedExerciseModel[], void>({
+      query: () => {
         return {
           url: recommendedExerciseEndPoint,
           method: "get",
         };
       },
-      async onQueryStarted(arg, { dispatch, getState, queryFulfilled }) {
+      transformResponse: (response: any) =>
+        mapRecommendedExerciseResponse(response),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
-          // dispatch(setLoading(true));
-          const res = await queryFulfilled;
-
-          // console.log(
-          //   " recommended exercise res :::::::>>>>  ",
-          //   JSON.stringify(res?.data)
-          // );
-          dispatch(setAllRecommendedExercise(res?.data));
-          dispatch(setLoading(false));
+          const { data } = await queryFulfilled;
+          dispatch(setAllRecommendedExercise(data));
         } catch (error) {
+          console.log("Recommended exercise error :::::::>>>>", error);
+        } finally {
           dispatch(setLoading(false));
         }
       },

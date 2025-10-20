@@ -20,6 +20,7 @@ import { useUpdateUserMutation } from "../../services/authSlice";
 import { useDispatch } from "react-redux";
 import { setLoading } from "../../store/loading";
 import { useAppSelector } from "../../store";
+import { UpdateUserPayload } from "../../models/Auth";
 
 const EditProfileScreen = ({ navigation }: any) => {
   const dispatch = useDispatch();
@@ -36,7 +37,6 @@ const EditProfileScreen = ({ navigation }: any) => {
 
   const [errors, setErrors] = useState<any>({});
 
-  // ✅ Validation before submit
   const validate = () => {
     const newErrors: any = {};
 
@@ -50,22 +50,22 @@ const EditProfileScreen = ({ navigation }: any) => {
     ) {
       newErrors.email = t("invalid_email_or_phone");
     }
-    // if (!phone.trim()) newErrors.phone = t("phone_required");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSave = async () => {
-    if (!validate()) return; // ❌ Stop if validation fails
+    if (!validate()) return;
 
     dispatch(setLoading(true));
+
     try {
-      const obj = {
+      const obj: UpdateUserPayload = {
         data: {
           firstName: FName,
           lastName: LName,
-          username: email,
+          email,
           phone,
           avatarFileId: user?.avatar?.id,
         },
@@ -73,7 +73,6 @@ const EditProfileScreen = ({ navigation }: any) => {
 
       console.log("data of object user update ", obj);
       await updateUser(obj).unwrap();
-      // maybe show success toast or navigate back
     } catch (err) {
       console.log("Update failed", JSON.stringify(err));
     } finally {
@@ -102,7 +101,6 @@ const EditProfileScreen = ({ navigation }: any) => {
           />
         </View>
 
-        {/* Inputs with inline errors */}
         <View>
           <View style={styles.inputWrapper}>
             <AnimatedInput
@@ -155,9 +153,6 @@ const EditProfileScreen = ({ navigation }: any) => {
                 setErrors((prev: any) => ({ ...prev, phone: "" }));
               }}
             />
-            {/* {errors.phone ? (
-              <Text style={styles.errorText}>{errors.phone}</Text>
-            ) : null} */}
           </View>
         </View>
 

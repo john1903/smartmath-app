@@ -24,24 +24,13 @@ import { useDispatch } from "react-redux";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
 import { setLoading } from "../../store/loading";
+import { RegisterUserPayload } from "../../models/Auth";
 
 // ----------------------
 // ✅ Interface Definitions
 // ----------------------
 interface SignUpScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
-}
-
-interface RegisterUserData {
-  email: string;
-  firstName: string;
-  lastName: string;
-  password: string;
-}
-
-interface RegisterUserPayload {
-  data: RegisterUserData;
-  navigation: SignUpScreenProps["navigation"];
 }
 
 interface ValidationErrors {
@@ -59,10 +48,10 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const { t } = useTranslation();
 
-  const [FName, setFName] = useState<string>("");
-  const [LName, setLName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [FName, setFName] = useState("");
+  const [LName, setLName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState<ValidationErrors>({});
 

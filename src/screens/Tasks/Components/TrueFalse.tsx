@@ -113,6 +113,7 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
         style={{
           width: "85%",
           alignSelf: "center",
+          marginBottom: 20,
         }}
       >
         <View>

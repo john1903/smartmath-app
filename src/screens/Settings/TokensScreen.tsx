@@ -58,48 +58,6 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
   const progress = Math.min(usage / limit, 1);
   const limitExceeded = usage >= limit;
 
-  // const fetchPrompts = useCallback(async () => {
-  //   try {
-  //     dispatch(setLoading(true));
-  //     setIsLoading(true);
-  //     setError(null);
-
-  //     const res = await getPrompts({}).unwrap();
-  //     setData(res);
-
-  //     setPlans([
-  //       { id: 1, price: "$4.99", tokens: "100 Tokens" },
-  //       { id: 2, price: "$9.99", tokens: "500 Tokens" },
-  //       { id: 3, price: "$14.99", tokens: "1000 Tokens", save: "Save 25%" },
-  //       { id: 4, price: "$24.99", tokens: "2000 Tokens", save: "Save 30%" },
-  //       { id: 5, price: "$49.99", tokens: "5000 Tokens", save: "Save 40%" },
-  //       { id: 6, price: "$99.99", tokens: "10000 Tokens", save: "Save 50%" },
-  //     ]);
-  //   } catch (err) {
-  //     setError("Failed to fetch data");
-  //   } finally {
-  //     setIsLoading(false);
-  //     dispatch(setLoading(false));
-  //   }
-  // }, []);
-
-  // const onRefresh = useCallback(async () => {
-  //   try {
-  //     setRefreshing(true);
-  //     await fetchPrompts();
-  //   } finally {
-  //     setRefreshing(false);
-  //   }
-  // }, [fetchPrompts]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     (async () => {
-  //       await fetchPrompts();
-  //     })();
-  //   }, [fetchPrompts])
-  // );
-
   const fetchPrompts = useCallback(
     async (showGlobalLoader = true) => {
       try {
@@ -107,7 +65,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
         setIsLoading(true);
         setError(null);
 
-        const res = await getPrompts({}).unwrap();
+        const res = await getPrompts().unwrap();
         setData(res);
 
         setPlans([

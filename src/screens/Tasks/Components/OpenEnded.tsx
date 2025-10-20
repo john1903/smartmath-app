@@ -331,7 +331,7 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
 
     const fetchPrompts = async () => {
       try {
-        const res = await getPrompts({}).unwrap();
+        const res = await getPrompts().unwrap();
         if (res?.usage !== undefined && res?.limit !== undefined) {
           const available = res.limit - res.usage;
           setAppToken(available >= 0 ? available : 0);

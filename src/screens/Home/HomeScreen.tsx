@@ -33,6 +33,8 @@ import { setLoading } from "../../store/loading";
 import { setUser } from "../../store/auth";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
+import { UserModel } from "../../models/User";
+import { ExerciseStats } from "../../models/ExerciseStats";
 
 interface HomeScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -45,12 +47,6 @@ interface Exercise {
   [key: string]: any;
 }
 
-interface User {
-  firstName?: string;
-  avatar?: { uri: string };
-  [key: string]: any;
-}
-
 interface ExerciseStatus {
   totalAnswers: number;
   correctAnswers: number;
@@ -58,7 +54,7 @@ interface ExerciseStatus {
 }
 
 interface RootState {
-  auth: { user: User };
+  auth: { user: UserModel };
   home: { allRecommendedExercise: Exercise[] };
 }
 
@@ -76,7 +72,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 
   const [userExerciseStatus, setUserExerciseStatus] =
-    useState<ExerciseStatus>();
+    useState<ExerciseStats | null>(null);
+
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
   const [calendarVisible, setCalendarVisible] = useState(false);
@@ -91,30 +88,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     "single_choice",
   ];
   const [activeCategory, setActiveCategory] = useState(categories[0]);
-
-  // /** ✅ Format date for API */
-  // const formatDateTime = (date: Date, type: "from" | "to"): string => {
-  //   const d = new Date(date);
-
-  //   if (type === "from") {
-  //     d.setHours(0, 0, 0, 0); // start of day
-  //   } else if (type === "to") {
-  //     // current time - 3 seconds
-  //     const now = new Date();
-  //     const threeSecondsAgo = new Date(now.getTime() - 3000);
-  //     d.setHours(
-  //       threeSecondsAgo.getHours(),
-  //       threeSecondsAgo.getMinutes(),
-  //       threeSecondsAgo.getSeconds(),
-  //       0
-  //     );
-  //   }
-
-  //   const pad = (n: number) => String(n).padStart(2, "0");
-  //   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
-  //     d.getDate()
-  //   )}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  // };
 
   const formatDateTime = (date: Date, type: "from" | "to"): string => {
     const d = new Date(date);
@@ -174,14 +147,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       setToDate(null);
       fetchExerciseStatus();
 
-      triggerUserDetail({})
+      triggerUserDetail()
         .unwrap()
-        .then((res: User) => {
+        .then((res: UserModel) => {
           if (res) dispatch(setUser(res));
         })
         .catch((err: any) => console.log("User detail error:", err));
 
-      getAllRecommendedExercise({});
+      getAllRecommendedExercise().unwrap();
     }, [dispatch, triggerUserDetail, getAllRecommendedExercise])
   );
 
@@ -231,7 +204,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await getAllRecommendedExercise({});
+      await getAllRecommendedExercise().unwrap();
     } catch (err) {
       console.log("Refresh error", err);
     } finally {
