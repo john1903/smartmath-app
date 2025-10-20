@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../theme/colors";
 import EditPencilIcon from "../../assets/svgs/EditPencilIcon.svg";
@@ -9,12 +10,12 @@ import {
   useUpdateFileMutation,
   useUpdateUserMutation,
 } from "../services/authSlice";
-import { setLoading } from "../store/loading";
 import { showErrorToast, showSuccessToast } from "../utils/toast";
+import { useTranslation } from "react-i18next";
 
 interface ProfileImagePickerProps {
   size?: number;
-  initialImage?: string; // remote image if user already has one
+  initialImage?: string;
   onImagePicked?: (uri: string) => void;
 }
 
@@ -25,135 +26,110 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
   onImagePicked,
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [updateFile, { isLoading }] = useUpdateFileMutation();
   const [updateUser] = useUpdateUserMutation();
-
   const [image, setImage] = useState<string | undefined>(initialImage);
 
-  const pickFromGallery = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
+  const requestPermission = async (type: "camera" | "gallery") => {
+    if (type === "camera") {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        showErrorToast(t("cameraPermissionRequired"));
+        return false;
+      }
+    } else {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        showErrorToast(t("galleryPermissionRequired"));
+        return false;
+      }
+    }
+    return true;
+  };
 
-    if (result.canceled) return;
-
-    const image = result.assets[0];
-    setImage(image.uri);
-    onImagePicked?.(image.uri);
-
-    // dispatch(setLoading(true));
-
+  const compressImage = async (uri: string) => {
     try {
-      // 1. Upload file
+      const result = await ImageManipulator.manipulateAsync(uri, [], {
+        compress: 0.6,
+        format: ImageManipulator.SaveFormat.JPEG,
+      });
+      return result.uri;
+    } catch (error) {
+      console.log("Compression failed", error);
+      return uri;
+    }
+  };
+
+  const handleImageUpload = async (uri: string) => {
+    try {
+      const compressedUri = await compressImage(uri);
+      setImage(compressedUri);
+      onImagePicked?.(compressedUri);
+
       const formData = new FormData();
       formData.append("category", "USER");
       formData.append("file", {
-        uri: image.uri,
+        uri: compressedUri,
         name: "profile.jpg",
         type: "image/jpeg",
       } as any);
 
-      console.log("Uploading file...");
+      console.log("Uploading compressed image...");
       const uploadedFile = await updateFile({ data: formData }).unwrap();
-      console.log("Uploaded file :::::::::::: ", uploadedFile);
 
-      // 2. Update user with avatarFileId
       if (uploadedFile?.id) {
-        const updatePayload = {
-          data: {
-            avatarFileId: uploadedFile.id,
-          },
-        };
-
-        console.log(
-          "Updating user with fileId ::::::::::::: ",
-          uploadedFile.id
-        );
-        const updatedUser = await updateUser(updatePayload).unwrap();
-        console.log("User updated ::::::::::::: ", updatedUser);
-
-        showSuccessToast("Profile updated successfully!");
+        const updatePayload = { data: { avatarFileId: uploadedFile.id } };
+        await updateUser(updatePayload).unwrap();
+        // showSuccessToast(t("profileUpdateSuccessfully"));
       } else {
-        showErrorToast("File upload succeeded but no file ID returned.");
+        showErrorToast(t("fileUploadError"));
       }
     } catch (err) {
-      console.log("Upload or update failed ::::::::::::::: ", err);
-      showErrorToast("Something went wrong!");
-    } finally {
-      // setTimeout(() => {
-      //   dispatch(setLoading(false));
-      // }, 500);
+      console.log("Upload failed ::::::::::::::: ", err);
+      showErrorToast(t("somethingWentWrong"));
+    }
+  };
+
+  const pickFromGallery = async () => {
+    const permission = await requestPermission("gallery");
+    if (!permission) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const selected = result.assets[0];
+      await handleImageUpload(selected.uri);
     }
   };
 
   const pickFromCamera = async () => {
+    const permission = await requestPermission("camera");
+    if (!permission) return;
+
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.8,
+      quality: 1,
     });
 
     if (!result.canceled) {
-      console.log("result :::::::: result:::::::::: ", result);
-
-      const image = result.assets[0];
-      setImage(image.uri);
-      onImagePicked?.(image.uri);
-
-      // dispatch(setLoading(true));
-      try {
-        const formData = new FormData();
-        formData.append("category", "USER");
-        formData.append("file", {
-          uri: image.uri,
-          name: "profile.jpg",
-          type: "image/jpeg", // or "image/png"
-        });
-
-        console.log("FormData sending...");
-
-        // const res = await updateFile({ data: formData });
-        // console.log("res:::::::::::::: ", res);
-
-        console.log("Uploading file...");
-        const uploadedFile = await updateFile({ data: formData }).unwrap();
-        console.log("Uploaded file :::::::::::: ", uploadedFile);
-
-        // 2. Update user with avatarFileId
-        if (uploadedFile?.id) {
-          const updatePayload = {
-            data: {
-              avatarFileId: uploadedFile.id,
-            },
-          };
-
-          console.log(
-            "Updating user with fileId camera ::::::::::::: ",
-            uploadedFile.id
-          );
-          const updatedUser = await updateUser(updatePayload).unwrap();
-          console.log("User updated camera ::::::::::::: ", updatedUser);
-
-          showSuccessToast("Profile updated successfully!");
-        } else {
-          showErrorToast("File upload succeeded but no file ID returned.");
-        }
-      } catch (err) {
-        console.log("Upload failed", err);
-      } finally {
-        // dispatch(setLoading(false));
-      }
+      const selected = result.assets[0];
+      await handleImageUpload(selected.uri);
     }
   };
 
   const handleEdit = () => {
-    Alert.alert("Select Image", "Choose an option", [
-      { text: "Camera", onPress: pickFromCamera },
-      { text: "Gallery", onPress: pickFromGallery },
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("selectImage"), t("chooseAnOption"), [
+      { text: t("camera"), onPress: pickFromCamera },
+      { text: t("gallery"), onPress: pickFromGallery },
+      { text: t("cancel"), style: "cancel" },
     ]);
   };
 
@@ -162,7 +138,7 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
       <View style={[styles.imageContainer, styles.image]}>
         <Image
           source={
-            image ? { uri: image } : require("../../assets/images/avatar.png") // ✅ local placeholder
+            image ? { uri: image } : require("../../assets/images/avatar.png")
           }
           style={styles.image}
         />
@@ -181,8 +157,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-
-    // overflow: "hidden",
   },
   image: {
     width: imageSize,

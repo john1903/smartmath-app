@@ -122,7 +122,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
               }
 
               const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 quality: 1,
               });
 
@@ -611,6 +610,9 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
                 textStyle={[styles.buttonText, { color: COLORS.black }]}
                 onPress={() => {
                   setWaitingPopup(false);
+                  setTimeout(() => {
+                    navigation.goBack();
+                  }, 1000);
                 }}
               />
             </View>
