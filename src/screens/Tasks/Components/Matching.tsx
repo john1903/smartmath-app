@@ -114,7 +114,11 @@ const Matching: React.FC<MatchingProps> = ({ question, onPress, answer }) => {
           </View>
         </View>
 
-        <View>
+        <View
+          style={{
+            marginTop: 20,
+          }}
+        >
           {Object.entries(question.optionsRowFirst).map(([key, label]) => (
             <OptionButton
               key={key}

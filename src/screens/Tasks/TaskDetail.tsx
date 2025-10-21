@@ -17,30 +17,6 @@ import Matching from "./Components/Matching";
 import { setLoading } from "../../store/loading";
 import { useDispatch } from "react-redux";
 
-interface ExerciseData {
-  id?: number;
-  title?: string;
-  description?: string;
-  difficultyLevel?: string;
-  maxPoints?: number;
-  exerciseType?:
-    | "MULTIPLE_CHOICE"
-    | "TRUE_FALSE"
-    | "SINGLE_CHOICE"
-    | "OPEN_ENDED"
-    | "MATCHING";
-  illustrations?: { id: number; uri: string }[];
-}
-
-interface ExerciseResponse {
-  exercise: ExerciseData;
-  answer?: {
-    feedbackStatus?: string;
-    answerText?: string;
-    [key: string]: any;
-  };
-}
-
 interface TaskDetailProps {
   navigation: any;
   route: any;
@@ -50,7 +26,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [appToken] = useState<number>(10);
-  const [question, setQuestion] = useState<ExerciseResponse | null>(null);
+  const [question, setQuestion] = useState(null);
 
   const [getExercise] = useLazyGetExerciseQuery();
 
@@ -62,7 +38,7 @@ const TaskDetail: React.FC<TaskDetailProps> = ({ navigation, route }) => {
     });
   };
 
-  const renderQuestion = (q: ExerciseResponse | null) => {
+  const renderQuestion = (q: any) => {
     if (!q?.exercise) return null;
 
     switch (q.exercise.exerciseType) {

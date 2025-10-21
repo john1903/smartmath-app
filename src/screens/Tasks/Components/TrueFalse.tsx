@@ -117,9 +117,7 @@ const TrueFalse: React.FC<TrueFalseProps> = ({ question, onPress, answer }) => {
         }}
       >
         <View>
-          <Text style={styles.question}>
-            Question 1: {question?.text ?? ""}
-          </Text>
+          <Text style={styles.question}>{t("question1")}</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
             <MathRenderer
               formula={question.description}

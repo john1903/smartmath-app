@@ -126,7 +126,11 @@ const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           </View>
         </View>
 
-        <View>
+        <View
+          style={{
+            marginTop: 20,
+          }}
+        >
           {Object.entries(question.options).map(([key, value]) => {
             let correct: boolean | null = null;
 

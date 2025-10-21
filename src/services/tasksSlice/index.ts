@@ -7,6 +7,7 @@ import {
   SubmitExerciseAnswerPayload,
   SubmitExerciseAnswerResponse,
 } from "../../models/ExerciseAnswer";
+import { ExerciseResponse } from "../../models/ExerciseDetail";
 import { ExerciseItem } from "../../models/Exercises";
 import { ExerciseStats } from "../../models/ExerciseStats";
 
@@ -71,7 +72,7 @@ export const TasksApi = api.injectEndpoints({
         }
       },
     }),
-    getExercise: builder.query({
+    getExercise: builder.query<ExerciseResponse, { id: number }>({
       query: (payload) => {
         return {
           url: `${SingleExerciseEndPoint}/${payload?.id}`,
@@ -83,7 +84,7 @@ export const TasksApi = api.injectEndpoints({
           // dispatch(setLoading(true));
           const res = await queryFulfilled;
 
-          console.log("exercise question :::::: ", JSON.stringify(res?.data));
+          console.log("exercise question :::::: ", JSON.stringify(res));
 
           // setTimeout(() => {
           //   dispatch(setLoading(false));

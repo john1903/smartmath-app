@@ -136,7 +136,11 @@ const SingleChoice: React.FC<SingleChoiceProps> = ({
           </View>
         </View>
 
-        <View>
+        <View
+          style={{
+            marginTop: 20,
+          }}
+        >
           {Object.entries(question.options).map(([key, value]) => {
             let optionCorrectness: boolean | null = null;
 

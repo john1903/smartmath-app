@@ -232,5 +232,9 @@
   "profileUpdateSuccessfully": "Profil został pomyślnie zaktualizowany!",
   "fileUploadError": "Plik został przesłany, ale nie zwrócono identyfikatora pliku",
   "selectImage": "Wybierz obraz",
-  "chooseAnOption": "Wybierz opcję"
+  "chooseAnOption": "Wybierz opcję",
+  "pending": "Oczekujące",
+  "failed": "Niepowodzenie",
+  "inprogress": "W toku",
+  "confirm": "Potwierdź"
 }

@@ -71,10 +71,10 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
         setPlans([
           { id: 1, price: "$4.99", tokens: "100 Tokens" },
           { id: 2, price: "$9.99", tokens: "500 Tokens" },
-          { id: 3, price: "$14.99", tokens: "1000 Tokens", save: "Save 25%" },
-          { id: 4, price: "$24.99", tokens: "2000 Tokens", save: "Save 30%" },
-          { id: 5, price: "$49.99", tokens: "5000 Tokens", save: "Save 40%" },
-          { id: 6, price: "$99.99", tokens: "10000 Tokens", save: "Save 50%" },
+          { id: 3, price: "$14.99", tokens: "1000 Tokens", save: "25%" },
+          { id: 4, price: "$24.99", tokens: "2000 Tokens", save: "30%" },
+          { id: 5, price: "$49.99", tokens: "5000 Tokens", save: "40%" },
+          { id: 6, price: "$99.99", tokens: "10000 Tokens", save: "50%" },
         ]);
       } catch (err) {
         setError("Failed to fetch data");
@@ -134,7 +134,7 @@ const TokensScreen: React.FC<TokensScreenProps> = ({ navigation }) => {
         <View style={styles.tokenContainer}>
           <View style={styles.tokenHeader}>
             <TokenIcon width={22} height={22} />
-            <Text style={styles.title}>{t("tokenUsage")}</Text>
+            <Text style={styles.title}>{t("token")}</Text>
           </View>
 
           {isLoading ? (

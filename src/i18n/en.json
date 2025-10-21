@@ -232,5 +232,9 @@
   "profileUpdateSuccessfully": "Profile updated successfully!",
   "fileUploadError": "File uploaded but no file ID returned",
   "selectImage": "Select Image",
-  "chooseAnOption": "Choose an option"
+  "chooseAnOption": "Choose an option",
+  "pending": "Pending",
+  "failed": "Failed",
+  "inprogress": "In Progress",
+  "confirm": "Confirm"
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useTransition } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import TokenIcon from "../../assets/svgs/TokenIcon.svg";
 import COLORS from "../theme/colors";
 import FONTSIZE from "../theme/fontsSize";
 import FONTS from "../theme/fonts";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
@@ -32,6 +33,7 @@ const TokenTileGrid: React.FC<TokenTileGridProps> = ({
   selectedId,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   const renderItem = ({ item }: { item: TokenPlan }) => {
     const isSelected = item.id === selectedId;
 
@@ -47,7 +49,7 @@ const TokenTileGrid: React.FC<TokenTileGridProps> = ({
 
         {item.save && (
           <View style={styles.saveBadge}>
-            <Text style={styles.saveText}>{item.save}</Text>
+            <Text style={styles.saveText}>{t("save") + " " + item.save}</Text>
           </View>
         )}
       </TouchableOpacity>

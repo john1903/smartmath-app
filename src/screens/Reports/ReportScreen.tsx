@@ -299,13 +299,13 @@ const ReportScreen: React.FC<ReportScreenProps> = ({ navigation }) => {
               status={item.status}
               title={
                 item.status === "SUCCESS"
-                  ? `Report ${item.id}`
+                  ? `${t("report")} ${item.id}`
                   : item.status === "PENDING"
-                  ? "Pending"
+                  ? `${t("pending")}`
                   : item.status === "FAILED"
-                  ? "Failed"
+                  ? `${t("failed")}`
                   : item.status === "IN_PROGRESS"
-                  ? "In Progress"
+                  ? `${t("inprogress")}`
                   : ""
               }
               date={formatDateForUI(item.createdAt)}
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   generateReportBtn: {
-    width: "85%",
+    width: "80%",
     alignItems: "center",
   },
   generateReportBtnTitle: {
@@ -397,6 +397,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.UrbanistSemiBold,
     color: COLORS.white,
   },
+
   whiteSheetFooterText: {
     fontSize: FONTSIZE.size14,
     fontFamily: FONTS.UrbanistMedium,

@@ -9,6 +9,7 @@ import {
   Dimensions,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { useTranslation } from "react-i18next";
@@ -105,7 +106,132 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
     }
   };
 
+  // const pickFile = async () => {
+  //   Alert.alert(
+  //     t("selectFileFrom"),
+  //     "",
+  //     [
+  //       {
+  //         text: t("camera"),
+  //         onPress: async () => {
+  //           try {
+  //             const permission =
+  //               await ImagePicker.requestCameraPermissionsAsync();
+  //             if (!permission.granted) {
+  //               showErrorToast(t("cameraPermissionDenied"));
+  //               return;
+  //             }
+
+  //             const result = await ImagePicker.launchCameraAsync({
+  //               quality: 1,
+  //             });
+
+  //             if (!result.canceled && result.assets?.length) {
+  //               let file = result.assets[0];
+
+  //               const compressed = await compressImage(file.uri);
+  //               file = { ...file, uri: compressed.uri };
+
+  //               setTimeout(async () => {
+  //                 await handleFileUpload(file);
+  //               }, 1000);
+  //             }
+  //           } catch (err) {
+  //             console.log("Camera error:", err);
+  //             showErrorToast(t("somethingWentWrong"));
+  //           }
+  //         },
+  //       },
+  //       {
+  //         text: t("gallery"),
+  //         onPress: async () => {
+  //           try {
+  //             const permission =
+  //               await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //             if (!permission.granted) {
+  //               showErrorToast(t("galleryPermissionDenied"));
+  //               return;
+  //             }
+
+  //             const result = await ImagePicker.launchImageLibraryAsync({
+  //               mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //               allowsMultipleSelection: false,
+  //               quality: 1,
+  //             });
+
+  //             if (!result.canceled && result.assets?.length) {
+  //               let file = result.assets[0];
+
+  //               const compressed = await compressImage(file.uri);
+  //               file = { ...file, uri: compressed.uri };
+
+  //               setTimeout(async () => {
+  //                 await handleFileUpload(file);
+  //               }, 1000);
+  //             }
+  //           } catch (err) {
+  //             console.log("Gallery error:", err);
+  //             showErrorToast(t("somethingWentWrong"));
+  //           }
+  //         },
+  //       },
+  //       {
+  //         text: t("document"),
+  //         onPress: async () => {
+  //           try {
+  //             const result = await DocumentPicker.getDocumentAsync({
+  //               type: ["image/png", "image/jpeg", "application/pdf"],
+  //               copyToCacheDirectory: true,
+  //               multiple: false,
+  //             });
+
+  //             if (!result.canceled && result.assets?.length) {
+  //               let file = result.assets[0];
+
+  //               // 🧠 Compress if it’s an image, skip if it’s a PDF
+  //               const mimeType =
+  //                 file.mimeType ||
+  //                 file.type ||
+  //                 (file.uri?.endsWith(".pdf")
+  //                   ? "application/pdf"
+  //                   : "image/jpeg");
+
+  //               if (mimeType.startsWith("image/")) {
+  //                 const compressed = await compressImage(file.uri);
+  //                 file = { ...file, uri: compressed.uri };
+  //               }
+
+  //               setTimeout(async () => {
+  //                 await handleFileUpload(file);
+  //               }, 1000);
+  //             }
+  //           } catch (err) {
+  //             console.log("Document error:", err);
+  //             showErrorToast(t("somethingWentWrong"));
+  //           }
+  //         },
+  //       },
+  //       {
+  //         text: t("cancel"),
+  //         style: "cancel",
+  //       },
+  //     ],
+  //     { cancelable: true }
+  //   );
+  // };
+
   const pickFile = async () => {
+    const handleDenied = (type: "Camera" | "Gallery") => {
+      Alert.alert(
+        `${type} ${t("permissionRequired")}`,
+        t("pleaseEnablePermissionInSettings"),
+        [
+          { text: t("cancel"), style: "cancel" },
+          { text: t("openSettings"), onPress: () => Linking.openSettings() },
+        ]
+      );
+    };
+
     Alert.alert(
       t("selectFileFrom"),
       "",
@@ -114,20 +240,24 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
           text: t("camera"),
           onPress: async () => {
             try {
-              const permission =
+              const { status } =
                 await ImagePicker.requestCameraPermissionsAsync();
-              if (!permission.granted) {
+              if (status !== "granted") {
                 showErrorToast(t("cameraPermissionDenied"));
+                handleDenied("Camera");
                 return;
               }
 
+              if (Platform.OS === "ios")
+                await new Promise((r) => setTimeout(r, 300));
+
               const result = await ImagePicker.launchCameraAsync({
                 quality: 1,
+                allowsEditing: true,
               });
 
               if (!result.canceled && result.assets?.length) {
                 let file = result.assets[0];
-
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
@@ -145,22 +275,26 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
           text: t("gallery"),
           onPress: async () => {
             try {
-              const permission =
+              const { status } =
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
-              if (!permission.granted) {
+              if (status !== "granted") {
                 showErrorToast(t("galleryPermissionDenied"));
+                handleDenied("Gallery");
                 return;
               }
+
+              if (Platform.OS === "ios")
+                await new Promise((r) => setTimeout(r, 300));
 
               const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsMultipleSelection: false,
+                allowsEditing: true,
                 quality: 1,
               });
 
               if (!result.canceled && result.assets?.length) {
                 let file = result.assets[0];
-
                 const compressed = await compressImage(file.uri);
                 file = { ...file, uri: compressed.uri };
 
@@ -187,7 +321,6 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
               if (!result.canceled && result.assets?.length) {
                 let file = result.assets[0];
 
-                // 🧠 Compress if it’s an image, skip if it’s a PDF
                 const mimeType =
                   file.mimeType ||
                   file.type ||
@@ -210,14 +343,12 @@ const OpenEnded: React.FC<OpenEndedProps> = ({
             }
           },
         },
-        {
-          text: t("cancel"),
-          style: "cancel",
-        },
+        { text: t("cancel"), style: "cancel" },
       ],
       { cancelable: true }
     );
   };
+
   const handleFileUpload = async (file: any) => {
     try {
       dispatch(setLoading(true));
