@@ -85,7 +85,13 @@ const EditProfileScreen = ({ navigation }: any) => {
       <View style={styles.header}>
         <CustomHeader
           title={t("editProfile")}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            // navigation.goBack()
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "SettingsMain" }],
+            });
+          }}
         />
       </View>
 

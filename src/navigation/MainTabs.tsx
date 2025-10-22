@@ -83,6 +83,12 @@ const MainTabs: FC = () => {
         name="TasksTab"
         component={TasksStack}
         options={{ title: t("tabs.tasks") }}
+        listeners={({ navigation }: any) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("TasksTab", { screen: "TasksMain" });
+          },
+        })}
       />
       <Tab.Screen
         name="ReportsTab"
@@ -93,6 +99,12 @@ const MainTabs: FC = () => {
         name="SettingsTab"
         component={SettingsStack}
         options={{ title: t("tabs.setting") }}
+        listeners={({ navigation }: any) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("SettingsTab", { screen: "SettingsMain" });
+          },
+        })}
       />
     </Tab.Navigator>
   );
