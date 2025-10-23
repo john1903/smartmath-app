@@ -8,6 +8,7 @@ import {
   TextStyle,
   ViewStyle,
   StyleProp,
+  useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../theme/colors";
@@ -43,6 +44,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   iconStyle,
   ...rest
 }) => {
+  const { width } = useWindowDimensions();
+
   return (
     <TouchableOpacity
       style={[styles.button, buttonStyle, disabled && { opacity: 0.6 }]}
@@ -51,7 +54,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       {...rest}
     >
-      <View style={[styles.content, contentStyle]}>
+      <View style={[styles.content, contentStyle, { maxWidth: width * 0.9 }]}>
         {(icon || svg) && (
           <View style={[styles.iconContainer, iconStyle]}>
             {icon && (
@@ -66,7 +69,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           </View>
         )}
 
-        <Text style={[styles.title, textStyle]}>{title}</Text>
+        <Text
+          style={[styles.title, textStyle]}
+          numberOfLines={0}
+          allowFontScaling={true}
+        >
+          {title}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -74,7 +83,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    width: "100%",
+    alignSelf: "center",
     backgroundColor: COLORS.primary,
     borderRadius: 40,
     borderWidth: 1,
@@ -84,21 +93,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
   content: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     flexWrap: "nowrap",
-    maxWidth: "100%",
   },
+
   title: {
     fontSize: 16,
     color: COLORS.white,
     fontWeight: "600",
     textAlign: "center",
     flexShrink: 1,
-    flexWrap: "wrap",
+    flexBasis: 0,
+    flexGrow: 1,
   },
+
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",
