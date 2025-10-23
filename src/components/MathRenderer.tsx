@@ -1,11 +1,10 @@
-// import React from "react";
+// import React, { useRef } from "react";
 // import {
 //   View,
 //   StyleSheet,
 //   ViewStyle,
 //   StyleProp,
 //   TextStyle,
-//   Alert,
 // } from "react-native";
 // import MathJax from "react-native-mathjax";
 // import { normalizeLatex } from "../utils/helpers";
@@ -29,13 +28,30 @@
 //   const color = selected ? COLORS.white : COLORS.black;
 //   const dispatch = useDispatch();
 
+//   // Track if it's the first load
+//   const isFirstLoad = useRef(true);
+
+//   const handleLoadStart = () => {
+//     if (isFirstLoad.current) {
+//       dispatch(setLoading(true));
+//     }
+//   };
+
+//   const handleLoadEnd = () => {
+//     if (isFirstLoad.current) {
+//       setTimeout(() => {
+//         dispatch(setLoading(false));
+//         isFirstLoad.current = false; // ✅ Mark first load as complete
+//       }, 800);
+//     }
+//   };
+
 //   return (
 //     <View style={[styles.container, style]}>
 //       <MathJax
 //         html={`
 //           <html>
 //             <head>
-//               <!-- Load Urbanist-Medium (weight 500) from Google Fonts -->
 //               <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500&display=swap" rel="stylesheet">
 //               <style>
 //                 body, span, mjx-container {
@@ -74,12 +90,8 @@
 //           },
 //         }}
 //         style={{ backgroundColor: "transparent" }}
-//         // onLoadStart={() => dispatch(setLoading(true))}
-//         // onLoadEnd={() =>
-//         //   setTimeout(() => {
-//         //     dispatch(setLoading(false));
-//         //   }, 1000)
-//         // }
+//         onLoadStart={handleLoadStart}
+//         onLoadEnd={handleLoadEnd}
 //       />
 //     </View>
 //   );
@@ -124,7 +136,6 @@ const MathRenderer: React.FC<MathRendererProps> = ({
   const color = selected ? COLORS.white : COLORS.black;
   const dispatch = useDispatch();
 
-  // Track if it's the first load
   const isFirstLoad = useRef(true);
 
   const handleLoadStart = () => {
@@ -137,7 +148,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
     if (isFirstLoad.current) {
       setTimeout(() => {
         dispatch(setLoading(false));
-        isFirstLoad.current = false; // ✅ Mark first load as complete
+        isFirstLoad.current = false;
       }, 800);
     }
   };
@@ -157,6 +168,17 @@ const MathRenderer: React.FC<MathRendererProps> = ({
                   color: ${color};
                   padding: 0;
                   margin: 0;
+                  letter-spacing: 0.5px; /* adds spacing between characters */
+                  line-height: 1.4;       /* better vertical alignment */
+                }
+                mjx-mi {
+                  padding: 0 1px; /* adds spacing between math identifiers */
+                }
+                mjx-mo {
+                  padding: 0 1px;
+                }
+                mjx-sub {
+                  margin-left: 1px; /* separates subscripts like logₓ */
                 }
               </style>
             </head>
@@ -168,7 +190,7 @@ const MathRenderer: React.FC<MathRendererProps> = ({
         mathJaxOptions={{
           messageStyle: "none",
           extensions: ["tex2jax.js"],
-          jax: ["input/TeX", "output/HTML-CSS"],
+          jax: ["input/TeX", "output/SVG"],
           tex2jax: {
             inlineMath: [
               ["$", "$"],
@@ -180,9 +202,9 @@ const MathRenderer: React.FC<MathRendererProps> = ({
             ],
             processEscapes: true,
           },
-          "HTML-CSS": {
-            availableFonts: [],
-            webFont: "none",
+          SVG: {
+            scale: 100,
+            font: "TeX",
           },
         }}
         style={{ backgroundColor: "transparent" }}
