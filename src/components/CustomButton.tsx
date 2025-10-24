@@ -54,7 +54,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       {...rest}
     >
-      <View style={[styles.content, contentStyle, { maxWidth: width * 0.9 }]}>
+      <View
+        style={[
+          styles.content,
+          contentStyle,
+          // { maxWidth: width * 0.9 }
+        ]}
+      >
         {(icon || svg) && (
           <View style={[styles.iconContainer, iconStyle]}>
             {icon && (
