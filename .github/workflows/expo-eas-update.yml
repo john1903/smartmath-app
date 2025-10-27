@@ -8,8 +8,6 @@ on:
 jobs:
   publish-ota-update:
     runs-on: ubuntu-latest
-    env:
-      EAS_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
     steps:
       - name: 🧾 Checkout repository
@@ -33,5 +31,6 @@ jobs:
         run: npm install -g eas-cli
 
       - name: 🚀 Publish OTA update
+        env:
+          EAS_TOKEN: ${{ secrets.EXPO_TOKEN }}  # ✅ This is key
         run: eas update --branch main --non-interactive --message "CI/CD OTA update"
-
