@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomBackground from "../../components/CustomBackground";
@@ -17,6 +17,8 @@ import { setLoading } from "../../store/loading";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/types";
 import { LoginRequest } from "../../models/Auth";
+import { registerForPushNotificationsAsync } from "../../utils/notifications"; // ✅ import here
+import { setDeviceToken } from "../../store/auth";
 
 interface SignInScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -32,9 +34,22 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("hani4u13@gmail.com");
+  const [password, setPassword] = useState("123456789");
   const [errors, setErrors] = useState<ErrorState>({ email: "", password: "" });
+  const [pushToken, setPushToken] = useState<string | undefined>();
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await registerForPushNotificationsAsync();
+      console.log("token", token);
+      if (token) {
+        dispatch(setDeviceToken(token));
+        setPushToken(token);
+      }
+    };
+    getToken();
+  }, []);
 
   const validate = (): boolean => {
     let valid = true;
@@ -64,12 +79,14 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
   };
 
   const loginFunc = async (): Promise<void> => {
+    if (!validate()) return;
+
     const payload: LoginRequest = {
       username: email,
       password,
+      device_token: pushToken ?? "", // ✅ include push token
     };
 
-    if (!validate()) return;
     dispatch(setLoading(true));
     await loginUser({ data: payload });
   };
@@ -78,7 +95,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
     <CustomBackground showImage={false}>
       <KeyboardAwareScrollView
         contentContainerStyle={styles.container}
-        enableOnAndroid={true}
+        enableOnAndroid
         extraScrollHeight={20}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -92,6 +109,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               <Text style={styles.subtitle}>{t("login_subtitle")}</Text>
             </View>
 
+            {/* Inputs */}
             <View style={styles.inputWrapper}>
               <AnimatedInput
                 label={t("email_or_phone")}
@@ -141,39 +159,12 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
               onPress={loginFunc}
             />
 
-            <View style={styles.createAccountContainer}>
-              <Text style={styles.createAccount}>{t("no_account")}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                <Text style={styles.createLink}> {t("create_account")} </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.divider}>
-              <View style={styles.line} />
-              <Text style={styles.orText}>{t("or")}</Text>
-              <View style={styles.line} />
-            </View>
-
-            <CustomButton
-              title={t("sign_in_with_google")}
-              buttonStyle={[styles.socialButton, { marginTop: 10 }]}
-              textStyle={styles.socialButtonTitle}
-              onPress={() => navigation.navigate("SignIn")}
-              svg={<GoogleIcon width={22} height={22} fill="#fff" />}
-            />
-            <CustomButton
-              title={t("sign_in_with_apple")}
-              buttonStyle={[styles.socialButton, { marginTop: 10 }]}
-              textStyle={styles.socialButtonTitle}
-              onPress={() => navigation.navigate("SignIn")}
-              svg={<AppleIcon width={22} height={22} fill="#fff" />}
-            />
+            {/* {pushToken && (
+              <Text style={{ color: COLORS.secondary, fontSize: 10 }}>
+                Device Token: {pushToken}
+              </Text>
+            )} */}
           </View>
-
-          <Text style={styles.footerText}>
-            {t("terms_text")} <Text style={styles.link}>{t("terms")}</Text>{" "}
-            {t("and")} <Text style={styles.link}>{t("privacy")}</Text>.
-          </Text>
         </View>
       </KeyboardAwareScrollView>
     </CustomBackground>
@@ -182,8 +173,7 @@ const SignInScreen: React.FC<SignInScreenProps> = ({ navigation }) => {
 
 export default SignInScreen;
 
-// ---------------------- STYLES ----------------------
-
+// your existing styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

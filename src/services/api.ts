@@ -6,7 +6,7 @@ import {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import { BASE_URL } from "../config";
-import { logoutUser } from "../utils/logout";
+import { logoutApp } from "../utils/logout";
 import { setToken, setRefreshToken } from "../store/auth";
 import type { RootState } from "../store";
 
@@ -49,6 +49,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
       // 1. Get refresh token directly from Redux
       const state = getState() as RootState;
       const refreshToken = state.auth.refreshToken;
+      const deviceToken = state.auth.deviceToken;
 
       console.log("refreshToken ::::::::::::::::", refreshToken);
 
@@ -76,13 +77,13 @@ const baseQueryWithInterceptor: BaseQueryFn<
           // 4. Retry the original request
           result = await baseQuery(args, api, extraOptions);
         } else {
-          await logoutUser(dispatch);
+          await logoutApp(dispatch, undefined, deviceToken);
         }
       } else {
-        await logoutUser(dispatch);
+        await logoutApp(dispatch, undefined, deviceToken);
       }
     } catch (err) {
-      await logoutUser(dispatch);
+      await logoutApp(dispatch);
     }
   }
 

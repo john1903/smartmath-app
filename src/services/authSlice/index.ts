@@ -2,6 +2,7 @@ import {
   userDetailEndPoint,
   userFileEndPoint,
   userLoginEndPoint,
+  userLogoutEndPoint,
   userRegisterEndPoint,
 } from "../../config/endPoints";
 import {
@@ -228,6 +229,32 @@ export const AuthApi = api.injectEndpoints({
         }
       },
     }),
+
+    logoutUser: builder.mutation<any, any>({
+      query: ({ data }) => {
+        return {
+          url: userLogoutEndPoint,
+          method: "post",
+          body: data,
+        };
+      },
+      transformResponse: (result: RegisterUserResponse) => result,
+      async onQueryStarted(args, { dispatch, queryFulfilled, getState }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          console.log(
+            "logout user response :::::::::::: ",
+            JSON.stringify(data)
+          );
+
+          dispatch(setLoading(false));
+        } catch (e: any) {
+          console.log("register user error :::::::::::: ", JSON.stringify(e));
+          dispatch(setLoading(false));
+        }
+      },
+    }),
   }),
   overrideExisting: true,
 });
@@ -238,6 +265,6 @@ export const {
   useUpdateUserMutation,
   useUpdateFileMutation,
   useDeleteFileMutation,
+  useLogoutUserMutation,
   //   useForgotPasswordMutation,
-  //   useLogoutUserMutation,
 } = AuthApi;
