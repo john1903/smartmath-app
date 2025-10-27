@@ -4,12 +4,14 @@ export type AuthState = {
   token: string | null;
   refreshToken: string | null;
   user: {};
+  deviceToken: string | null;
 };
 
 const initialState: AuthState = {
   token: "",
   refreshToken: "",
   user: {},
+  deviceToken: "",
 };
 
 const slice = createSlice({
@@ -25,10 +27,14 @@ const slice = createSlice({
     setRefreshToken: (state: AuthState, action: PayloadAction<string>) => {
       state.refreshToken = action.payload;
     },
+    setDeviceToken: (state: AuthState, action: PayloadAction<string>) => {
+      state.deviceToken = action.payload;
+    },
     setLogout: () => ({ ...initialState }),
   },
 });
 
-export const { setLogout, setUser, setToken, setRefreshToken } = slice.actions;
+export const { setLogout, setUser, setToken, setRefreshToken, setDeviceToken } =
+  slice.actions;
 
 export default slice.reducer;

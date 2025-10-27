@@ -1,13 +1,29 @@
-// src/utils/logout.ts
 import { setLogout } from "../store/auth";
 import { setLoading } from "../store/loading";
 
-export const logoutUser = async (dispatch: any) => {
-  dispatch(setLoading(true));
+export const logoutApp = async (
+  dispatch: any,
+  logoutUser?: (args: any) => Promise<any>,
+  deviceToken?: string | null
+) => {
+  try {
+    dispatch(setLoading(true));
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (logoutUser && deviceToken) {
+      const payload = { device_token: deviceToken };
+      const response = await logoutUser({ data: payload });
+      console.log("Logout API response:", response);
+    } else {
+      console.log(
+        " Skipping API logout call — missing logoutUser or deviceToken"
+      );
+    }
 
-  dispatch(setLogout());
-
-  dispatch(setLoading(false));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    dispatch(setLogout());
+  } catch (error) {
+    console.error(" Logout failed:", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
 };

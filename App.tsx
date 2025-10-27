@@ -16,6 +16,7 @@ import Toast from "react-native-toast-message";
 import { enableScreens } from "react-native-screens";
 import { ThemeProvider } from "./src/context/ThemeContext";
 import { ToastConfigComponent } from "./src/utils/toast";
+import { navigationRef } from "./src/navigation/RootNavigation"; // 👈 NEW IMPORT
 
 const LANGUAGE_KEY = "appLanguage";
 
@@ -61,7 +62,7 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <I18nextProvider i18n={i18n}>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <ThemeProvider>
               <RootNavigator />
               <ToastConfigComponent />

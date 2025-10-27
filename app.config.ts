@@ -1,67 +1,3 @@
-// import "dotenv/config";
-
-// export default {
-//   expo: {
-//     name: "SmartMath",
-//     slug: "SmartMath",
-//     version: "1.0.0",
-//     platforms: ["ios", "android"],
-//     orientation: "portrait",
-//     icon: "./assets/icon.png",
-//     userInterfaceStyle: "automatic",
-//     newArchEnabled: true,
-//     assetBundlePatterns: ["**/*"],
-//     assets: ["./assets/fonts/"],
-//     splash: {
-//       image: "./assets/splash-icon.png",
-//       resizeMode: "contain",
-//       backgroundColor: "#ffffff",
-//     },
-//     ios: {
-//       bundleIdentifier: "pl.smartmath.app",
-//       supportsTablet: true,
-//       infoPlist: {
-//         NSCameraUsageDescription:
-//           "This app uses the camera to allow users to take and upload photos.",
-//         NSPhotoLibraryUsageDescription:
-//           "This app needs access to your photo library so you can upload and share images.",
-//         NSDocumentPickerUsageDescription:
-//           "This app needs access to documents for uploads and learning material.",
-//       },
-//     },
-//     android: {
-//       package: "pl.smartmath.app",
-//       adaptiveIcon: {
-//         foregroundImage: "./assets/adaptive-icon.png",
-//         backgroundColor: "#ffffff",
-//       },
-//       permissions: [
-//         "CAMERA",
-//         "READ_EXTERNAL_STORAGE",
-//         "WRITE_EXTERNAL_STORAGE",
-//       ],
-//       edgeToEdgeEnabled: true,
-//     },
-//     web: {
-//       favicon: "./assets/favicon.png",
-//     },
-//     plugins: ["expo-font", "expo-asset", "expo-localization"],
-//     extra: {
-//       API_URL: process.env.API_URL,
-//       eas: {
-//         projectId: "f61905c9-ee9f-4931-bbae-bb6102a51c66",
-//       },
-//     },
-//     owner: "jan.gluzniewicz",
-//     runtimeVersion: {
-//       policy: "appVersion",
-//     },
-//     updates: {
-//       url: "https://u.expo.dev/f61905c9-ee9f-4931-bbae-bb6102a51c66",
-//     },
-//   },
-// };
-
 import "dotenv/config";
 import { ExpoConfig, ConfigContext } from "expo/config";
 
@@ -76,12 +12,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   assetBundlePatterns: ["**/*"],
-  assets: ["./assets/fonts/"], // 👈 includes custom fonts
+  assets: ["./assets/fonts/"],
   splash: {
     image: "./assets/splash-icon.png",
     resizeMode: "contain",
     backgroundColor: "#ffffff",
   },
+
+  scheme: "smartmath",
+
   ios: {
     bundleIdentifier: "pl.smartmath.app",
     supportsTablet: true,
@@ -92,27 +31,51 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         "This app needs access to your photo library so you can upload and share images.",
       NSDocumentPickerUsageDescription:
         "This app needs access to documents for uploads and learning material.",
+      NSUserTrackingUsageDescription:
+        "This identifier will be used to send you personalized notifications.",
     },
   },
+
   android: {
     package: "pl.smartmath.app",
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
-    permissions: ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+    permissions: [
+      "CAMERA",
+      "READ_EXTERNAL_STORAGE",
+      "WRITE_EXTERNAL_STORAGE",
+      "NOTIFICATIONS",
+    ],
     edgeToEdgeEnabled: true,
   },
+
   web: {
     favicon: "./assets/favicon.png",
   },
-  plugins: ["expo-font", "expo-asset", "expo-localization"],
+
+  plugins: [
+    "expo-font",
+    "expo-asset",
+    "expo-localization",
+    [
+      "expo-notifications",
+      {
+        icon: "./assets/notification-icon.png",
+        color: "#ffffff",
+        mode: "production",
+      },
+    ],
+  ],
+
   extra: {
     API_URL: process.env.API_URL,
     eas: {
       projectId: "f61905c9-ee9f-4931-bbae-bb6102a51c66",
     },
   },
+
   owner: "jan.gluzniewicz",
   runtimeVersion: {
     policy: "appVersion",
